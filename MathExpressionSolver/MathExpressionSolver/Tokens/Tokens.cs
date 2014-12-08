@@ -18,4 +18,6 @@ namespace MathExpressionSolver.Tokens
         virtual public int Priority { get; protected set; }
         abstract public T ReturnValue();
     }
+
+   
 }
