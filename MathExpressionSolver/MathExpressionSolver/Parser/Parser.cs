@@ -9,9 +9,10 @@ namespace MathExpressionSolver.Parser
     class Parser
     {
         const int TKNLGHT = 4;
-
-        private string expression;
+   
+        private StringBuilder charBuffer = new StringBuilder(TKNLGHT);
         private int bufferPointer = 0;
+        private string expression;
 
         public Parser(string expression)
         {
@@ -30,7 +31,7 @@ namespace MathExpressionSolver.Parser
 
         private string parseNextToken()
         {
-            StringBuilder item = new StringBuilder(TKNLGHT);
+            charBuffer.Clear();
             Func<char, bool> isTypeFunction = null;
 
             bool isLong = false;
@@ -54,41 +55,50 @@ namespace MathExpressionSolver.Parser
             }
             else if (ParserHelper.IsLeftBracket(expression[bufferPointer]))
             {
-                isTypeFunction = ParserHelper.IsLeftBracket;
+                addCurrCharToBuffer();
             }
             else if (ParserHelper.IsRightBracket(expression[bufferPointer]))
             {
-                isTypeFunction = ParserHelper.IsRightBracket;
+                addCurrCharToBuffer();
             }
             else if (ParserHelper.IsOperator(expression[bufferPointer]))
             {
-                isTypeFunction = ParserHelper.IsOperator;
+                addCurrCharToBuffer();
             }
             else if (ParserHelper.IsSeparator(expression[bufferPointer]))
             {
-                isTypeFunction = ParserHelper.IsSeparator;
+                addCurrCharToBuffer();
             }
             else
             {
-                bufferPointer++;
-                return string.Empty;
+                trashCurrChar();
             }
 
             if(isLong)
             {
                 while(bufferPointer < expression.Length && isTypeFunction(expression[bufferPointer]))
                 {
-                    if(!trash) item.Append(expression[bufferPointer]);
-                    bufferPointer++;
+                    if (trash) trashCurrChar();
+                    else addCurrCharToBuffer();
                 }
             }
-            else
-            {
-                if (!trash) item.Append(expression[bufferPointer]);
-                bufferPointer++;
-            }
  
-            return item.ToString();
+            return charBuffer.ToString();
+        }
+
+        private void addCurrCharToBuffer()
+        {
+            if (bufferPointer >= expression.Length) return;
+
+            charBuffer.Append(expression[bufferPointer]);
+            bufferPointer++;
+        }
+
+        private void trashCurrChar()
+        {
+            if (bufferPointer >= expression.Length) return;
+
+            bufferPointer++;
         }
     }
 
