@@ -9,6 +9,7 @@ namespace MathExpressionSolver.Parser
     class ExpressionParser
     {
         const int TKNLGHT = 4;
+        public bool SkipInvalidChars { get; set; } = true;
 
         private StringBuilder charBuffer;
         private int bufferPointer = 0;
@@ -99,6 +100,7 @@ namespace MathExpressionSolver.Parser
             else
             {
                 trashCurrChar();
+                if (SkipInvalidChars) return;
             }
 
             if(isLong)
