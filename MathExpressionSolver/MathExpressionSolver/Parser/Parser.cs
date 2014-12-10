@@ -6,30 +6,54 @@ using System.Threading.Tasks;
 
 namespace MathExpressionSolver.Parser
 {
-    class Parser
+    class ExpressionParser
     {
         const int TKNLGHT = 4;
-   
-        private StringBuilder charBuffer = new StringBuilder(TKNLGHT);
+
+        private StringBuilder charBuffer;
         private int bufferPointer = 0;
+
+        private List<string> listOfParsedExpressions;
         private string expression;
 
-        public Parser(string expression)
+        public string StringExpression
         {
-            this.expression = expression;
+            set
+            {
+                listOfParsedExpressions.Clear();
+                listOfParsedExpressions.Capacity = expression.Length / TKNLGHT;
+                expression = value;
+            }
+        }
+
+        public ExpressionParser() 
+        {
+            charBuffer = new StringBuilder(TKNLGHT);
+            listOfParsedExpressions = new List<string>();
+            expression = string.Empty;
+        }
+
+        public ExpressionParser(string expression) : this()
+        {
+            StringExpression = expression;
         }
 
         public string[] ParseExpression()
         {
-            List<string> listOfParsedExpressions = new List<string>(expression.Length / TKNLGHT);
-            while(bufferPointer < expression.Length)
-            {
-                listOfParsedExpressions.Add(parseNextToken());
-            }
+            parseExpression();
             return listOfParsedExpressions.ToArray();
         }
 
-        private string parseNextToken()
+        private void parseExpression()
+        {
+            listOfParsedExpressions.Clear();
+            while (bufferPointer < expression.Length)
+            {
+                parseNextToken();
+            }
+        }
+
+        private void parseNextToken()
         {
             charBuffer.Clear();
             Func<char, bool> isTypeFunction = null;
@@ -82,22 +106,18 @@ namespace MathExpressionSolver.Parser
                     else addCurrCharToBuffer();
                 }
             }
- 
-            return charBuffer.ToString();
+
+            listOfParsedExpressions.Add(charBuffer.ToString());
         }
 
         private void addCurrCharToBuffer()
         {
-            if (bufferPointer >= expression.Length) return;
-
             charBuffer.Append(expression[bufferPointer]);
             bufferPointer++;
         }
 
         private void trashCurrChar()
         {
-            if (bufferPointer >= expression.Length) return;
-
             bufferPointer++;
         }
     }
