@@ -63,16 +63,19 @@ namespace MathExpressionSolver.Parser
 
             if (ParserHelper.IsNameChar(expression[bufferPointer]))
             {
+                addCurrCharToBuffer();
                 isTypeFunction = ParserHelper.IsNameChar;
                 isLong = true;
             }
             else if (ParserHelper.IsNum(expression[bufferPointer]))
             {
+                addCurrCharToBuffer();
                 isTypeFunction = ParserHelper.IsNum;
                 isLong = true;
             }
             else if (ParserHelper.IsWhiteSpace(expression[bufferPointer]))
             {
+                trashCurrChar();
                 isTypeFunction = ParserHelper.IsWhiteSpace;
                 isLong = true;
                 trash = true;
