@@ -14,15 +14,15 @@ namespace MathExpressionSolver.Parser
         private int bufferPointer = 0;
 
         private List<string> listOfParsedExpressions;
-        private string expression;
+        private string stringExpression;
 
         public string StringExpression
         {
             set
             {
                 listOfParsedExpressions.Clear();
-                listOfParsedExpressions.Capacity = expression.Length / TKNLGHT;
-                expression = value;
+                listOfParsedExpressions.Capacity = stringExpression.Length / TKNLGHT;
+                stringExpression = value;
             }
         }
 
@@ -30,7 +30,7 @@ namespace MathExpressionSolver.Parser
         {
             charBuffer = new StringBuilder(TKNLGHT);
             listOfParsedExpressions = new List<string>();
-            expression = string.Empty;
+            stringExpression = string.Empty;
         }
 
         public ExpressionParser(string expression) : this()
@@ -47,7 +47,7 @@ namespace MathExpressionSolver.Parser
         private void parseExpression()
         {
             listOfParsedExpressions.Clear();
-            while (bufferPointer < expression.Length)
+            while (bufferPointer < stringExpression.Length)
             {
                 parseNextToken();
             }
@@ -61,38 +61,38 @@ namespace MathExpressionSolver.Parser
             bool isLong = false;
             bool trash = false;
 
-            if (ParserHelper.IsNameChar(expression[bufferPointer]))
+            if (ParserHelper.IsNameChar(stringExpression[bufferPointer]))
             {
                 addCurrCharToBuffer();
                 isTypeFunction = ParserHelper.IsNameChar;
                 isLong = true;
             }
-            else if (ParserHelper.IsNum(expression[bufferPointer]))
+            else if (ParserHelper.IsNum(stringExpression[bufferPointer]))
             {
                 addCurrCharToBuffer();
                 isTypeFunction = ParserHelper.IsNum;
                 isLong = true;
             }
-            else if (ParserHelper.IsWhiteSpace(expression[bufferPointer]))
+            else if (ParserHelper.IsWhiteSpace(stringExpression[bufferPointer]))
             {
                 trashCurrChar();
                 isTypeFunction = ParserHelper.IsWhiteSpace;
                 isLong = true;
                 trash = true;
             }
-            else if (ParserHelper.IsLeftBracket(expression[bufferPointer]))
+            else if (ParserHelper.IsLeftBracket(stringExpression[bufferPointer]))
             {
                 addCurrCharToBuffer();
             }
-            else if (ParserHelper.IsRightBracket(expression[bufferPointer]))
+            else if (ParserHelper.IsRightBracket(stringExpression[bufferPointer]))
             {
                 addCurrCharToBuffer();
             }
-            else if (ParserHelper.IsOperator(expression[bufferPointer]))
+            else if (ParserHelper.IsOperator(stringExpression[bufferPointer]))
             {
                 addCurrCharToBuffer();
             }
-            else if (ParserHelper.IsSeparator(expression[bufferPointer]))
+            else if (ParserHelper.IsSeparator(stringExpression[bufferPointer]))
             {
                 addCurrCharToBuffer();
             }
@@ -103,7 +103,7 @@ namespace MathExpressionSolver.Parser
 
             if(isLong)
             {
-                while(bufferPointer < expression.Length && isTypeFunction(expression[bufferPointer]))
+                while(bufferPointer < stringExpression.Length && isTypeFunction(stringExpression[bufferPointer]))
                 {
                     if (trash) trashCurrChar();
                     else addCurrCharToBuffer();
@@ -115,7 +115,7 @@ namespace MathExpressionSolver.Parser
 
         private void addCurrCharToBuffer()
         {
-            charBuffer.Append(expression[bufferPointer]);
+            charBuffer.Append(stringExpression[bufferPointer]);
             bufferPointer++;
         }
 
