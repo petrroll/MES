@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace MathExpressionSolver.Parser
@@ -7,21 +8,23 @@ namespace MathExpressionSolver.Parser
     class ExpressionParser
     {
         const int avgTokenLength = 4;
-        public bool SkipInvalidChars { get; set; } = true;
+        public bool SkipInvalidChars { get; set; } = false;
 
-        private StringBuilder expressionBuffer;
-        private int currCharPointer = 0;
 
-        private List<string> parsedExpressions;
+        private List<string> parsedExpression;
         private List<ParsedSubstringType> parsedTypes;
+
+        public string[] ParsedExpression { get { return parsedExpression.ToArray(); } }
+        public ParsedSubstringType[] ParsedTypes { get { return parsedTypes.ToArray(); } }
+
         private string rawExpression;
 
         public string StringExpression
         {
             set
             {
-                parsedExpressions.Clear();
-                parsedExpressions.Capacity = rawExpression.Length / avgTokenLength;
+                parsedExpression.Clear();
+                parsedExpression.Capacity = rawExpression.Length / avgTokenLength;
 
                 parsedTypes.Clear();
                 parsedTypes.Capacity = rawExpression.Length / avgTokenLength;
@@ -32,9 +35,7 @@ namespace MathExpressionSolver.Parser
 
         public ExpressionParser() 
         {
-            expressionBuffer = new StringBuilder(avgTokenLength);
-
-            parsedExpressions = new List<string>();
+            parsedExpression = new List<string>();
             parsedTypes = new List<ParsedSubstringType>();
 
             rawExpression = string.Empty;
@@ -45,131 +46,115 @@ namespace MathExpressionSolver.Parser
             StringExpression = expression;
         }
 
-        public Tuple<string[], ParsedSubstringType[]> ParseExpression()
+        public void ParseExpression()
         {
-            parseExpression();
-            return new Tuple<string[], ParsedSubstringType[]>(parsedExpressions.ToArray(), parsedTypes.ToArray());
-        }
+            ParsedSubstringType lastType = ParsedSubstringType.NotSet;
 
-        private void parseExpression()
-        {
-            parsedExpressions.Clear();
+            parsedExpression.Clear();
             parsedTypes.Clear();
 
-            while (isNotAtEnd())
+            StringBuilder charBuffer = new StringBuilder(avgTokenLength);
+            foreach (char token in rawExpression)
             {
-                parseNextToken();
+                ParsedSubstringType currentType = getTokenType(token);
+                if(IsCoumpnoundable(lastType) && currentType != lastType)
+                {
+                    parseNewExpression(charBuffer, lastType);
+                }
+
+                lastType = currentType;
+                if (IsCoumpnoundable(currentType))
+                {
+                    charBuffer.Append(token);
+                    continue;
+                }
+
+                if (currentType == ParsedSubstringType.Invalid && SkipInvalidChars) { continue; }
+                charBuffer.Append(token);
+
+                parseNewExpression(charBuffer, currentType);
+            }
+
+            if (charBuffer.Length > 0)
+            {
+                parseNewExpression(charBuffer, lastType);
             }
         }
-
-        private void parseNextToken()
+        private void parseNewExpression(StringBuilder charBuffer, ParsedSubstringType currentType)
         {
-            expressionBuffer.Clear();
-            Func<char, bool> isTypeFunction = null;
-            ParsedSubstringType currentType;
+            string expression = (isTrashable(currentType)) ? string.Empty : charBuffer.ToString();
 
-            bool isLong = false;
-            bool trash = false;
+            parsedTypes.Add(currentType);
+            parsedExpression.Add(expression);
+            charBuffer.Clear();
+        }
 
-            if (ParserHelper.IsNameChar(rawExpression[currCharPointer]))
+        private bool IsCoumpnoundable(ParsedSubstringType type)
+        {
+            return (
+                    type == ParsedSubstringType.Num ||
+                    type == ParsedSubstringType.Name ||
+                    type == ParsedSubstringType.WhiteSpace
+                 );
+        }
+
+        private bool isTrashable(ParsedSubstringType type)
+        {
+            return (type == ParsedSubstringType.WhiteSpace);
+        }
+
+        private ParsedSubstringType getTokenType(char token)
+        {
+            if (ParserHelper.IsNameChar(token))
             {
-                addCurrCharToBuffer();
-                isTypeFunction = ParserHelper.IsNameChar;
-                currentType = ParsedSubstringType.Name;
-                isLong = true;
+                return ParsedSubstringType.Name;
             }
-            else if (ParserHelper.IsNum(rawExpression[currCharPointer]))
+            else if (ParserHelper.IsNum(token))
             {
-                addCurrCharToBuffer();
-                isTypeFunction = ParserHelper.IsNum;
-                currentType = ParsedSubstringType.Num;
-                isLong = true;
+                return ParsedSubstringType.Num;
             }
-            else if (ParserHelper.IsWhiteSpace(rawExpression[currCharPointer]))
+            else if (ParserHelper.IsWhiteSpace(token))
             {
-                trashCurrChar();
-                isTypeFunction = ParserHelper.IsWhiteSpace;
-                currentType = ParsedSubstringType.WhiteSpace;
-                isLong = true;
-                trash = true;
+                return ParsedSubstringType.WhiteSpace;
             }
-            else if (ParserHelper.IsLeftBracket(rawExpression[currCharPointer]))
+            else if (ParserHelper.IsLeftBracket(token))
             {
-                addCurrCharToBuffer();
-                currentType = ParsedSubstringType.LBracket;
+                return ParsedSubstringType.LBracket;
             }
-            else if (ParserHelper.IsRightBracket(rawExpression[currCharPointer]))
+            else if (ParserHelper.IsRightBracket(token))
             {
-                addCurrCharToBuffer();
-                currentType = ParsedSubstringType.RBracket;
+                return ParsedSubstringType.RBracket;
             }
-            else if (ParserHelper.IsOperator(rawExpression[currCharPointer]))
+            else if (ParserHelper.IsOperator(token))
             {
-                addCurrCharToBuffer();
-                currentType = ParsedSubstringType.Operator;
+                return ParsedSubstringType.Operator;
             }
-            else if (ParserHelper.IsSeparator(rawExpression[currCharPointer]))
+            else if (ParserHelper.IsSeparator(token))
             {
-                addCurrCharToBuffer();
-                currentType = ParsedSubstringType.Separator;
+                return ParsedSubstringType.Separator;
             }
             else
             {
-                trashCurrChar();
-                if (SkipInvalidChars) { return; }
-                else { currentType = ParsedSubstringType.InvalidToken; }
+                return ParsedSubstringType.Invalid; 
             }
-
-            if(isLong)
-            {
-                while (isNotAtEnd() && isTypeFunction(rawExpression[currCharPointer]))
-                {
-                    if (trash) { trashCurrChar(); }
-                    else { addCurrCharToBuffer(); }
-                }
-            }
-
-            parsedExpressions.Add(expressionBuffer.ToString());
-            parsedTypes.Add(currentType);
-        }
-
-        private void addCurrCharToBuffer()
-        {
-            expressionBuffer.Append(rawExpression[currCharPointer]);
-            movePointer();
-        }
-
-        private void trashCurrChar()
-        {
-            movePointer();
-        }
-
-        private void movePointer()
-        {
-            currCharPointer++;
-        }
-
-        private bool isNotAtEnd()
-        {
-            return (currCharPointer < rawExpression.Length);
         }
     }
 
-    public enum ParsedSubstringType { Name, Num, LBracket, RBracket, Operator, Separator, WhiteSpace, InvalidToken };
+    public enum ParsedSubstringType { Name, Num, LBracket, RBracket, Operator, Separator, WhiteSpace, Invalid, NotSet };
 
     public static class ParserHelper
     {
         public static bool IsNameChar(char a)
         {
-            if (a == '_') { return true; }
-            else { return char.IsLetter(a); }
+            return (a == '_' || char.IsLetter(a));
         }
 
+        private static char decimalSeparator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator[0];
         public static bool IsNum(char a)
         {
-            if (a == '.') { return true; }
-            else { return char.IsDigit(a); }
+            return (a == decimalSeparator) || char.IsDigit(a);
         }
+
 
         public static bool IsLeftBracket(char a)
         {
