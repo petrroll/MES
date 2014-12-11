@@ -56,7 +56,7 @@ namespace MathExpressionSolver.Parser
             listOfParsedExpressions.Clear();
             listOfParsedTypes.Clear();
 
-            while (bufferPointer < stringExpression.Length)
+            while (isNotAtEnd())
             {
                 parseNextToken();
             }
@@ -122,7 +122,7 @@ namespace MathExpressionSolver.Parser
 
             if(isLong)
             {
-                while(bufferPointer < stringExpression.Length && isTypeFunction(stringExpression[bufferPointer]))
+                while(isNotAtEnd() && isTypeFunction(stringExpression[bufferPointer]))
                 {
                     if (trash) trashCurrChar();
                     else addCurrCharToBuffer();
@@ -142,6 +142,10 @@ namespace MathExpressionSolver.Parser
         private void trashCurrChar()
         {
             bufferPointer++;
+        }
+        private bool isNotAtEnd()
+        {
+            return bufferPointer < stringExpression.Length;
         }
     }
 
