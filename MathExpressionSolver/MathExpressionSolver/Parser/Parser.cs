@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace MathExpressionSolver.Parser
 {
@@ -15,6 +13,7 @@ namespace MathExpressionSolver.Parser
         private int bufferPointer = 0;
 
         private List<string> listOfParsedExpressions;
+        private List<ParsedSubstringType> listOfParsedTypes;
         private string stringExpression;
 
         public string StringExpression
@@ -23,6 +22,10 @@ namespace MathExpressionSolver.Parser
             {
                 listOfParsedExpressions.Clear();
                 listOfParsedExpressions.Capacity = stringExpression.Length / TKNLGHT;
+
+                listOfParsedTypes.Clear();
+                listOfParsedTypes.Capacity = stringExpression.Length / TKNLGHT;
+
                 stringExpression = value;
             }
         }
@@ -30,7 +33,10 @@ namespace MathExpressionSolver.Parser
         public ExpressionParser() 
         {
             charBuffer = new StringBuilder(TKNLGHT);
+
             listOfParsedExpressions = new List<string>();
+            listOfParsedTypes = new List<ParsedSubstringType>();
+
             stringExpression = string.Empty;
         }
 
@@ -39,15 +45,17 @@ namespace MathExpressionSolver.Parser
             StringExpression = expression;
         }
 
-        public string[] ParseExpression()
+        public Tuple<string[], ParsedSubstringType[]> ParseExpression()
         {
             parseExpression();
-            return listOfParsedExpressions.ToArray();
+            return new Tuple<string[], ParsedSubstringType[]>(listOfParsedExpressions.ToArray(), listOfParsedTypes.ToArray());
         }
 
         private void parseExpression()
         {
             listOfParsedExpressions.Clear();
+            listOfParsedTypes.Clear();
+
             while (bufferPointer < stringExpression.Length)
             {
                 parseNextToken();
@@ -58,6 +66,7 @@ namespace MathExpressionSolver.Parser
         {
             charBuffer.Clear();
             Func<char, bool> isTypeFunction = null;
+            ParsedSubstringType currentType;
 
             bool isLong = false;
             bool trash = false;
@@ -66,41 +75,49 @@ namespace MathExpressionSolver.Parser
             {
                 addCurrCharToBuffer();
                 isTypeFunction = ParserHelper.IsNameChar;
+                currentType = ParsedSubstringType.Name;
                 isLong = true;
             }
             else if (ParserHelper.IsNum(stringExpression[bufferPointer]))
             {
                 addCurrCharToBuffer();
                 isTypeFunction = ParserHelper.IsNum;
+                currentType = ParsedSubstringType.Num;
                 isLong = true;
             }
             else if (ParserHelper.IsWhiteSpace(stringExpression[bufferPointer]))
             {
                 trashCurrChar();
                 isTypeFunction = ParserHelper.IsWhiteSpace;
+                currentType = ParsedSubstringType.WhiteSpace;
                 isLong = true;
                 trash = true;
             }
             else if (ParserHelper.IsLeftBracket(stringExpression[bufferPointer]))
             {
                 addCurrCharToBuffer();
+                currentType = ParsedSubstringType.Bracket;
             }
             else if (ParserHelper.IsRightBracket(stringExpression[bufferPointer]))
             {
                 addCurrCharToBuffer();
+                currentType = ParsedSubstringType.Bracket;
             }
             else if (ParserHelper.IsOperator(stringExpression[bufferPointer]))
             {
                 addCurrCharToBuffer();
+                currentType = ParsedSubstringType.Operator;
             }
             else if (ParserHelper.IsSeparator(stringExpression[bufferPointer]))
             {
                 addCurrCharToBuffer();
+                currentType = ParsedSubstringType.Separator;
             }
             else
             {
                 trashCurrChar();
                 if (SkipInvalidChars) return;
+                else currentType = ParsedSubstringType.WhiteSpace;
             }
 
             if(isLong)
@@ -113,6 +130,7 @@ namespace MathExpressionSolver.Parser
             }
 
             listOfParsedExpressions.Add(charBuffer.ToString());
+            listOfParsedTypes.Add(currentType);
         }
 
         private void addCurrCharToBuffer()
@@ -126,6 +144,8 @@ namespace MathExpressionSolver.Parser
             bufferPointer++;
         }
     }
+
+    public enum ParsedSubstringType { Name, Num, Bracket, Operator, Separator, WhiteSpace };
 
     public static class ParserHelper
     {
