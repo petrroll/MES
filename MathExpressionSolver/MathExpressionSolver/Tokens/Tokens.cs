@@ -6,16 +6,19 @@ using System.Threading.Tasks;
 
 namespace MathExpressionSolver.Tokens
 {
+    public enum TokenType { Operator, Function, Element };
 
     public interface IToken<T>
     {
         T ReturnValue();
         int Priority { get; }
+        TokenType Type { get; }
     }
 
     public abstract class Token<T> : IToken<T>
     {
         virtual public int Priority { get; protected set; }
+        virtual public TokenType Type { get; protected set; }
         abstract public T ReturnValue();
     }
 
@@ -31,7 +34,8 @@ namespace MathExpressionSolver.Tokens
     {
         public IntToken()
         {
-            Priority = 1;
+            Priority = int.MaxValue;
+            Type = TokenType.Element;
         }
 
         new public int Child { get; set; }
@@ -60,6 +64,7 @@ namespace MathExpressionSolver.Tokens
         public MinusToken()
         {
             Priority = 2;
+            Type = TokenType.Operator;
         }
 
         public override int ReturnValue()
