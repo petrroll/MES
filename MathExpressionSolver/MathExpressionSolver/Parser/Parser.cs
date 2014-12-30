@@ -7,15 +7,15 @@ namespace MathExpressionSolver.Parser
 {
     class ExpressionParser
     {
-        const int avgTokenLength = 4;
+        const int avgExpressionItemLength = 4;
         public bool SkipInvalidChars { get; set; } = false;
 
 
         private List<string> parsedExpressions;
-        private List<TokenType> parsedTypes;
+        private List<ExpressionItemType> parsedTypes;
 
         public string[] ParsedExpression { get { return parsedExpressions.ToArray(); } }
-        public TokenType[] ParsedTypes { get { return parsedTypes.ToArray(); } }
+        public ExpressionItemType[] ParsedTypes { get { return parsedTypes.ToArray(); } }
 
         private string rawExpression;
 
@@ -24,10 +24,10 @@ namespace MathExpressionSolver.Parser
             set
             {
                 parsedExpressions.Clear();
-                parsedExpressions.Capacity = rawExpression.Length / avgTokenLength;
+                parsedExpressions.Capacity = rawExpression.Length / avgExpressionItemLength;
 
                 parsedTypes.Clear();
-                parsedTypes.Capacity = rawExpression.Length / avgTokenLength;
+                parsedTypes.Capacity = rawExpression.Length / avgExpressionItemLength;
 
                 rawExpression = value;
             }
@@ -36,7 +36,7 @@ namespace MathExpressionSolver.Parser
         public ExpressionParser() 
         {
             parsedExpressions = new List<string>();
-            parsedTypes = new List<TokenType>();
+            parsedTypes = new List<ExpressionItemType>();
 
             rawExpression = string.Empty;
         }
@@ -48,39 +48,39 @@ namespace MathExpressionSolver.Parser
 
         public void ParseExpression()
         {
-            TokenType lastType = TokenType.NotSet;
+            ExpressionItemType lastType = ExpressionItemType.NotSet;
 
             parsedExpressions.Clear();
             parsedTypes.Clear();
 
-            StringBuilder charBuffer = new StringBuilder(avgTokenLength);
-            foreach (char token in rawExpression)
+            StringBuilder expBuffer = new StringBuilder(avgExpressionItemLength);
+            foreach (char c in rawExpression)
             {
-                TokenType currentType = getTokenType(token);
+                ExpressionItemType currentType = getExpItemType(c);
                 if(IsCoumpnoundable(lastType) && currentType != lastType)
                 {
-                    parseNewExpression(charBuffer, lastType);
+                    parseNewExpression(expBuffer, lastType);
                 }
 
                 lastType = currentType;
                 if (IsCoumpnoundable(currentType))
                 {
-                    charBuffer.Append(token);
+                    expBuffer.Append(c);
                     continue;
                 }
 
-                if (currentType == TokenType.Invalid && SkipInvalidChars) { continue; }
-                charBuffer.Append(token);
+                if (currentType == ExpressionItemType.Invalid && SkipInvalidChars) { continue; }
+                expBuffer.Append(c);
 
-                parseNewExpression(charBuffer, currentType);
+                parseNewExpression(expBuffer, currentType);
             }
 
-            if (charBuffer.Length > 0)
+            if (expBuffer.Length > 0)
             {
-                parseNewExpression(charBuffer, lastType);
+                parseNewExpression(expBuffer, lastType);
             }
         }
-        private void parseNewExpression(StringBuilder charBuffer, TokenType currentType)
+        private void parseNewExpression(StringBuilder charBuffer, ExpressionItemType currentType)
         {
             string expression = (isTrashable(currentType)) ? string.Empty : charBuffer.ToString();
 
@@ -89,58 +89,58 @@ namespace MathExpressionSolver.Parser
             charBuffer.Clear();
         }
 
-        private bool IsCoumpnoundable(TokenType type)
+        private bool IsCoumpnoundable(ExpressionItemType type)
         {
             return (
-                    type == TokenType.Num ||
-                    type == TokenType.Name ||
-                    type == TokenType.WhiteSpace
+                    type == ExpressionItemType.Num ||
+                    type == ExpressionItemType.Name ||
+                    type == ExpressionItemType.WhiteSpace
                  );
         }
 
-        private bool isTrashable(TokenType type)
+        private bool isTrashable(ExpressionItemType type)
         {
-            return (type == TokenType.WhiteSpace);
+            return (type == ExpressionItemType.WhiteSpace);
         }
 
-        private TokenType getTokenType(char token)
+        private ExpressionItemType getExpItemType(char c)
         {
-            if (ParserHelper.IsNameChar(token))
+            if (ParserHelper.IsNameChar(c))
             {
-                return TokenType.Name;
+                return ExpressionItemType.Name;
             }
-            else if (ParserHelper.IsNum(token))
+            else if (ParserHelper.IsNum(c))
             {
-                return TokenType.Num;
+                return ExpressionItemType.Num;
             }
-            else if (ParserHelper.IsWhiteSpace(token))
+            else if (ParserHelper.IsWhiteSpace(c))
             {
-                return TokenType.WhiteSpace;
+                return ExpressionItemType.WhiteSpace;
             }
-            else if (ParserHelper.IsLeftBracket(token))
+            else if (ParserHelper.IsLeftBracket(c))
             {
-                return TokenType.LBracket;
+                return ExpressionItemType.LBracket;
             }
-            else if (ParserHelper.IsRightBracket(token))
+            else if (ParserHelper.IsRightBracket(c))
             {
-                return TokenType.RBracket;
+                return ExpressionItemType.RBracket;
             }
-            else if (ParserHelper.IsOperator(token))
+            else if (ParserHelper.IsOperator(c))
             {
-                return TokenType.Operator;
+                return ExpressionItemType.Operator;
             }
-            else if (ParserHelper.IsSeparator(token))
+            else if (ParserHelper.IsSeparator(c))
             {
-                return TokenType.Separator;
+                return ExpressionItemType.Separator;
             }
             else
             {
-                return TokenType.Invalid; 
+                return ExpressionItemType.Invalid; 
             }
         }
     }
 
-    public enum TokenType { Name, Num, LBracket, RBracket, Operator, Separator, WhiteSpace, Invalid, NotSet };
+    public enum ExpressionItemType { Name, Num, LBracket, RBracket, Operator, Separator, WhiteSpace, Invalid, NotSet };
 
     public static class ParserHelper
     {
