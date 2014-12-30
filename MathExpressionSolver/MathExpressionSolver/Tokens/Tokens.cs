@@ -78,4 +78,61 @@ namespace MathExpressionSolver.Tokens
         }
     }
 
+    public class PlusToken : BinIntToken
+    {
+        public PlusToken()
+        {
+            Priority = 2;
+            Type = TokenType.Operator;
+        }
+
+        public override int ReturnValue()
+        {
+            return LeftChild.ReturnValue() + RightChild.ReturnValue();
+        }
+
+        public override string ToString()
+        {
+            return LeftChild.ToString() + " + " + RightChild.ToString();
+        }
+    }
+
+    public class TimesToken : BinIntToken
+    {
+        public TimesToken()
+        {
+            Priority = 3;
+            Type = TokenType.Operator;
+        }
+
+        public override int ReturnValue()
+        {
+            return LeftChild.ReturnValue() * RightChild.ReturnValue();
+        }
+
+        public override string ToString()
+        {
+            return LeftChild.ToString() + " * " + RightChild.ToString();
+        }
+    }
+
+    public class DivToken : BinIntToken
+    {
+        public DivToken()
+        {
+            Priority = 3;
+            Type = TokenType.Operator;
+        }
+
+        public override int ReturnValue()
+        {
+            return LeftChild.ReturnValue() / RightChild.ReturnValue();
+        }
+
+        public override string ToString()
+        {
+            return LeftChild.ToString() + " / " + RightChild.ToString();
+        }
+    }
+
 }
