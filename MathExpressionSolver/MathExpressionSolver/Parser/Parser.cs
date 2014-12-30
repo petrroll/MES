@@ -92,7 +92,7 @@ namespace MathExpressionSolver.Parser
         private bool IsCoumpnoundable(ParsedItemType type)
         {
             return (
-                    type == ParsedItemType.Num ||
+                    type == ParsedItemType.Element ||
                     type == ParsedItemType.Name ||
                     type == ParsedItemType.WhiteSpace
                  );
@@ -111,7 +111,7 @@ namespace MathExpressionSolver.Parser
             }
             else if (ParserHelper.IsNum(c))
             {
-                return ParsedItemType.Num;
+                return ParsedItemType.Element;
             }
             else if (ParserHelper.IsWhiteSpace(c))
             {
@@ -140,7 +140,7 @@ namespace MathExpressionSolver.Parser
         }
     }
 
-    public enum ParsedItemType { Name, Num, LBracket, RBracket, Operator, Separator, WhiteSpace, Invalid, NotSet };
+    public enum ParsedItemType { Name, Element, LBracket, RBracket, Operator, Separator, WhiteSpace, Invalid, NotSet };
 
     public static class ParserHelper
     {
