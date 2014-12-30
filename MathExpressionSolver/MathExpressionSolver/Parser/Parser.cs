@@ -7,15 +7,15 @@ namespace MathExpressionSolver.Parser
 {
     class ExpressionParser
     {
-        const int avgExpressionItemLength = 4;
+        const int avgParsedItemLength = 4;
         public bool SkipInvalidChars { get; set; } = false;
 
 
         private List<string> parsedExpressions;
-        private List<ExpressionItemType> parsedTypes;
+        private List<ParsedItemType> parsedTypes;
 
         public string[] ParsedExpression { get { return parsedExpressions.ToArray(); } }
-        public ExpressionItemType[] ParsedTypes { get { return parsedTypes.ToArray(); } }
+        public ParsedItemType[] ParsedTypes { get { return parsedTypes.ToArray(); } }
 
         private string rawExpression;
 
@@ -24,10 +24,10 @@ namespace MathExpressionSolver.Parser
             set
             {
                 parsedExpressions.Clear();
-                parsedExpressions.Capacity = rawExpression.Length / avgExpressionItemLength;
+                parsedExpressions.Capacity = rawExpression.Length / avgParsedItemLength;
 
                 parsedTypes.Clear();
-                parsedTypes.Capacity = rawExpression.Length / avgExpressionItemLength;
+                parsedTypes.Capacity = rawExpression.Length / avgParsedItemLength;
 
                 rawExpression = value;
             }
@@ -36,7 +36,7 @@ namespace MathExpressionSolver.Parser
         public ExpressionParser() 
         {
             parsedExpressions = new List<string>();
-            parsedTypes = new List<ExpressionItemType>();
+            parsedTypes = new List<ParsedItemType>();
 
             rawExpression = string.Empty;
         }
@@ -48,15 +48,15 @@ namespace MathExpressionSolver.Parser
 
         public void ParseExpression()
         {
-            ExpressionItemType lastType = ExpressionItemType.NotSet;
+            ParsedItemType lastType = ParsedItemType.NotSet;
 
             parsedExpressions.Clear();
             parsedTypes.Clear();
 
-            StringBuilder expBuffer = new StringBuilder(avgExpressionItemLength);
+            StringBuilder expBuffer = new StringBuilder(avgParsedItemLength);
             foreach (char c in rawExpression)
             {
-                ExpressionItemType currentType = getExpItemType(c);
+                ParsedItemType currentType = getExpItemType(c);
                 if(IsCoumpnoundable(lastType) && currentType != lastType)
                 {
                     parseNewExpression(expBuffer, lastType);
@@ -69,7 +69,7 @@ namespace MathExpressionSolver.Parser
                     continue;
                 }
 
-                if (currentType == ExpressionItemType.Invalid && SkipInvalidChars) { continue; }
+                if (currentType == ParsedItemType.Invalid && SkipInvalidChars) { continue; }
                 expBuffer.Append(c);
 
                 parseNewExpression(expBuffer, currentType);
@@ -80,7 +80,7 @@ namespace MathExpressionSolver.Parser
                 parseNewExpression(expBuffer, lastType);
             }
         }
-        private void parseNewExpression(StringBuilder charBuffer, ExpressionItemType currentType)
+        private void parseNewExpression(StringBuilder charBuffer, ParsedItemType currentType)
         {
             string expression = (isTrashable(currentType)) ? string.Empty : charBuffer.ToString();
 
@@ -89,58 +89,58 @@ namespace MathExpressionSolver.Parser
             charBuffer.Clear();
         }
 
-        private bool IsCoumpnoundable(ExpressionItemType type)
+        private bool IsCoumpnoundable(ParsedItemType type)
         {
             return (
-                    type == ExpressionItemType.Num ||
-                    type == ExpressionItemType.Name ||
-                    type == ExpressionItemType.WhiteSpace
+                    type == ParsedItemType.Num ||
+                    type == ParsedItemType.Name ||
+                    type == ParsedItemType.WhiteSpace
                  );
         }
 
-        private bool isTrashable(ExpressionItemType type)
+        private bool isTrashable(ParsedItemType type)
         {
-            return (type == ExpressionItemType.WhiteSpace);
+            return (type == ParsedItemType.WhiteSpace);
         }
 
-        private ExpressionItemType getExpItemType(char c)
+        private ParsedItemType getExpItemType(char c)
         {
             if (ParserHelper.IsNameChar(c))
             {
-                return ExpressionItemType.Name;
+                return ParsedItemType.Name;
             }
             else if (ParserHelper.IsNum(c))
             {
-                return ExpressionItemType.Num;
+                return ParsedItemType.Num;
             }
             else if (ParserHelper.IsWhiteSpace(c))
             {
-                return ExpressionItemType.WhiteSpace;
+                return ParsedItemType.WhiteSpace;
             }
             else if (ParserHelper.IsLeftBracket(c))
             {
-                return ExpressionItemType.LBracket;
+                return ParsedItemType.LBracket;
             }
             else if (ParserHelper.IsRightBracket(c))
             {
-                return ExpressionItemType.RBracket;
+                return ParsedItemType.RBracket;
             }
             else if (ParserHelper.IsOperator(c))
             {
-                return ExpressionItemType.Operator;
+                return ParsedItemType.Operator;
             }
             else if (ParserHelper.IsSeparator(c))
             {
-                return ExpressionItemType.Separator;
+                return ParsedItemType.Separator;
             }
             else
             {
-                return ExpressionItemType.Invalid; 
+                return ParsedItemType.Invalid; 
             }
         }
     }
 
-    public enum ExpressionItemType { Name, Num, LBracket, RBracket, Operator, Separator, WhiteSpace, Invalid, NotSet };
+    public enum ParsedItemType { Name, Num, LBracket, RBracket, Operator, Separator, WhiteSpace, Invalid, NotSet };
 
     public static class ParserHelper
     {
