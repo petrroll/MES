@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 
 namespace MathExpressionSolver.Tokens
 {
-    class ExpTreeBuilder
+    class ExpTreeBuilder<T>
     {
 
-        IToken<int>[] tokenArray;
+        IToken<T>[] tokenArray;
 
-        public ExpTreeBuilder(IToken<int>[] tokenArray)
+        public ExpTreeBuilder(IToken<T>[] tokenArray)
         {
             this.tokenArray = tokenArray;
         }
 
-        public IToken<int> CreateExpressionTree()
+        public IToken<T> CreateExpressionTree()
         {
-            Stack<IToken<int>> tokenStack = new Stack<IToken<int>>();
+            Stack<IToken<T>> tokenStack = new Stack<IToken<T>>();
 
-            IToken<int> lastToken = null;
-            foreach (IToken<int> currToken in tokenArray)
+            IToken<T> lastToken = null;
+            foreach (IToken<T> currToken in tokenArray)
             {
                 while (tokenStack.Count > 0 && tokenStack.Peek().Priority >= currToken.Priority) { lastToken = tokenStack.Pop(); }
 
@@ -29,12 +29,12 @@ namespace MathExpressionSolver.Tokens
                 {
                     if (currToken.Type == TokenType.Operator)
                     {
-                        if(tokenStack.Count > 0 && tokenStack.Peek().Type == TokenType.Operator) { ((IntBinOpToken)tokenStack.Peek()).RightChild = currToken; }
-                        ((IntBinOpToken)currToken).LeftChild = lastToken;
+                        if(tokenStack.Count > 0 && tokenStack.Peek().Type == TokenType.Operator) { ((BinOpToken<T>)tokenStack.Peek()).RightChild = currToken; }
+                        ((BinOpToken<T>)currToken).LeftChild = lastToken;
                     }
                     else if (lastToken.Type == TokenType.Operator)
                     {
-                        ((IntBinOpToken)lastToken).RightChild = currToken;
+                        ((BinOpToken<T>)lastToken).RightChild = currToken;
                     }
                 }
 
