@@ -57,9 +57,17 @@ namespace MathExpressionSolver.Tokens
         public IToken<T> RightChild { get; set; }
     }
 
-    public abstract class BinIntToken : BinToken<int> { }
+    public abstract class BinOpToken<T> : BinToken<T>
+    {
+        public BinOpToken()
+        {
+            Type = TokenType.Operator;
+        }
+    }
 
-    public class MinusToken : BinIntToken
+    public abstract class IntBinOpToken : BinOpToken<int> { }
+
+    public class MinusToken : IntBinOpToken
     {
         public MinusToken()
         {
@@ -78,7 +86,7 @@ namespace MathExpressionSolver.Tokens
         }
     }
 
-    public class PlusToken : BinIntToken
+    public class PlusToken : IntBinOpToken
     {
         public PlusToken()
         {
@@ -97,7 +105,7 @@ namespace MathExpressionSolver.Tokens
         }
     }
 
-    public class TimesToken : BinIntToken
+    public class TimesToken : IntBinOpToken
     {
         public TimesToken()
         {
@@ -116,7 +124,7 @@ namespace MathExpressionSolver.Tokens
         }
     }
 
-    public class DivToken : BinIntToken
+    public class DivToken : IntBinOpToken
     {
         public DivToken()
         {
