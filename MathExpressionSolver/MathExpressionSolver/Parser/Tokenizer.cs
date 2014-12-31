@@ -5,16 +5,16 @@ namespace MathExpressionSolver.Parser
 {
     class Tokenizer
     {
-        private List<IToken<double>> tokens;
+        private List<IFactorableToken<double>> tokens;
         private int currTokenIndex;
-        public IToken<double>[] Tokens { get { return tokens.ToArray(); } }
+        public IFactorableToken<double>[] Tokens { get { return tokens.ToArray(); } }
 
         public string[] parsedExpressions;
         public ParsedItemType[] parsedTypes;
 
         public Tokenizer()
         {
-            tokens = new List<IToken<double>>();
+            tokens = new List<IFactorableToken<double>>();
         }
 
         public Tokenizer(string[] parsedExpressions, ParsedItemType[] parsedTypes) : this()
@@ -41,7 +41,7 @@ namespace MathExpressionSolver.Parser
         public void Tokenize()
         {
             Clear();
-            IToken<double> currToken;
+            IFactorableToken<double> currToken;
 
             while (currTokenIndex < parsedExpressions.Length)
             {
@@ -51,7 +51,7 @@ namespace MathExpressionSolver.Parser
             }
         }
 
-        private IToken<double> getToken()
+        private IFactorableToken<double> getToken()
         {
             switch (parsedTypes[currTokenIndex])
             {
@@ -82,12 +82,12 @@ namespace MathExpressionSolver.Parser
 
     public static class TokenFactory
     {
-        public static IToken<double> CreateNum(string s)
+        public static IFactorableToken<double> CreateNum(string s)
         {
             return new NumToken<double>() { Child = double.Parse(s) };
         }
 
-        public static IToken<double> CreateOperator(string s)
+        public static IFactorableToken<double> CreateOperator(string s)
         {
             switch (s)
             {

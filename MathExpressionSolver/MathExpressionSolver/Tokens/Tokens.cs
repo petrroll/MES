@@ -6,36 +6,26 @@ using System.Threading.Tasks;
 
 namespace MathExpressionSolver.Tokens
 {
-    public enum TokenType { Operator, Function, Element };
+    public enum TokenType { Operator, Function, Element, Brackets };
 
-    public interface IToken<T>
+    public abstract class UnToken<T> : IUnToken<T>
     {
-        T ReturnValue();
-        int Priority { get; }
-        TokenType Type { get; }
-    }
-
-    public abstract class Token<T> : IToken<T>
-    {
-        virtual public int Priority { get; protected set; }
-        virtual public TokenType Type { get; protected set; }
+        public IToken<T> Child { get; set; }
         abstract public T ReturnValue();
     }
 
-    public abstract class UnToken<T> : Token<T>
-    {
-        public IToken<T> Child { get; set; }
-    }
 
-    public class NumToken<T> : UnToken<T>
+    public class NumToken<T> : UnToken<T>, IFactorableToken<T>
     {
+        virtual public int Priority { get; protected set; }
+        virtual public TokenType Type { get; protected set; }
+        new public T Child { get; set; }
+
         public NumToken()
         {
             Priority = int.MaxValue;
             Type = TokenType.Element;
         }
-
-        new public T Child { get; set; }
 
         public override T ReturnValue()
         {
@@ -48,28 +38,29 @@ namespace MathExpressionSolver.Tokens
         }
     }
 
-    public abstract class BinToken<T> : Token<T>
+    public abstract class BinToken<T> : IBiToken<T>
     {
+        abstract public T ReturnValue();
         public IToken<T> LeftChild { get; set; }
         public IToken<T> RightChild { get; set; }
     }
 
-    public abstract class BinOpToken<T> : BinToken<T>
+    public abstract class BinOpToken<T> : BinToken<T>, IFactorableToken<T>
     {
+        virtual public int Priority { get; protected set; }
+        virtual public TokenType Type { get; protected set; }
+
         public BinOpToken()
         {
             Type = TokenType.Operator;
         }
     }
 
-    public abstract class IntBinOpToken : BinOpToken<int> { }
-
     public class MinusToken<T> : BinOpToken<T>
     {
-        public MinusToken()
+        public MinusToken() : base()
         {
             Priority = 2;
-            Type = TokenType.Operator;
         }
 
         public override T ReturnValue()
@@ -88,10 +79,9 @@ namespace MathExpressionSolver.Tokens
 
     public class PlusToken<T> : BinOpToken<T>
     {
-        public PlusToken()
+        public PlusToken() : base()
         {
             Priority = 2;
-            Type = TokenType.Operator;
         }
 
         public override T ReturnValue()
@@ -110,10 +100,9 @@ namespace MathExpressionSolver.Tokens
 
     public class TimesToken<T> : BinOpToken<T>
     {
-        public TimesToken()
+        public TimesToken() : base()
         {
             Priority = 3;
-            Type = TokenType.Operator;
         }
 
         public override T ReturnValue()
@@ -132,10 +121,9 @@ namespace MathExpressionSolver.Tokens
 
     public class DivToken<T> : BinOpToken<T>
     {
-        public DivToken()
+        public DivToken() : base()
         {
             Priority = 3;
-            Type = TokenType.Operator;
         }
 
         public override T ReturnValue()

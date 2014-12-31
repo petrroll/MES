@@ -9,19 +9,19 @@ namespace MathExpressionSolver.Tokens
     class ExpTreeBuilder<T>
     {
 
-        IToken<T>[] tokenArray;
+        IFactorableToken<T>[] tokenArray;
 
-        public ExpTreeBuilder(IToken<T>[] tokenArray)
+        public ExpTreeBuilder(IFactorableToken<T>[] tokenArray)
         {
             this.tokenArray = tokenArray;
         }
 
         public IToken<T> CreateExpressionTree()
         {
-            Stack<IToken<T>> tokenStack = new Stack<IToken<T>>();
+            Stack<IFactorableToken<T>> tokenStack = new Stack<IFactorableToken<T>>();
 
-            IToken<T> lastToken = null;
-            foreach (IToken<T> currToken in tokenArray)
+            IFactorableToken<T> lastToken = null;
+            foreach (IFactorableToken<T> currToken in tokenArray)
             {
                 while (tokenStack.Count > 0 && tokenStack.Peek().Priority >= currToken.Priority) { lastToken = tokenStack.Pop(); }
 
