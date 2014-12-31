@@ -8,33 +8,44 @@ namespace MathExpressionSolver.Tokens
 {
     class ExpTreeBuilder<T>
     {
+        private IEnumerable<IFactorableToken<T>> rawTokens;
+        public IEnumerable<IFactorableToken<T>> RawTokens { private get { return rawTokens; } set { rawTokens = value; TreeTop = null; } }
 
-        IEnumerable<IFactorableToken<T>> tokenArray;
+        public IToken<T> TreeTop { get; set; }
 
-        public ExpTreeBuilder(IEnumerable<IFactorableToken<T>> tokenArray)
+        public ExpTreeBuilder()
         {
-            this.tokenArray = tokenArray;
+
         }
 
-        public IToken<T> CreateExpressionTree()
+        public ExpTreeBuilder(IEnumerable<IFactorableToken<T>> tokens) : this()
+        {
+            RawTokens = tokens;
+        }
+
+        public void CreateExpressionTree()
         {
             Stack<IFactorableToken<T>> tokenStack = new Stack<IFactorableToken<T>>();
 
             IFactorableToken<T> lastToken = null;
-            foreach (IFactorableToken<T> currToken in tokenArray)
+            foreach (IFactorableToken<T> currToken in RawTokens)
             {
-                while (tokenStack.Count > 0 && tokenStack.Peek().Priority >= currToken.Priority) { lastToken = tokenStack.Pop(); }
+                Func<IFactorableToken<T>> LastOnStack = () => { return tokenStack.Peek(); };
+                Func<bool> IsStackEmpty = () => { return (tokenStack.Count > 0); };
 
-                if(lastToken != null)
+                while (!IsStackEmpty() && LastOnStack().Priority >= currToken.Priority) { lastToken = tokenStack.Pop(); }
+
+                if (lastToken != null)
                 {
-                    if(currToken.Type == TokenType.Brackets || currToken.Type == TokenType.Function)
+                    if (currToken.Type == TokenType.Brackets || currToken.Type == TokenType.Function)
                     {
                         ExpTreeBuilder<T> bracketedExpressionTree = new ExpTreeBuilder<T>(((IFactorableBracketsToken<T>)currToken).BracketedTokens);
-                        ((IUnToken<T>)currToken).Child = bracketedExpressionTree.CreateExpressionTree();
+                        bracketedExpressionTree.CreateExpressionTree();
+                        ((IUnToken<T>)currToken).Child = bracketedExpressionTree.TreeTop;
                     }
                     else if (currToken.Type == TokenType.Operator)
                     {
-                        if (tokenStack.Count > 0 && tokenStack.Peek().Type == TokenType.Operator) { ((BinOpToken<T>)tokenStack.Peek()).RightChild = currToken; }
+                        if (!IsStackEmpty() && LastOnStack().Type == TokenType.Operator) { ((BinOpToken<T>)LastOnStack()).RightChild = currToken; }
                         ((BinOpToken<T>)currToken).LeftChild = lastToken;
                     }
 
@@ -47,7 +58,7 @@ namespace MathExpressionSolver.Tokens
                 tokenStack.Push(currToken);
                 lastToken = currToken;
             }
-            return tokenStack.Last();
+            TreeTop = tokenStack.Last();
         }
     }
 }
