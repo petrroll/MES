@@ -43,13 +43,13 @@ namespace MathExpressionSolver.Tokens
                         bracketedExpressionTree.CreateExpressionTree();
                         ((IUnToken<T>)currToken).Child = bracketedExpressionTree.TreeTop;
                     }
-                    else if (currToken.Type == TokenType.Operator)
+                    else if (currToken.Type == TokenType.BinOperator)
                     {
-                        if (!IsStackEmpty() && LastOnStack().Type == TokenType.Operator) { ((BinOpToken<T>)LastOnStack()).RightChild = currToken; }
+                        if (!IsStackEmpty() && LastOnStack().Type == TokenType.BinOperator) { ((BinOpToken<T>)LastOnStack()).RightChild = currToken; }
                         ((BinOpToken<T>)currToken).LeftChild = lastToken;
                     }
 
-                    if (currToken.Type != TokenType.Operator && lastToken.Type == TokenType.Operator)
+                    if (currToken.Type != TokenType.BinOperator && lastToken.Type == TokenType.BinOperator)
                     {
                         ((BinOpToken<T>)lastToken).RightChild = currToken;
                     }

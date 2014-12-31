@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MathExpressionSolver.Tokens
 {
-    public enum TokenType { Operator, Function, Element, Brackets };
+    public enum TokenType { BinOperator, Function, Element, Brackets };
 
     public abstract class UnToken<T> : IUnToken<T>
     {
@@ -76,7 +76,7 @@ namespace MathExpressionSolver.Tokens
 
         public BinOpToken()
         {
-            Type = TokenType.Operator;
+            Type = TokenType.BinOperator;
         }
     }
 
