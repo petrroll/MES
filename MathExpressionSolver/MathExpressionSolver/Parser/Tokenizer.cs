@@ -6,6 +6,7 @@ namespace MathExpressionSolver.Parser
     class Tokenizer
     {
         private List<IToken<double>> tokens;
+        private int currTokenIndex;
         public IToken<double>[] Tokens { get { return tokens.ToArray(); } }
 
         public string[] parsedExpressions;
@@ -23,38 +24,47 @@ namespace MathExpressionSolver.Parser
 
         public void SetDataToBeTokenized(string[] parsedExpressions, ParsedItemType[] parsedTypes)
         {
-            tokens.Clear();
-            tokens.Capacity = parsedTypes.Length / 2;
-
             this.parsedExpressions = parsedExpressions;
             this.parsedTypes = parsedTypes;
+
+            Clear();
+        }
+
+        public void Clear()
+        {
+            currTokenIndex = 0;
+
+            tokens.Clear();
+            tokens.Capacity = parsedTypes.Length / 2;
         }
 
         public void Tokenize()
         {
+            Clear();
             IToken<double> currToken;
 
-            for (int i = 0; i < parsedExpressions.Length; i++)
+            while (currTokenIndex < parsedExpressions.Length)
             {
-                currToken = getToken(i);
+                currToken = getToken();
                 if (currToken != null) { tokens.Add(currToken); }
+                currTokenIndex++;
             }
         }
 
-        private IToken<double> getToken(int expIndex)
+        private IToken<double> getToken()
         {
-            switch (parsedTypes[expIndex])
+            switch (parsedTypes[currTokenIndex])
             {
                 case ParsedItemType.Name:
                     break;
                 case ParsedItemType.Element:
-                    return TokenFactory.CreateNum(parsedExpressions[expIndex]);
+                    return TokenFactory.CreateNum(parsedExpressions[currTokenIndex]);
                 case ParsedItemType.LBracket:
                     break;
                 case ParsedItemType.RBracket:
                     break;
                 case ParsedItemType.Operator:
-                    return TokenFactory.CreateOperator(parsedExpressions[expIndex]);
+                    return TokenFactory.CreateOperator(parsedExpressions[currTokenIndex]);
                 case ParsedItemType.Separator:
                     break;
                 case ParsedItemType.WhiteSpace:
