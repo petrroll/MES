@@ -1,4 +1,5 @@
 ﻿using MathExpressionSolver.Tokens;
+using System;
 using System.Collections.Generic;
 
 namespace MathExpressionSolver.Parser
@@ -60,7 +61,7 @@ namespace MathExpressionSolver.Parser
                 case ParsedItemType.Element:
                     return TokenFactory.CreateNum(parsedExpressions[currTokenIndex]);
                 case ParsedItemType.LBracket:
-                    break;
+                    return handleBrackets();
                 case ParsedItemType.RBracket:
                     break;
                 case ParsedItemType.Operator:
@@ -77,6 +78,31 @@ namespace MathExpressionSolver.Parser
 
             }
             return null;
+        }
+
+        private IFactorableToken<double> handleBrackets()
+        {
+            List<int> a = new List<int>();
+            if(parsedExpressions.Length - currTokenIndex > 1)
+            {
+                int firstItemIndex = currTokenIndex + 1;
+                int leftBrackets = 1;
+                while (leftBrackets > 0)
+                {
+                    currTokenIndex++;
+                    if (currTokenIndex == parsedExpressions.Length) { break; }
+
+                    if (parsedTypes[currTokenIndex] == ParsedItemType.RBracket) { leftBrackets--; }
+                    else if (parsedTypes[currTokenIndex] == ParsedItemType.LBracket) { leftBrackets++; }
+                }
+                int lastItemIndex = currTokenIndex - 1;
+
+                Tokenizer bracketedExpressionsTokenizer = new Tokenizer();
+                bracketedExpressionsTokenizer.SetDataToBeTokenized(parsedExpressions.SubArray(firstItemIndex, lastItemIndex), parsedTypes.SubArray(firstItemIndex, lastItemIndex));
+                bracketedExpressionsTokenizer.Tokenize();
+                return new BracketToken<double>() { BracketedTokens = bracketedExpressionsTokenizer.Tokens };
+            } else { return null; }
+
         }
     }
 
@@ -104,4 +130,5 @@ namespace MathExpressionSolver.Parser
             }
         }
     }
+
 }

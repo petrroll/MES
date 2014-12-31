@@ -26,7 +26,7 @@ namespace MathExpressionSolver.Tokens
 
     public interface IFactorableBracketsToken<T> : IFactorableToken<T>
     {
-        Queue<IToken<T>> BracketedTokens { get; set; }
+        IEnumerable<IFactorableToken<T>> BracketedTokens { get; set; }
     }
 
 }

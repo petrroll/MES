@@ -38,6 +38,30 @@ namespace MathExpressionSolver.Tokens
         }
     }
 
+    public class BracketToken<T> : UnToken<T>, IFactorableBracketsToken<T>
+    {
+        virtual public int Priority { get; protected set; }
+        virtual public TokenType Type { get; protected set; }
+
+        public IEnumerable<IFactorableToken<T>> BracketedTokens { get; set; }
+
+        public BracketToken()
+        {
+            Priority = int.MaxValue;
+            Type = TokenType.Brackets;
+        }
+
+        public override T ReturnValue()
+        {
+            return Child.ReturnValue();
+        }
+
+        public override string ToString()
+        {
+            return "(" + Child.ToString() + ")";
+        }
+    }
+
     public abstract class BinToken<T> : IBiToken<T>
     {
         abstract public T ReturnValue();

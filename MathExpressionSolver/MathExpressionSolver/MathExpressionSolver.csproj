@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HelperExtensions.cs" />
     <Compile Include="Parser\Parser.cs" />
     <Compile Include="Parser\Tokenizer.cs" />
     <Compile Include="Program.cs" />

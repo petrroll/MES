@@ -9,9 +9,9 @@ namespace MathExpressionSolver.Tokens
     class ExpTreeBuilder<T>
     {
 
-        IFactorableToken<T>[] tokenArray;
+        IEnumerable<IFactorableToken<T>> tokenArray;
 
-        public ExpTreeBuilder(IFactorableToken<T>[] tokenArray)
+        public ExpTreeBuilder(IEnumerable<IFactorableToken<T>> tokenArray)
         {
             this.tokenArray = tokenArray;
         }
@@ -27,12 +27,18 @@ namespace MathExpressionSolver.Tokens
 
                 if(lastToken != null)
                 {
-                    if (currToken.Type == TokenType.Operator)
+                    if(currToken.Type == TokenType.Brackets || currToken.Type == TokenType.Function)
                     {
-                        if(tokenStack.Count > 0 && tokenStack.Peek().Type == TokenType.Operator) { ((BinOpToken<T>)tokenStack.Peek()).RightChild = currToken; }
+                        ExpTreeBuilder<T> bracketedExpressionTree = new ExpTreeBuilder<T>(((IFactorableBracketsToken<T>)currToken).BracketedTokens);
+                        ((IUnToken<T>)currToken).Child = bracketedExpressionTree.CreateExpressionTree();
+                    }
+                    else if (currToken.Type == TokenType.Operator)
+                    {
+                        if (tokenStack.Count > 0 && tokenStack.Peek().Type == TokenType.Operator) { ((BinOpToken<T>)tokenStack.Peek()).RightChild = currToken; }
                         ((BinOpToken<T>)currToken).LeftChild = lastToken;
                     }
-                    else if (lastToken.Type == TokenType.Operator)
+
+                    if (currToken.Type != TokenType.Operator && lastToken.Type == TokenType.Operator)
                     {
                         ((BinOpToken<T>)lastToken).RightChild = currToken;
                     }
