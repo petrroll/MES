@@ -29,7 +29,7 @@ namespace MathExpressionSolver.Tokens
             foreach (IFactorableToken<T> currToken in RawTokens)
             {
                 Func<IFactorableToken<T>> LastOnStack = () => { return tokenStack.Peek(); };
-                Func<bool> IsStackEmpty = () => { return (tokenStack.Count > 0); };
+                Func<bool> IsStackEmpty = () => { return (tokenStack.Count == 0); };
 
                 while (!IsStackEmpty() && LastOnStack().Priority >= currToken.Priority) { lastToken = tokenStack.Pop(); }
 
