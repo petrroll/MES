@@ -5,15 +5,15 @@ namespace MathExpressionSolver.Parser
 {
     class Tokenizer
     {
-        private List<IToken<int>> tokens;
-        public IToken<int>[] Tokens { get { return tokens.ToArray(); } }
+        private List<IToken<double>> tokens;
+        public IToken<double>[] Tokens { get { return tokens.ToArray(); } }
 
         public string[] parsedExpressions;
         public ParsedItemType[] parsedTypes;
 
         public Tokenizer()
         {
-            tokens = new List<IToken<int>>();
+            tokens = new List<IToken<double>>();
         }
 
         public Tokenizer(string[] parsedExpressions, ParsedItemType[] parsedTypes) : this()
@@ -32,7 +32,7 @@ namespace MathExpressionSolver.Parser
 
         public void Tokenize()
         {
-            IToken<int> currToken;
+            IToken<double> currToken;
 
             for (int i = 0; i < parsedExpressions.Length; i++)
             {
@@ -41,14 +41,14 @@ namespace MathExpressionSolver.Parser
             }
         }
 
-        private IToken<int> getToken(int expIndex)
+        private IToken<double> getToken(int expIndex)
         {
             switch (parsedTypes[expIndex])
             {
                 case ParsedItemType.Name:
                     break;
                 case ParsedItemType.Element:
-                    return TokenFactory.CreateInt(parsedExpressions[expIndex]);
+                    return TokenFactory.CreateNum(parsedExpressions[expIndex]);
                 case ParsedItemType.LBracket:
                     break;
                 case ParsedItemType.RBracket:
@@ -72,23 +72,23 @@ namespace MathExpressionSolver.Parser
 
     public static class TokenFactory
     {
-        public static IToken<int> CreateInt(string s)
+        public static IToken<double> CreateNum(string s)
         {
-            return new IntToken() { Child = int.Parse(s) };
+            return new NumToken<double>() { Child = double.Parse(s) };
         }
 
-        public static IToken<int> CreateOperator(string s)
+        public static IToken<double> CreateOperator(string s)
         {
             switch (s)
             {
                 case "-":
-                    return new MinusToken();
+                    return new MinusToken<double>();
                 case "+":
-                    return new PlusToken();
+                    return new PlusToken<double>();
                 case "*":
-                    return new TimesToken();
+                    return new TimesToken<double>();
                 case "/":
-                    return new DivToken();
+                    return new DivToken<double>();
                 default:
                     return null;
             }

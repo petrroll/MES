@@ -27,20 +27,17 @@ namespace MathExpressionSolver.Tokens
         public IToken<T> Child { get; set; }
     }
 
-    public abstract class UnIntToken : Token<int> { }
-
-
-    public class IntToken : UnIntToken
+    public class NumToken<T> : UnToken<T>
     {
-        public IntToken()
+        public NumToken()
         {
             Priority = int.MaxValue;
             Type = TokenType.Element;
         }
 
-        new public int Child { get; set; }
+        new public T Child { get; set; }
 
-        public override int ReturnValue()
+        public override T ReturnValue()
         {
             return Child;
         }
@@ -67,7 +64,7 @@ namespace MathExpressionSolver.Tokens
 
     public abstract class IntBinOpToken : BinOpToken<int> { }
 
-    public class MinusToken : IntBinOpToken
+    public class MinusToken<T> : BinOpToken<T>
     {
         public MinusToken()
         {
@@ -75,9 +72,12 @@ namespace MathExpressionSolver.Tokens
             Type = TokenType.Operator;
         }
 
-        public override int ReturnValue()
+        public override T ReturnValue()
         {
-            return LeftChild.ReturnValue() - RightChild.ReturnValue();
+            dynamic l = LeftChild.ReturnValue();
+            dynamic r = RightChild.ReturnValue();
+
+            return l - r;
         }
 
         public override string ToString()
@@ -86,7 +86,7 @@ namespace MathExpressionSolver.Tokens
         }
     }
 
-    public class PlusToken : IntBinOpToken
+    public class PlusToken<T> : BinOpToken<T>
     {
         public PlusToken()
         {
@@ -94,9 +94,12 @@ namespace MathExpressionSolver.Tokens
             Type = TokenType.Operator;
         }
 
-        public override int ReturnValue()
+        public override T ReturnValue()
         {
-            return LeftChild.ReturnValue() + RightChild.ReturnValue();
+            dynamic l = LeftChild.ReturnValue();
+            dynamic r = RightChild.ReturnValue();
+
+            return l + r;
         }
 
         public override string ToString()
@@ -105,7 +108,7 @@ namespace MathExpressionSolver.Tokens
         }
     }
 
-    public class TimesToken : IntBinOpToken
+    public class TimesToken<T> : BinOpToken<T>
     {
         public TimesToken()
         {
@@ -113,9 +116,12 @@ namespace MathExpressionSolver.Tokens
             Type = TokenType.Operator;
         }
 
-        public override int ReturnValue()
+        public override T ReturnValue()
         {
-            return LeftChild.ReturnValue() * RightChild.ReturnValue();
+            dynamic l = LeftChild.ReturnValue();
+            dynamic r = RightChild.ReturnValue();
+
+            return l * r;
         }
 
         public override string ToString()
@@ -124,7 +130,7 @@ namespace MathExpressionSolver.Tokens
         }
     }
 
-    public class DivToken : IntBinOpToken
+    public class DivToken<T> : BinOpToken<T>
     {
         public DivToken()
         {
@@ -132,9 +138,12 @@ namespace MathExpressionSolver.Tokens
             Type = TokenType.Operator;
         }
 
-        public override int ReturnValue()
+        public override T ReturnValue()
         {
-            return LeftChild.ReturnValue() / RightChild.ReturnValue();
+            dynamic l = LeftChild.ReturnValue();
+            dynamic r = RightChild.ReturnValue();
+
+            return l / r;
         }
 
         public override string ToString()
