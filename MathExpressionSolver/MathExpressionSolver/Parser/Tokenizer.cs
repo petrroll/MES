@@ -27,15 +27,15 @@ namespace MathExpressionSolver.Parser
             this.parsedExpressions = parsedExpressions;
             this.parsedTypes = parsedTypes;
 
+            tokens.Capacity = parsedTypes.Length / 2;
+
             Clear();
         }
 
         public void Clear()
         {
             currTokenIndex = 0;
-
             tokens.Clear();
-            tokens.Capacity = parsedTypes.Length / 2;
         }
 
         public void Tokenize()
@@ -61,14 +61,8 @@ namespace MathExpressionSolver.Parser
                     return TokenFactory.CreateNum(parsedExpressions[currTokenIndex]);
                 case ParsedItemType.LBracket:
                     return handleBrackets();
-                case ParsedItemType.RBracket:
-                    break;
                 case ParsedItemType.Operator:
-                    return TokenFactory.CreateOperator(parsedExpressions[currTokenIndex]);
-                case ParsedItemType.Separator:
-                    break;
-                case ParsedItemType.WhiteSpace:
-                    return null;
+                    return TokenFactory.CreateOperator<double>(parsedExpressions[currTokenIndex]);
                 case ParsedItemType.Invalid:
                     return null;
                 default:
@@ -85,21 +79,23 @@ namespace MathExpressionSolver.Parser
             if(parsedExpressions.Length - currTokenIndex > 1)
             {
                 int firstItemIndex = currTokenIndex + 1;
-                int leftBrackets = 1;
-                while (leftBrackets > 0)
+                int bracketsLevel = 1;
+                while (bracketsLevel > 0)
                 {
                     currTokenIndex++;
                     if (currTokenIndex == parsedExpressions.Length) { break; }
 
-                    if (parsedTypes[currTokenIndex] == ParsedItemType.RBracket) { leftBrackets--; }
-                    else if (parsedTypes[currTokenIndex] == ParsedItemType.LBracket) { leftBrackets++; }
+                    if (parsedTypes[currTokenIndex] == ParsedItemType.RBracket) { bracketsLevel--; }
+                    else if (parsedTypes[currTokenIndex] == ParsedItemType.LBracket) { bracketsLevel++; }
                 }
                 int lastItemIndex = currTokenIndex - 1;
 
                 Tokenizer bracketedExpressionsTokenizer = new Tokenizer();
                 bracketedExpressionsTokenizer.SetDataToBeTokenized(parsedExpressions.SubArray(firstItemIndex, lastItemIndex), parsedTypes.SubArray(firstItemIndex, lastItemIndex));
                 bracketedExpressionsTokenizer.Tokenize();
-                return new BracketToken<double>() { BracketedTokens = bracketedExpressionsTokenizer.Tokens };
+
+                return TokenFactory.CreateBrackets(bracketedExpressionsTokenizer.Tokens);
+
             } else { return null; }
 
         }
@@ -107,23 +103,28 @@ namespace MathExpressionSolver.Parser
 
     public static class TokenFactory
     {
+        public static IFactorableBracketsToken<T> CreateBrackets<T>(IEnumerable<IFactorableToken<T>> bracketedTokens)
+        {
+            return new BracketToken<T>() { BracketedTokens = bracketedTokens };
+        }
+
         public static IFactorableToken<double> CreateNum(string s)
         {
             return new NumToken<double>() { Child = double.Parse(s) };
         }
 
-        public static IFactorableToken<double> CreateOperator(string s)
+        public static IFactorableToken<T> CreateOperator<T>(string s)
         {
             switch (s)
             {
                 case "-":
-                    return new MinusToken<double>();
+                    return new MinusToken<T>();
                 case "+":
-                    return new PlusToken<double>();
+                    return new PlusToken<T>();
                 case "*":
-                    return new TimesToken<double>();
+                    return new TimesToken<T>();
                 case "/":
-                    return new DivToken<double>();
+                    return new DivToken<T>();
                 default:
                     return null;
             }
