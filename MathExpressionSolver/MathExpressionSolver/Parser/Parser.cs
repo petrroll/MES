@@ -13,7 +13,7 @@ namespace MathExpressionSolver.Parser
         private List<string> parsedExpressions;
         private List<ParsedItemType> parsedTypes;
 
-        public string[] ParsedExpression { get { return parsedExpressions.ToArray(); } }
+        public string[] ParsedExpressions { get { return parsedExpressions.ToArray(); } }
         public ParsedItemType[] ParsedTypes { get { return parsedTypes.ToArray(); } }
 
         private string rawExpression;
