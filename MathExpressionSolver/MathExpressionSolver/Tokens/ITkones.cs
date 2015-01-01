@@ -5,7 +5,7 @@ namespace MathExpressionSolver.Tokens
     public interface IToken<T>
     {
         T ReturnValue();
-        IToken<T>[] Children { get; set; }
+        IToken<T>[] Children { get; }
     }
 
     public interface IUnToken<T> : IToken<T>

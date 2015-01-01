@@ -9,7 +9,7 @@ namespace MathExpressionSolver.Tokens
         virtual public int Priority { get; protected set; }
         virtual public TokenType Type { get; protected set; }
 
-        public IToken<T>[] Children { get; set; }
+        public IToken<T>[] Children { get; protected set; }
         abstract public T ReturnValue();
     }
 
@@ -33,7 +33,7 @@ namespace MathExpressionSolver.Tokens
     public class NumToken<T> : UnToken<T>
     {
         new public T Child { get { return Children[0]; } set { Children[0] = value; } }
-        new public T[] Children { get; set; }
+        new public T[] Children { get; protected set; }
 
         public NumToken() : base()
         {
