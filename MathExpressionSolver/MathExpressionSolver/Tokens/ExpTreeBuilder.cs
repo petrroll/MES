@@ -25,12 +25,12 @@ namespace MathExpressionSolver.Tokens
         {
             Stack<IFactorableToken<T>> tokenStack = new Stack<IFactorableToken<T>>();
 
+            Func<IFactorableToken<T>> LastOnStack = () => { return tokenStack.Peek(); };
+            Func<bool> IsStackEmpty = () => { return (tokenStack.Count == 0); };
+
             IFactorableToken<T> lastToken = null;
             foreach (IFactorableToken<T> currToken in RawTokens)
             {
-                Func<IFactorableToken<T>> LastOnStack = () => { return tokenStack.Peek(); };
-                Func<bool> IsStackEmpty = () => { return (tokenStack.Count == 0); };
-
                 while (!IsStackEmpty() && LastOnStack().Priority >= currToken.Priority) { lastToken = tokenStack.Pop(); }
 
                 if (currToken.Type == TokenType.Brackets || currToken.Type == TokenType.Function)
