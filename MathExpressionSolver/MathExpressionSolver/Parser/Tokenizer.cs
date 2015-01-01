@@ -116,7 +116,7 @@ namespace MathExpressionSolver.Parser
                 }
                 int lastItemIndex = currTokenIndex - 1;
 
-                Tokenizer<T> bracketedExpressionsTokenizer = new Tokenizer<T>();
+                Tokenizer<T> bracketedExpressionsTokenizer = new Tokenizer<T>() { TokenFactory = this.TokenFactory };
                 bracketedExpressionsTokenizer.SetDataToBeTokenized(parsedExpressions.SubArray(firstItemIndex, lastItemIndex), parsedTypes.SubArray(firstItemIndex, lastItemIndex));
                 bracketedExpressionsTokenizer.Tokenize();
 
