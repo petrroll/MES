@@ -4,18 +4,21 @@ using System;
 
 namespace MathExpressionSolver.Parser
 {
-    class Tokenizer
+    class Tokenizer<T>
     {
-        private List<IFactorableToken<double>> tokens;
+        private List<IFactorableToken<T>> tokens;
         private int currTokenIndex;
-        public IFactorableToken<double>[] Tokens { get { return tokens.ToArray(); } }
 
-        public string[] parsedExpressions;
-        public ParsedItemType[] parsedTypes;
+        private string[] parsedExpressions;
+        private ParsedItemType[] parsedTypes;
+
+        public IFactorableToken<T>[] Tokens { get { return tokens.ToArray(); } }
+        public TokenFactory<T> TokenFactory { get; set; }
 
         public Tokenizer()
         {
-            tokens = new List<IFactorableToken<double>>();
+            TokenFactory = new TokenFactory<T>();
+            tokens = new List<IFactorableToken<T>>();
 
             parsedExpressions = new string[0];
             parsedTypes = new ParsedItemType[0];
@@ -45,7 +48,7 @@ namespace MathExpressionSolver.Parser
         public void Tokenize()
         {
             Clear();
-            IFactorableToken<double> currToken;
+            IFactorableToken<T> currToken;
 
             while (currTokenIndex < parsedExpressions.Length)
             {
@@ -55,18 +58,18 @@ namespace MathExpressionSolver.Parser
             }
         }
 
-        private IFactorableToken<double> getToken()
+        private IFactorableToken<T> getToken()
         {
             switch (parsedTypes[currTokenIndex])
             {
                 case ParsedItemType.Name:
-                    return TokenFactory.CrateFunction<double>(parsedExpressions[currTokenIndex], extractTokensFromFunctionArgs());
+                    return handleName();
                 case ParsedItemType.Element:
                     return TokenFactory.CreateNum(parsedExpressions[currTokenIndex]);
                 case ParsedItemType.LBracket:
                     return TokenFactory.CreateBrackets(extractTokensFromBrakets());
                 case ParsedItemType.Operator:
-                    return TokenFactory.CreateOperator<double>(parsedExpressions[currTokenIndex]);
+                    return TokenFactory.CreateOperator(parsedExpressions[currTokenIndex]);
                 case ParsedItemType.Invalid:
                     return null;
                 default:
@@ -74,7 +77,19 @@ namespace MathExpressionSolver.Parser
             }
         }
 
-        private IEnumerable<IFactorableToken<double>> extractTokensFromFunctionArgs()
+        private IFactorableToken<T> handleName()
+        {
+            if (parsedExpressions.Length - currTokenIndex > 1 && parsedTypes[currTokenIndex + 1] == ParsedItemType.LBracket)
+            {
+                return TokenFactory.CrateFunction(parsedExpressions[currTokenIndex], extractTokensFromFunctionArgs());
+            }
+            else
+            {
+                return TokenFactory.CreateVariable(parsedExpressions[currTokenIndex]);
+            }
+        }
+
+        private IEnumerable<IFactorableToken<T>> extractTokensFromFunctionArgs()
         {
             if (parsedExpressions.Length - currTokenIndex > 1)
             {
@@ -84,7 +99,7 @@ namespace MathExpressionSolver.Parser
             return null;
         }
 
-        private IEnumerable<IFactorableToken<double>> extractTokensFromBrakets()
+        private IEnumerable<IFactorableToken<T>> extractTokensFromBrakets()
         {
             List<int> a = new List<int>();
             if(parsedExpressions.Length - currTokenIndex > 1)
@@ -101,7 +116,7 @@ namespace MathExpressionSolver.Parser
                 }
                 int lastItemIndex = currTokenIndex - 1;
 
-                Tokenizer bracketedExpressionsTokenizer = new Tokenizer();
+                Tokenizer<T> bracketedExpressionsTokenizer = new Tokenizer<T>();
                 bracketedExpressionsTokenizer.SetDataToBeTokenized(parsedExpressions.SubArray(firstItemIndex, lastItemIndex), parsedTypes.SubArray(firstItemIndex, lastItemIndex));
                 bracketedExpressionsTokenizer.Tokenize();
 
@@ -112,14 +127,16 @@ namespace MathExpressionSolver.Parser
         }
     }
 
-    public static class TokenFactory
+    public class TokenFactory<T>
     {
-        public static IFactorableBracketsToken<T> CreateBrackets<T>(IEnumerable<IFactorableToken<T>> bracketedTokens)
+        public Dictionary<string, T> CustomVariables { get; set; }
+
+        public IFactorableBracketsToken<T> CreateBrackets(IEnumerable<IFactorableToken<T>> bracketedTokens)
         {
             return new BracketToken<T>() { BracketedTokens = bracketedTokens };
         }
 
-        public static IFactorableBracketsToken<T> CrateFunction<T>(string funcName, IEnumerable<IFactorableToken<T>> bracketetTokens)
+        public IFactorableBracketsToken<T> CrateFunction(string funcName, IEnumerable<IFactorableToken<T>> bracketetTokens)
         {
             switch (funcName)
             {
@@ -130,12 +147,17 @@ namespace MathExpressionSolver.Parser
             }
         }
 
-        public static IFactorableToken<double> CreateNum(string s)
+        public IFactorableToken<T> CreateNum(string s)
         {
-            return new NumToken<double>() { Child = double.Parse(s) };
+            return (IFactorableToken<T>)new NumToken<double>() { Child = double.Parse(s) };
         }
 
-        public static IFactorableToken<T> CreateOperator<T>(string s)
+        public IFactorableToken<T> CreateVariable(string s)
+        {
+            return (CustomVariables != null && CustomVariables.ContainsKey(s)) ? new NumToken<T>() { Child = CustomVariables[s] } : null; 
+        } 
+
+        public IFactorableToken<T> CreateOperator(string s)
         {
             switch (s)
             {

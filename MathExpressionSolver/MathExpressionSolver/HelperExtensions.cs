@@ -11,5 +11,10 @@ namespace MathExpressionSolver
             Array.Copy(data, startingIndex, result, 0, length);
             return result;
         }
+
+        public static T[] SubArray<T>(this T[] data, int startingIndex)
+        {
+            return SubArray(data, startingIndex, (data.Length - 1));
+        }
     }
 }
