@@ -5,17 +5,7 @@ namespace MathExpressionSolver.Tokens
     public interface IToken<T>
     {
         T ReturnValue();
-    }
-
-    public interface IUnToken<T> : IToken<T>
-    {
-        IToken<T> Child { get; set; }
-    }
-
-    public interface IBiToken<T> : IToken<T>
-    {
-        IToken<T> LeftChild { get; set; }
-        IToken<T> RightChild { get; set; }
+        IToken<T>[] Children { get; set; }
     }
 
     public interface IFactorableToken<T> : IToken<T>

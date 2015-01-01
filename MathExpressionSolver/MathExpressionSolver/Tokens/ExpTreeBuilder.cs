@@ -37,19 +37,19 @@ namespace MathExpressionSolver.Tokens
                 {
                     ExpTreeBuilder<T> bracketedExpressionTree = new ExpTreeBuilder<T>(((IFactorableBracketsToken<T>)currToken).BracketedTokens);
                     bracketedExpressionTree.CreateExpressionTree();
-                    ((IUnToken<T>)currToken).Child = bracketedExpressionTree.TreeTop;
+                    ((IToken<T>)currToken).Children[0] = bracketedExpressionTree.TreeTop;
                 }
 
                 if (lastToken != null)
                 {
                     if (currToken.Type == TokenType.BinOperator)
                     {
-                        if (!IsStackEmpty() && LastOnStack().Type == TokenType.BinOperator) { ((BinOpToken<T>)LastOnStack()).RightChild = currToken; }
-                        ((BinOpToken<T>)currToken).LeftChild = lastToken;
+                        if (!IsStackEmpty() && LastOnStack().Type == TokenType.BinOperator) { ((IToken<T>)LastOnStack()).Children[1] = currToken; }
+                        ((IToken<T>)currToken).Children[0] = lastToken;
                     }
                     else if (currToken.Type != TokenType.BinOperator && lastToken.Type == TokenType.BinOperator)
                     {
-                        ((BinOpToken<T>)lastToken).RightChild = currToken;
+                        ((IToken<T>)lastToken).Children[1] = currToken;
                     }
                 }
 
