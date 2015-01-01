@@ -1,6 +1,7 @@
 ﻿using MathExpressionSolver.Parser;
 using MathExpressionSolver.Tokens;
 using System;
+using System.Collections.Generic;
 
 namespace MathExpressionSolver
 {
@@ -8,22 +9,31 @@ namespace MathExpressionSolver
     {
         static void Main(string[] args)
         {
-            ProgramController controller = new ProgramController();
+            ProgramController<double> controller = new ProgramController<double>();
             controller.TestIfWorks();
         }
     }
 
-    class ProgramController
+    class ProgramController<T>
     {
         ExpressionParser parser;
-        Tokenizer tokenizer;
-        ExpTreeBuilder<double> treeBuilder;
+        string[] expressions;
+        ParsedItemType[] types;
+
+        Tokenizer<T> tokenizer;
+        ExpTreeBuilder<T> treeBuilder;
+
+        StorageHandler<T> storageHandler;
 
         public ProgramController()
         {
             parser = new ExpressionParser() { SkipWhiteSpace = true };
-            tokenizer = new Tokenizer();
-            treeBuilder = new ExpTreeBuilder<double>();
+            tokenizer = new Tokenizer<T>();
+            treeBuilder = new ExpTreeBuilder<T>();
+
+            storageHandler = new StorageHandler<T>();
+
+            tokenizer.TokenFactory.CustomVariables = storageHandler.Variables;
         }
 
         public void TestIfWorks()
@@ -35,51 +45,83 @@ namespace MathExpressionSolver
             testInput("((2+1)-(3+1)*2)", "-5");
 
             testInput("2&3 + 5", "8");
+
+            testInput("a=(3/6*5)", "2,5");
+            testInput("asdfsdf=(5 + 3)", "8");
+
+            testInput("Pi = 3,4", "3,4");
+            testInput("3 - Pi + 8", "7,6");
+
+            testInput("a", "2,5");
+            testInput("asdfsdf", "8");
+
             Console.ReadLine();
         }
 
         private void testInput(string input, string output)
         {
             handleInput(input);
-            prepareTree();
+            work();
             testIfWorking(output);
-        }
-
-        public void Work()
-        {
-            while (true)
-            {
-                Console.WriteLine("Write math expression / declare function / save a variable and press enter.");
-                Work(Console.ReadLine());
-            }
-        }
-
-        public void Work(string s)
-        {
-            handleInput(s);
-            prepareTree();
-            writeOutResult();
         }
 
         private void handleInput(string input)
         {
             parser.StringExpression = input;
             parser.ParseExpression();
+
+            expressions = parser.ParsedExpressions;
+            types = parser.ParsedTypes;
+        }
+
+        private void work()
+        {
+            bool isVariable = false;
+            bool isFunctrion = false;
+
+            string variableName = string.Empty;
+            string functionName = string.Empty;
+
+            if(types[0] == ParsedItemType.Name)
+            {
+                if (types.Length > 1 &&
+                    (types[1] == ParsedItemType.Operator && expressions[1] == "="))
+                {
+                    isVariable = true;
+                    variableName = expressions[0];
+
+                    expressions = expressions.SubArray(2);
+                    types = types.SubArray(2);
+                }
+            }
+
+            prepareTree();
+            T result = computeResult();
+
+            if(isVariable)
+            {
+                storageHandler.AddVariable(variableName, result);
+            }
         }
 
         private void prepareTree()
         {
-            tokenizer.SetDataToBeTokenized(parser.ParsedExpressions, parser.ParsedTypes);
+            tokenizer.SetDataToBeTokenized(expressions, types);
             tokenizer.Tokenize();
 
-            treeBuilder.RawTokens = tokenizer.Tokens;
+            treeBuilder.RawTokens = (IFactorableToken<T>[])tokenizer.Tokens;
             treeBuilder.CreateExpressionTree();  
         }
 
         private void testIfWorking(string exptectedResult)
         {
-            string realResult = treeBuilder.TreeTop.ReturnValue().ToString();
-            Console.WriteLine(exptectedResult == realResult);
+            string realResult = computeResult().ToString();
+            Console.WriteLine((exptectedResult == realResult).ToString() + " | " + realResult);
+        }
+
+        private T computeResult()
+        {
+            return treeBuilder.TreeTop.ReturnValue();
         }
 
         private void writeOutResult()
@@ -87,7 +129,7 @@ namespace MathExpressionSolver
             string result = string.Empty;
             try
             {
-                result = treeBuilder.TreeTop.ReturnValue().ToString();
+                result = computeResult().ToString();
             }
             catch (Exception ex)
             {
