@@ -8,6 +8,7 @@ namespace MathExpressionSolver.Parser
     {
         const int avgParsedItemLength = 4;
         public bool SkipInvalidChars { get; set; } = false;
+        public bool SkipWhiteSpace { get; set; } = true;
 
 
         private List<string> parsedExpressions;
@@ -68,7 +69,8 @@ namespace MathExpressionSolver.Parser
                     continue;
                 }
 
-                if (currentType == ParsedItemType.Invalid && SkipInvalidChars) { continue; }
+                if ((currentType == ParsedItemType.Invalid && SkipInvalidChars) ||
+                    (currentType == ParsedItemType.WhiteSpace && SkipWhiteSpace)) { continue; }
                 expBuffer.Append(c);
 
                 parseNewExpression(expBuffer, currentType);
