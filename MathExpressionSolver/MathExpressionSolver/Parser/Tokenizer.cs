@@ -1,5 +1,6 @@
 ﻿using MathExpressionSolver.Tokens;
 using System.Collections.Generic;
+using System;
 
 namespace MathExpressionSolver.Parser
 {
@@ -56,24 +57,31 @@ namespace MathExpressionSolver.Parser
             switch (parsedTypes[currTokenIndex])
             {
                 case ParsedItemType.Name:
-                    break;
+                    return TokenFactory.CrateFunction<double>(parsedExpressions[currTokenIndex], extractTokensFromFunctionArgs());
                 case ParsedItemType.Element:
                     return TokenFactory.CreateNum(parsedExpressions[currTokenIndex]);
                 case ParsedItemType.LBracket:
-                    return handleBrackets();
+                    return TokenFactory.CreateBrackets(extractTokensFromBrakets());
                 case ParsedItemType.Operator:
                     return TokenFactory.CreateOperator<double>(parsedExpressions[currTokenIndex]);
                 case ParsedItemType.Invalid:
                     return null;
                 default:
                     return null;
+            }
+        }
 
-
+        private IEnumerable<IFactorableToken<double>> extractTokensFromFunctionArgs()
+        {
+            if (parsedExpressions.Length - currTokenIndex > 1)
+            {
+                currTokenIndex++;
+                return extractTokensFromBrakets();
             }
             return null;
         }
 
-        private IFactorableToken<double> handleBrackets()
+        private IEnumerable<IFactorableToken<double>> extractTokensFromBrakets()
         {
             List<int> a = new List<int>();
             if(parsedExpressions.Length - currTokenIndex > 1)
@@ -94,7 +102,7 @@ namespace MathExpressionSolver.Parser
                 bracketedExpressionsTokenizer.SetDataToBeTokenized(parsedExpressions.SubArray(firstItemIndex, lastItemIndex), parsedTypes.SubArray(firstItemIndex, lastItemIndex));
                 bracketedExpressionsTokenizer.Tokenize();
 
-                return TokenFactory.CreateBrackets(bracketedExpressionsTokenizer.Tokens);
+                return bracketedExpressionsTokenizer.Tokens;
 
             } else { return null; }
 
@@ -106,6 +114,17 @@ namespace MathExpressionSolver.Parser
         public static IFactorableBracketsToken<T> CreateBrackets<T>(IEnumerable<IFactorableToken<T>> bracketedTokens)
         {
             return new BracketToken<T>() { BracketedTokens = bracketedTokens };
+        }
+
+        public static IFactorableBracketsToken<T> CrateFunction<T>(string funcName, IEnumerable<IFactorableToken<T>> bracketetTokens)
+        {
+            switch (funcName)
+            {
+                case "exp":
+                    return (IFactorableBracketsToken<T>)new ExpToken() { BracketedTokens = (IEnumerable<IFactorableToken<double>>)bracketetTokens };
+                default:
+                    return null;
+            }
         }
 
         public static IFactorableToken<double> CreateNum(string s)

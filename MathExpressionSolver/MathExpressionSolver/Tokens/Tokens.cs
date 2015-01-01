@@ -34,6 +34,30 @@ namespace MathExpressionSolver.Tokens
         }
     }
 
+    public class ExpToken: UnToken<double>, IFactorableBracketsToken<double>
+    {
+        virtual public int Priority { get; protected set; }
+        virtual public TokenType Type { get; protected set; }
+
+        public IEnumerable<IFactorableToken<double>> BracketedTokens { get; set; }
+
+        public ExpToken()
+        {
+            Priority = int.MaxValue;
+            Type = TokenType.Function;
+        }
+
+        public override double ReturnValue()
+        {
+            return System.Math.Exp(Child.ReturnValue());
+        }
+
+        public override string ToString()
+        {
+            return "exp(" + Child.ToString() + ")";
+        }
+    }
+
     public class BracketToken<T> : UnToken<T>, IFactorableBracketsToken<T>
     {
         virtual public int Priority { get; protected set; }
