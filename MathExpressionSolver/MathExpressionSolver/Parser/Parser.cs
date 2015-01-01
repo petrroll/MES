@@ -69,10 +69,7 @@ namespace MathExpressionSolver.Parser
                     continue;
                 }
 
-                if ((currentType == ParsedItemType.Invalid && SkipInvalidChars) ||
-                    (currentType == ParsedItemType.WhiteSpace && SkipWhiteSpace)) { continue; }
                 expBuffer.Append(c);
-
                 parseNewExpression(expBuffer, currentType);
             }
 
@@ -84,10 +81,13 @@ namespace MathExpressionSolver.Parser
         private void parseNewExpression(StringBuilder charBuffer, ParsedItemType currentType)
         {
             string expression = (isTrashable(currentType)) ? string.Empty : charBuffer.ToString();
+            charBuffer.Clear();
+
+            if (isSkipable(currentType)) { return; }
 
             parsedTypes.Add(currentType);
             parsedExpressions.Add(expression);
-            charBuffer.Clear();
+
         }
 
         private bool IsCoumpnoundable(ParsedItemType type)
@@ -102,6 +102,12 @@ namespace MathExpressionSolver.Parser
         private bool isTrashable(ParsedItemType type)
         {
             return (type == ParsedItemType.WhiteSpace);
+        }
+
+        private bool isSkipable(ParsedItemType type)
+        {
+            return ((type == ParsedItemType.Invalid && SkipInvalidChars) ||
+                (type == ParsedItemType.WhiteSpace && SkipWhiteSpace));
         }
 
         private ParsedItemType getExpItemType(char c)
