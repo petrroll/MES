@@ -33,7 +33,7 @@ namespace MathExpressionSolver
 
             storageHandler = new StorageHandler<T>();
 
-            tokenizer.TokenFactory.CustomVariables = storageHandler.Variables;
+            tokenizer.CustomVariables = storageHandler.Variables;
         }
 
         public void TestIfWorks()

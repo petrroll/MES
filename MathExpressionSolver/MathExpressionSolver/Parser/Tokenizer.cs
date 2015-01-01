@@ -6,6 +6,9 @@ namespace MathExpressionSolver.Parser
 {
     class Tokenizer<T>
     {
+        TokenFactory<T> _tokenFactory;
+        public TokenFactory<T> TokenFactory { get { if (_tokenFactory == null) { _tokenFactory = new TokenFactory<T>(); } return _tokenFactory; }  set { _tokenFactory = value; } }
+
         private List<IFactorableToken<T>> tokens;
         private int currTokenIndex;
 
@@ -13,11 +16,11 @@ namespace MathExpressionSolver.Parser
         private ParsedItemType[] parsedTypes;
 
         public IFactorableToken<T>[] Tokens { get { return tokens.ToArray(); } }
-        public TokenFactory<T> TokenFactory { get; set; }
+
+        public Dictionary<string, T> CustomVariables { set { TokenFactory.CustomVariables = value; } }
 
         public Tokenizer()
         {
-            TokenFactory = new TokenFactory<T>();
             tokens = new List<IFactorableToken<T>>();
 
             parsedExpressions = new string[0];
