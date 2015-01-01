@@ -33,21 +33,21 @@ namespace MathExpressionSolver.Tokens
 
                 while (!IsStackEmpty() && LastOnStack().Priority >= currToken.Priority) { lastToken = tokenStack.Pop(); }
 
+                if (currToken.Type == TokenType.Brackets || currToken.Type == TokenType.Function)
+                {
+                    ExpTreeBuilder<T> bracketedExpressionTree = new ExpTreeBuilder<T>(((IFactorableBracketsToken<T>)currToken).BracketedTokens);
+                    bracketedExpressionTree.CreateExpressionTree();
+                    ((IUnToken<T>)currToken).Child = bracketedExpressionTree.TreeTop;
+                }
+
                 if (lastToken != null)
                 {
-                    if (currToken.Type == TokenType.Brackets || currToken.Type == TokenType.Function)
-                    {
-                        ExpTreeBuilder<T> bracketedExpressionTree = new ExpTreeBuilder<T>(((IFactorableBracketsToken<T>)currToken).BracketedTokens);
-                        bracketedExpressionTree.CreateExpressionTree();
-                        ((IUnToken<T>)currToken).Child = bracketedExpressionTree.TreeTop;
-                    }
-                    else if (currToken.Type == TokenType.BinOperator)
+                    if (currToken.Type == TokenType.BinOperator)
                     {
                         if (!IsStackEmpty() && LastOnStack().Type == TokenType.BinOperator) { ((BinOpToken<T>)LastOnStack()).RightChild = currToken; }
                         ((BinOpToken<T>)currToken).LeftChild = lastToken;
                     }
-
-                    if (currToken.Type != TokenType.BinOperator && lastToken.Type == TokenType.BinOperator)
+                    else if (currToken.Type != TokenType.BinOperator && lastToken.Type == TokenType.BinOperator)
                     {
                         ((BinOpToken<T>)lastToken).RightChild = currToken;
                     }
