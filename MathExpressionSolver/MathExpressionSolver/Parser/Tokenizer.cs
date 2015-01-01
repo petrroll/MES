@@ -31,9 +31,9 @@ namespace MathExpressionSolver.Parser
             this.parsedExpressions = parsedExpressions;
             this.parsedTypes = parsedTypes;
 
-            tokens.Capacity = parsedTypes.Length / 2;
-
             Clear();
+
+            tokens.Capacity = parsedTypes.Length / 2;
         }
 
         public void Clear()
