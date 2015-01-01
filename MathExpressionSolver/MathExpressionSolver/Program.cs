@@ -55,6 +55,8 @@ namespace MathExpressionSolver
             testInput("a", "2,5");
             testInput("asdfsdf", "8");
 
+            testInput("exp(a) + asdfsdf - 2*Pi", "13,3824939607035");
+
             Console.ReadLine();
         }
 
@@ -116,7 +118,13 @@ namespace MathExpressionSolver
         private void testIfWorking(string exptectedResult)
         {
             string realResult = computeResult().ToString();
-            Console.WriteLine((exptectedResult == realResult).ToString() + " | " + realResult);
+            bool isOk = (exptectedResult == realResult);
+            Console.WriteLine(isOk.ToString() + " | " + realResult);
+
+            if (!isOk)
+            {
+                //Breakpoint;
+            }
         }
 
         private T computeResult()
