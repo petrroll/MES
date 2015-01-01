@@ -13,7 +13,7 @@ namespace MathExpressionSolver.Tokens
 
         public ExpTreeBuilder()
         {
-
+            rawTokens = new IFactorableToken<T>[0];
         }
 
         public ExpTreeBuilder(IEnumerable<IFactorableToken<T>> tokens) : this()

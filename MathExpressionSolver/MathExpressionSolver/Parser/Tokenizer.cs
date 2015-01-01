@@ -16,6 +16,9 @@ namespace MathExpressionSolver.Parser
         public Tokenizer()
         {
             tokens = new List<IFactorableToken<double>>();
+
+            parsedExpressions = new string[0];
+            parsedTypes = new ParsedItemType[0];
         }
 
         public Tokenizer(string[] parsedExpressions, ParsedItemType[] parsedTypes) : this()
