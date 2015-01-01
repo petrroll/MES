@@ -8,6 +8,17 @@ namespace MathExpressionSolver.Tokens
         IToken<T>[] Children { get; set; }
     }
 
+    public interface IUnToken<T> : IToken<T>
+    {
+        IToken<T> Child { get; set; }
+    }
+
+    public interface IBinToken<T> : IToken<T>
+    {
+        IToken<T> LeftChild { get; set; }
+        IToken<T> RightChild { get; set; }
+    }
+
     public interface IFactorableToken<T> : IToken<T>
     {
         int Priority { get; }

@@ -4,10 +4,22 @@ namespace MathExpressionSolver.Tokens
 {
     public enum TokenType { BinOperator, Function, Element, Brackets };
 
-    public abstract class UnToken<T> : NToken<T>
+    public abstract class Token<T> : IToken<T>, IFactorableToken<T>
     {
-        public UnToken()
+        virtual public int Priority { get; protected set; }
+        virtual public TokenType Type { get; protected set; }
+
+        public IToken<T>[] Children { get; set; }
+        abstract public T ReturnValue();
+    }
+
+    public abstract class UnToken<T> : Token<T>, IUnToken<T>
+    {
+        public virtual IToken<T> Child { get { return Children[0]; } set { Children[0] = value; } }
+
+        public UnToken() : base()
         {
+            Priority = int.MaxValue;
             Children = new IToken<T>[1];
         }
 
@@ -18,64 +30,34 @@ namespace MathExpressionSolver.Tokens
     }
 
 
-    public class NumToken<T> : UnToken<T>, IFactorableToken<T>
+    public class NumToken<T> : UnToken<T>
     {
+        new public T Child { get { return Children[0]; } set { Children[0] = value; } }
         new public T[] Children { get; set; }
 
-        public NumToken()
+        public NumToken() : base()
         {
-            Priority = int.MaxValue;
             Type = TokenType.Element;
             Children = new T[1];
         }
 
         public override T ReturnValue()
         {
-            return Children[0];
+            return Child;
         }
 
         public override string ToString()
         {
-            return Children[0].ToString();
+            return Child.ToString();
         }
     }
 
-    public class ExpToken: UnToken<double>, IFactorableBracketsToken<double>
+    public abstract class BinOpToken<T> : Token<T>, IBinToken<T>
     {
-        public IEnumerable<IFactorableToken<double>> BracketedTokens { get; set; }
+        public IToken<T> LeftChild { get { return Children[0]; } set { Children[0] = value; } }
+        public IToken<T> RightChild { get { return Children[1]; } set { Children[1] = value; } }
 
-        public ExpToken()
-        {
-            Priority = int.MaxValue;
-            Type = TokenType.Function;
-            Children = new IToken<double>[1];
-        }
-
-        public override double ReturnValue()
-        {
-            return System.Math.Exp(Children[0].ReturnValue());
-        }
-
-        public override string ToString()
-        {
-            return "exp(" + Children[0].ToString() + ")";
-        }
-    }
-
-
-
-    public abstract class NToken<T> : IToken<T>, IFactorableToken<T>
-    {
-        virtual public int Priority { get; protected set; }
-        virtual public TokenType Type { get; protected set; }
-
-        public IToken<T>[] Children { get; set; }
-        abstract public T ReturnValue();
-    }
-
-    public abstract class BinOpToken<T> : NToken<T>
-    {
-        public BinOpToken()
+        public BinOpToken() : base()
         {
             Type = TokenType.BinOperator;
             Children = new IToken<T>[2];
@@ -96,15 +78,15 @@ namespace MathExpressionSolver.Tokens
 
         public override T ReturnValue()
         {
-            dynamic l = Children[0].ReturnValue();
-            dynamic r = Children[1].ReturnValue();
+            dynamic l = LeftChild.ReturnValue();
+            dynamic r = RightChild.ReturnValue();
 
             return l - r;
         }
 
         public override string ToString()
         {
-            return Children[0].ToString() + " - " + Children[1].ToString();
+            return LeftChild.ToString() + " - " + RightChild.ToString();
         }
     }
 
@@ -117,15 +99,15 @@ namespace MathExpressionSolver.Tokens
 
         public override T ReturnValue()
         {
-            dynamic l = Children[0].ReturnValue();
-            dynamic r = Children[1].ReturnValue();
+            dynamic l = LeftChild.ReturnValue();
+            dynamic r = RightChild.ReturnValue();
 
             return l + r;
         }
 
         public override string ToString()
         {
-            return Children[0].ToString() + " + " + Children[1].ToString();
+            return LeftChild.ToString() + " + " + RightChild.ToString();
         }
     }
 
@@ -138,15 +120,15 @@ namespace MathExpressionSolver.Tokens
 
         public override T ReturnValue()
         {
-            dynamic l = Children[0].ReturnValue();
-            dynamic r = Children[1].ReturnValue();
+            dynamic l = LeftChild.ReturnValue();
+            dynamic r = RightChild.ReturnValue();
 
             return l * r;
         }
 
         public override string ToString()
         {
-            return Children[0].ToString() + " * " + Children[1].ToString();
+            return LeftChild.ToString() + " * " + RightChild.ToString();
         }
     }
 
@@ -159,15 +141,15 @@ namespace MathExpressionSolver.Tokens
 
         public override T ReturnValue()
         {
-            dynamic l = Children[0].ReturnValue();
-            dynamic r = Children[1].ReturnValue();
+            dynamic l = LeftChild.ReturnValue();
+            dynamic r = RightChild.ReturnValue();
 
             return l / r;
         }
 
         public override string ToString()
         {
-            return Children[0].ToString() + " / " + Children[1].ToString();
+            return LeftChild.ToString() + " / " + RightChild.ToString();
         }
     }
 
@@ -180,26 +162,45 @@ namespace MathExpressionSolver.Tokens
 
         public override double ReturnValue()
         {
-            dynamic l = Children[0].ReturnValue();
-            dynamic r = Children[1].ReturnValue();
+            dynamic l = LeftChild.ReturnValue();
+            dynamic r = RightChild.ReturnValue();
 
             return l > r ? 1 : 0;
         }
 
         public override string ToString()
         {
-            return Children[0].ToString() + " >" + Children[1].ToString();
+            return LeftChild.ToString() + " >" + RightChild.ToString();
         }
     }
 
-    public class BracketToken<T> : UnToken<T>, IFactorableBracketsToken<T>
+    public abstract class FuncToken<T> : Token<T>, IFactorableBracketsToken<T>
     {
         public IEnumerable<IFactorableToken<T>> BracketedTokens { get; set; }
 
-        public BracketToken()
+        public FuncToken() : base()
         {
+            Type = TokenType.Function;
             Priority = int.MaxValue;
+        }
+
+        public override T ReturnValue()
+        {
+            return default(T);
+        }
+
+        public override string ToString()
+        {
+            return "(" + default(T) + ")";
+        }
+    }
+
+    public class BracketToken<T> : FuncToken<T>
+    {
+        public BracketToken() : base()
+        {
             Type = TokenType.Brackets;
+            Children = new IToken<T>[1];
         }
 
         public override T ReturnValue()
@@ -210,6 +211,25 @@ namespace MathExpressionSolver.Tokens
         public override string ToString()
         {
             return "(" + Children[0].ToString() + ")";
+        }
+    }
+
+    public class ExpToken : FuncToken<double>
+    {
+        public ExpToken()
+        {
+            Type = TokenType.Function;
+            Children = new IToken<double>[1];
+        }
+
+        public override double ReturnValue()
+        {
+            return System.Math.Exp(Children[0].ReturnValue());
+        }
+
+        public override string ToString()
+        {
+            return "exp(" + Children[0].ToString() + ")";
         }
     }
 

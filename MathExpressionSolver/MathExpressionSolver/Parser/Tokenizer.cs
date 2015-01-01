@@ -132,10 +132,7 @@ namespace MathExpressionSolver.Parser
 
         public static IFactorableToken<double> CreateNum(string s)
         {
-            var a = new NumToken<double>();
-            a.Children[0] = double.Parse(s);
-
-            return a;
+            return new NumToken<double>() { Child = double.Parse(s) };
         }
 
         public static IFactorableToken<T> CreateOperator<T>(string s)

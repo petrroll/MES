@@ -44,12 +44,12 @@ namespace MathExpressionSolver.Tokens
                 {
                     if (currToken.Type == TokenType.BinOperator)
                     {
-                        if (!IsStackEmpty() && LastOnStack().Type == TokenType.BinOperator) { ((IToken<T>)LastOnStack()).Children[1] = currToken; }
-                        ((IToken<T>)currToken).Children[0] = lastToken;
+                        if (!IsStackEmpty() && LastOnStack().Type == TokenType.BinOperator) { ((IBinToken<T>)LastOnStack()).RightChild = currToken; }
+                        ((IBinToken<T>)currToken).LeftChild = lastToken;
                     }
                     else if (currToken.Type != TokenType.BinOperator && lastToken.Type == TokenType.BinOperator)
                     {
-                        ((IToken<T>)lastToken).Children[1] = currToken;
+                        ((IBinToken<T>)lastToken).RightChild = currToken;
                     }
                 }
 
