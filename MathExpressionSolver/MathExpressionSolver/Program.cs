@@ -9,7 +9,7 @@ namespace MathExpressionSolver
         static void Main(string[] args)
         {
             ProgramController controller = new ProgramController();
-            controller.Work("(3>2)+5>1+2*3");
+            controller.TestIfWorks();
         }
     }
 
@@ -21,9 +21,28 @@ namespace MathExpressionSolver
 
         public ProgramController()
         {
-            parser = new ExpressionParser();
+            parser = new ExpressionParser() { SkipWhiteSpace = true };
             tokenizer = new Tokenizer();
             treeBuilder = new ExpTreeBuilder<double>();
+        }
+
+        public void TestIfWorks()
+        {
+            testInput("3*(7+7)/2-2*6/7- &&&  (&6 +&9) *8-  (2+ 2/3*(6+exp  (2*7-6* 2 ) - 8)+(2>1))", "-107,306989780239");
+            testInput("3*(7+7)/2-2*6/7-(6+9)*8-(2+2/3*(6+exp(2*7-6*2)-8)+(2>1))", "-107,306989780239");
+
+            testInput("3 > 1", "1");
+            testInput("((2+1)-(3+1)*2)", "-5");
+
+            testInput("2&3 + 5", "8");
+            Console.ReadLine();
+        }
+
+        private void testInput(string input, string output)
+        {
+            handleInput(input);
+            prepareTree();
+            testIfWorking(output);
         }
 
         public void Work()
@@ -57,6 +76,12 @@ namespace MathExpressionSolver
             treeBuilder.CreateExpressionTree();  
         }
 
+        private void testIfWorking(string exptectedResult)
+        {
+            string realResult = treeBuilder.TreeTop.ReturnValue().ToString();
+            Console.WriteLine(exptectedResult == realResult);
+        }
+
         private void writeOutResult()
         {
             string result = string.Empty;
@@ -71,6 +96,4 @@ namespace MathExpressionSolver
             Console.WriteLine(result);
         }
     }
-
-
 }
