@@ -184,4 +184,25 @@ namespace MathExpressionSolver.Tokens
         }
     }
 
+    public class GrtToken : BinOpToken<double>
+    {
+        public GrtToken() : base()
+        {
+            Priority = 0;
+        }
+
+        public override double ReturnValue()
+        {
+            dynamic l = LeftChild.ReturnValue();
+            dynamic r = RightChild.ReturnValue();
+
+            return l > r ? 1 : 0;
+        }
+
+        public override string ToString()
+        {
+            return LeftChild.ToString() + " >" + RightChild.ToString();
+        }
+    }
+
 }

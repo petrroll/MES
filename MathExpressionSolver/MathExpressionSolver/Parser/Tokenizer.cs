@@ -147,6 +147,8 @@ namespace MathExpressionSolver.Parser
                     return new TimesToken<T>();
                 case "/":
                     return new DivToken<T>();
+                case ">":
+                    return (IFactorableToken<T>)new GrtToken();
                 default:
                     return null;
             }
