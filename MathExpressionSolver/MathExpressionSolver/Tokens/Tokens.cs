@@ -30,12 +30,12 @@ namespace MathExpressionSolver.Tokens
     }
 
 
-    public class NumToken<T> : UnToken<T>
+    public class ItemToken<T> : UnToken<T>
     {
         new public T Child { get { return Children[0]; } set { Children[0] = value; } }
         new public T[] Children { get; protected set; }
 
-        public NumToken() : base()
+        public ItemToken() : base()
         {
             Type = TokenType.Element;
             Children = new T[1];

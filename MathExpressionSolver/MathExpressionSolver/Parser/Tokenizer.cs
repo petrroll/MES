@@ -184,12 +184,12 @@ namespace MathExpressionSolver.Parser
 
         public IFactorableToken<T> CreateNum(string s)
         {
-            return (IFactorableToken<T>)new NumToken<double>() { Child = double.Parse(s) };
+            return (IFactorableToken<T>)new ItemToken<double>() { Child = double.Parse(s) };
         }
 
         public IFactorableToken<T> CreateVariable(string s)
         {
-            return (CustomVariables != null && CustomVariables.ContainsKey(s)) ? new NumToken<T>() { Child = CustomVariables[s] } : null; 
+            return (CustomVariables != null && CustomVariables.ContainsKey(s)) ? new ItemToken<T>() { Child = CustomVariables[s] } : null; 
         } 
 
         public IFactorableToken<T> CreateOperator(string s)
