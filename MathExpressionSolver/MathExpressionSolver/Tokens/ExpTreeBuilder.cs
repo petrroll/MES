@@ -35,9 +35,19 @@ namespace MathExpressionSolver.Tokens
 
                 if (currToken.Type == TokenType.Brackets || currToken.Type == TokenType.Function)
                 {
-                    ExpTreeBuilder<T> bracketedExpressionTree = new ExpTreeBuilder<T>(((IFactorableBracketsToken<T>)currToken).BracketedTokens);
-                    bracketedExpressionTree.CreateExpressionTree();
-                    ((IToken<T>)currToken).Children[0] = bracketedExpressionTree.TreeTop;
+                    ExpTreeBuilder<T> arguementTokenTreeBuilder = new ExpTreeBuilder<T>();
+                    IEnumerable<IFactorableToken<T>>[] arguementsTokens = ((IFactorableBracketsToken<T>)currToken).BracketedTokens;
+
+                    int nThArguement = 0;
+                    while(arguementsTokens.Length > nThArguement && 
+                        currToken.Children.Length > nThArguement)
+                    {
+                        arguementTokenTreeBuilder.RawTokens = arguementsTokens[nThArguement];
+                        arguementTokenTreeBuilder.CreateExpressionTree();
+                        currToken.Children[nThArguement] = arguementTokenTreeBuilder.TreeTop;
+
+                        nThArguement++;
+                    }
                 }
 
                 if (lastToken != null)

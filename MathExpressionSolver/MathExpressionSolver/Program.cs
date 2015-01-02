@@ -57,6 +57,12 @@ namespace MathExpressionSolver
 
             testInput("exp(a) + asdfsdf - 2*Pi", "13,3824939607035");
 
+            testInput("if(1;2;3)", "2");
+            testInput("if(0;2;3)", "3");
+
+            testInput("if((exp(100)> Pi)*2;exp(a) + asdfsdf - 2*Pi;2*3-asdfsdf)", "13,3824939607035");
+            testInput("(if((exp(100)> Pi)*2;exp(a) + asdfsdf - 2*Pi;2*3-asdfsdf))*2>1", "1");
+
             Console.ReadLine();
         }
 

@@ -176,12 +176,15 @@ namespace MathExpressionSolver.Tokens
 
     public abstract class FuncToken<T> : Token<T>, IFactorableBracketsToken<T>
     {
-        public IEnumerable<IFactorableToken<T>> BracketedTokens { get; set; }
+        public IEnumerable<IFactorableToken<T>>[] BracketedTokens { get; set; }
 
-        public FuncToken() : base()
+        public FuncToken(int arguements) : base()
         {
             Type = TokenType.Function;
             Priority = int.MaxValue;
+
+            Children = new IToken<T>[arguements];
+            BracketedTokens = new IEnumerable<IFactorableToken<T>>[arguements];
         }
 
         public override T ReturnValue()
@@ -197,10 +200,9 @@ namespace MathExpressionSolver.Tokens
 
     public class BracketToken<T> : FuncToken<T>
     {
-        public BracketToken() : base()
+        public BracketToken() : base(1)
         {
             Type = TokenType.Brackets;
-            Children = new IToken<T>[1];
         }
 
         public override T ReturnValue()
@@ -216,10 +218,9 @@ namespace MathExpressionSolver.Tokens
 
     public class ExpToken : FuncToken<double>
     {
-        public ExpToken()
+        public ExpToken() : base(1)
         {
             Type = TokenType.Function;
-            Children = new IToken<double>[1];
         }
 
         public override double ReturnValue()
@@ -230,6 +231,24 @@ namespace MathExpressionSolver.Tokens
         public override string ToString()
         {
             return "exp(" + Children[0].ToString() + ")";
+        }
+    }
+
+    public class IfToken : FuncToken<double>
+    {
+        public IfToken() : base(3)
+        {
+            Type = TokenType.Function;
+        }
+
+        public override double ReturnValue()
+        {
+            return (Children[0].ReturnValue() != 0) ? Children[1].ReturnValue() : Children[2].ReturnValue();
+        }
+
+        public override string ToString()
+        {
+            return "if(" + Children[0].ToString() + ")then(" + Children[1].ToString() + ")else(" + Children[2].ToString() + ")";
         }
     }
 

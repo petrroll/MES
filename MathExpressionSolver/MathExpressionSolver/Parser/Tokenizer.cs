@@ -92,7 +92,7 @@ namespace MathExpressionSolver.Parser
             }
         }
 
-        private IEnumerable<IFactorableToken<T>> extractTokensFromFunctionArgs()
+        private IEnumerable<IFactorableToken<T>>[] extractTokensFromFunctionArgs()
         {
             if (parsedExpressions.Length - currTokenIndex > 1)
             {
@@ -102,28 +102,49 @@ namespace MathExpressionSolver.Parser
             return null;
         }
 
-        private IEnumerable<IFactorableToken<T>> extractTokensFromBrakets()
+        private IEnumerable<IFactorableToken<T>>[] extractTokensFromBrakets()
         {
-            List<int> a = new List<int>();
             if(parsedExpressions.Length - currTokenIndex > 1)
             {
-                int firstItemIndex = currTokenIndex + 1;
+                List<IFactorableToken<T>[]> arguements = new List<IFactorableToken<T>[]>();
+                Tokenizer<T> arguementsTokenizer = new Tokenizer<T>() { TokenFactory = this.TokenFactory };
+
+                int firstItemIndex = ++currTokenIndex;
+                int length = 0;
+
                 int bracketsLevel = 1;
+
                 while (bracketsLevel > 0)
                 {
-                    currTokenIndex++;
-                    if (currTokenIndex == parsedExpressions.Length) { break; }
+                    if ((bracketsLevel == 1 &&
+                        (parsedTypes[currTokenIndex] == ParsedItemType.RBracket ||
+                        parsedTypes[currTokenIndex] == ParsedItemType.Separator)) ||
+                        currTokenIndex == parsedExpressions.Length - 1)
+                    {
+                        arguementsTokenizer.SetDataToBeTokenized(parsedExpressions.SubArray(firstItemIndex, length), parsedTypes.SubArray(firstItemIndex, length));
+                        arguementsTokenizer.Tokenize();
+
+                        arguements.Add(arguementsTokenizer.Tokens);
+
+                        firstItemIndex = currTokenIndex + 1;
+                        length = 0;
+
+                        if(parsedTypes[currTokenIndex] == ParsedItemType.RBracket) { break; }
+                    }
+                    else
+                    {
+                        length++;
+                    }
+
 
                     if (parsedTypes[currTokenIndex] == ParsedItemType.RBracket) { bracketsLevel--; }
                     else if (parsedTypes[currTokenIndex] == ParsedItemType.LBracket) { bracketsLevel++; }
+
+                    currTokenIndex++;
+                    if (currTokenIndex == parsedExpressions.Length) { break; }
                 }
-                int lastItemIndex = currTokenIndex - 1;
 
-                Tokenizer<T> bracketedExpressionsTokenizer = new Tokenizer<T>() { TokenFactory = this.TokenFactory };
-                bracketedExpressionsTokenizer.SetDataToBeTokenized(parsedExpressions.SubArray(firstItemIndex, lastItemIndex), parsedTypes.SubArray(firstItemIndex, lastItemIndex));
-                bracketedExpressionsTokenizer.Tokenize();
-
-                return bracketedExpressionsTokenizer.Tokens;
+                return arguements.ToArray();
 
             } else { return null; }
 
@@ -134,17 +155,28 @@ namespace MathExpressionSolver.Parser
     {
         public Dictionary<string, T> CustomVariables { get; set; }
 
-        public IFactorableBracketsToken<T> CreateBrackets(IEnumerable<IFactorableToken<T>> bracketedTokens)
+        public IFactorableBracketsToken<T> CreateBrackets(IEnumerable<IFactorableToken<T>>[] arguements)
         {
-            return new BracketToken<T>() { BracketedTokens = bracketedTokens };
+            IFactorableBracketsToken<T> bracketToken = new BracketToken<T>();
+            bracketToken.BracketedTokens[0] = arguements[0];
+            return bracketToken;
         }
 
-        public IFactorableBracketsToken<T> CrateFunction(string funcName, IEnumerable<IFactorableToken<T>> bracketetTokens)
+        public IFactorableBracketsToken<T> CrateFunction(string funcName, IEnumerable<IFactorableToken<T>>[] arguements)
         {
+            IFactorableBracketsToken<T> bracketToken;
             switch (funcName)
             {
                 case "exp":
-                    return (IFactorableBracketsToken<T>)new ExpToken() { BracketedTokens = (IEnumerable<IFactorableToken<double>>)bracketetTokens };
+                    bracketToken = (IFactorableBracketsToken<T>)new ExpToken();
+                    bracketToken.BracketedTokens[0] = arguements[0];
+                    return bracketToken;
+                case "if":
+                    bracketToken = (IFactorableBracketsToken<T>)new IfToken();
+                    bracketToken.BracketedTokens[0] = arguements[0];
+                    bracketToken.BracketedTokens[1] = arguements[1];
+                    bracketToken.BracketedTokens[2] = arguements[2];
+                    return bracketToken;
                 default:
                     return null;
             }
