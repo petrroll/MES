@@ -116,7 +116,7 @@ namespace MathExpressionSolver.Parser
 
                 while (bracketsLevel > 0)
                 {
-                    if ((bracketsLevel == 1 && isEndOfArgument()) ||
+                    if ((bracketsLevel == 1 && isCurrTypeArgumentEnding()) ||
                         isCurrTokenIndexLast())
                     {
                         arguments.Add(returnTokenizedSubArray(argumentsTokenizer, firstItemIndex, length));
@@ -152,7 +152,7 @@ namespace MathExpressionSolver.Parser
             return argumentsTokenizer.Tokens;
         }
 
-        private bool isEndOfArgument()
+        private bool isCurrTypeArgumentEnding()
         {
             return (parsedTypes[currTokenIndex] == ParsedItemType.RBracket ||
                      parsedTypes[currTokenIndex] == ParsedItemType.Separator);
