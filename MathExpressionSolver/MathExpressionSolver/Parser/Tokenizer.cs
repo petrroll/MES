@@ -53,7 +53,7 @@ namespace MathExpressionSolver.Parser
             Clear();
             IFactorableToken<T> currToken;
 
-            while (currTokenIndex < parsedExpressions.Length)
+            while (isCurrTokenIndexInRange())
             {
                 currToken = getToken();
                 if (currToken != null) { tokens.Add(currToken); }
@@ -82,7 +82,7 @@ namespace MathExpressionSolver.Parser
 
         private IFactorableToken<T> handleName()
         {
-            if (parsedExpressions.Length - currTokenIndex > 1 && parsedTypes[currTokenIndex + 1] == ParsedItemType.LBracket)
+            if (isAfterCurrTokenIndexSomething() && parsedTypes[currTokenIndex + 1] == ParsedItemType.LBracket)
             {
                 return TokenFactory.CrateFunction(parsedExpressions[currTokenIndex], extractTokensFromFunctionArgs());
             }
@@ -94,7 +94,7 @@ namespace MathExpressionSolver.Parser
 
         private IEnumerable<IFactorableToken<T>>[] extractTokensFromFunctionArgs()
         {
-            if (parsedExpressions.Length - currTokenIndex > 1)
+            if (isAfterCurrTokenIndexSomething())
             {
                 currTokenIndex++;
                 return extractTokensFromBrakets();
@@ -104,7 +104,7 @@ namespace MathExpressionSolver.Parser
 
         private IEnumerable<IFactorableToken<T>>[] extractTokensFromBrakets()
         {
-            if(parsedExpressions.Length - currTokenIndex > 1)
+            if(isAfterCurrTokenIndexSomething())
             {
                 List<IFactorableToken<T>[]> arguements = new List<IFactorableToken<T>[]>();
                 Tokenizer<T> arguementsTokenizer = new Tokenizer<T>() { TokenFactory = this.TokenFactory };
@@ -119,7 +119,7 @@ namespace MathExpressionSolver.Parser
                     if ((bracketsLevel == 1 &&
                         (parsedTypes[currTokenIndex] == ParsedItemType.RBracket ||
                         parsedTypes[currTokenIndex] == ParsedItemType.Separator)) ||
-                        currTokenIndex == parsedExpressions.Length - 1)
+                        isCurrTokenIndexLast())
                     {
                         arguementsTokenizer.SetDataToBeTokenized(parsedExpressions.SubArray(firstItemIndex, length), parsedTypes.SubArray(firstItemIndex, length));
                         arguementsTokenizer.Tokenize();
@@ -141,13 +141,33 @@ namespace MathExpressionSolver.Parser
                     else if (parsedTypes[currTokenIndex] == ParsedItemType.LBracket) { bracketsLevel++; }
 
                     currTokenIndex++;
-                    if (currTokenIndex == parsedExpressions.Length) { break; }
+                    if (isCurrTokenIndexOutOfRange()) { break; }
                 }
 
                 return arguements.ToArray();
 
             } else { return null; }
 
+        }
+
+        private bool isCurrTokenIndexInRange()
+        {
+            return (currTokenIndex < parsedExpressions.Length);
+        }
+
+        private bool isCurrTokenIndexOutOfRange()
+        {
+            return !(currTokenIndex < parsedExpressions.Length);
+        }
+
+        private bool isAfterCurrTokenIndexSomething()
+        {
+            return (parsedExpressions.Length - currTokenIndex > 1);
+        }
+
+        private bool isCurrTokenIndexLast()
+        {
+            return (parsedExpressions.Length - currTokenIndex == 1);
         }
     }
 
