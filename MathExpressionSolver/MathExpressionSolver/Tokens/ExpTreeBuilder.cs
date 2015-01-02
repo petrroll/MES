@@ -25,48 +25,55 @@ namespace MathExpressionSolver.Tokens
         {
             Stack<IFactorableToken<T>> tokenStack = new Stack<IFactorableToken<T>>();
 
-            Func<IFactorableToken<T>> LastOnStack = () => { return tokenStack.Peek(); };
-            Func<bool> IsStackEmpty = () => { return (tokenStack.Count == 0); };
-
             IFactorableToken<T> lastToken = null;
             foreach (IFactorableToken<T> currToken in RawTokens)
             {
-                while (!IsStackEmpty() && LastOnStack().Priority >= currToken.Priority) { lastToken = tokenStack.Pop(); }
-
                 if (currToken.Type == TokenType.Brackets || currToken.Type == TokenType.Function)
                 {
-                    ExpTreeBuilder<T> arguementTokenTreeBuilder = new ExpTreeBuilder<T>();
-                    IEnumerable<IFactorableToken<T>>[] arguementsTokens = ((IFactorableBracketsToken<T>)currToken).BracketedTokens;
-
-                    int nThArguement = 0;
-                    while(arguementsTokens.Length > nThArguement && 
-                        currToken.Children.Length > nThArguement)
-                    {
-                        arguementTokenTreeBuilder.RawTokens = arguementsTokens[nThArguement];
-                        arguementTokenTreeBuilder.CreateExpressionTree();
-                        currToken.Children[nThArguement] = arguementTokenTreeBuilder.TreeTop;
-
-                        nThArguement++;
-                    }
+                    buildExpTreeInArguments(currToken);
                 }
 
                 if (lastToken != null)
                 {
-                    if (currToken.Type == TokenType.BinOperator)
-                    {
-                        if (!IsStackEmpty() && LastOnStack().Type == TokenType.BinOperator) { ((IBinToken<T>)LastOnStack()).RightChild = currToken; }
-                        ((IBinToken<T>)currToken).LeftChild = lastToken;
-                    }
-                    else if (currToken.Type != TokenType.BinOperator && lastToken.Type == TokenType.BinOperator)
-                    {
-                        ((IBinToken<T>)lastToken).RightChild = currToken;
-                    }
+                    placeCurrentToken(tokenStack, lastToken, currToken);
                 }
 
                 tokenStack.Push(currToken);
                 lastToken = currToken;
             }
             TreeTop = tokenStack.Last();
+        }
+
+        private static void placeCurrentToken(Stack<IFactorableToken<T>> tokenStack, IFactorableToken<T> lastToken, IFactorableToken<T> currToken)
+        {
+            while (!tokenStack.IsEmpty() && tokenStack.Peek().Priority >= currToken.Priority) { lastToken = tokenStack.Pop(); }
+
+            if (currToken.Type == TokenType.BinOperator)
+            {
+                if (!tokenStack.IsEmpty() && tokenStack.Peek().Type == TokenType.BinOperator) { ((IBinToken<T>)tokenStack.Peek()).RightChild = currToken; }
+                ((IBinToken<T>)currToken).LeftChild = lastToken;
+            }
+            else if (currToken.Type != TokenType.BinOperator && lastToken.Type == TokenType.BinOperator)
+            {
+                ((IBinToken<T>)lastToken).RightChild = currToken;
+            }
+        }
+
+        private static void buildExpTreeInArguments(IFactorableToken<T> currToken)
+        {
+            ExpTreeBuilder<T> arguementTokenTreeBuilder = new ExpTreeBuilder<T>();
+            IEnumerable<IFactorableToken<T>>[] arguementsTokens = ((IFactorableBracketsToken<T>)currToken).BracketedTokens;
+
+            int nThArguement = 0;
+            while (arguementsTokens.Length > nThArguement &&
+                currToken.Children.Length > nThArguement)
+            {
+                arguementTokenTreeBuilder.RawTokens = arguementsTokens[nThArguement];
+                arguementTokenTreeBuilder.CreateExpressionTree();
+                currToken.Children[nThArguement] = arguementTokenTreeBuilder.TreeTop;
+
+                nThArguement++;
+            }
         }
     }
 }
