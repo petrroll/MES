@@ -61,18 +61,18 @@ namespace MathExpressionSolver.Tokens
 
         private static void buildExpTreeInArguments(IFactorableToken<T> currToken)
         {
-            ExpTreeBuilder<T> arguementTokenTreeBuilder = new ExpTreeBuilder<T>();
-            IEnumerable<IFactorableToken<T>>[] arguementsTokens = ((IFactorableBracketsToken<T>)currToken).BracketedTokens;
+            ExpTreeBuilder<T> argumentTokenTreeBuilder = new ExpTreeBuilder<T>();
+            IEnumerable<IFactorableToken<T>>[] argumentsTokens = ((IFactorableBracketsToken<T>)currToken).BracketedTokens;
 
-            int nThArguement = 0;
-            while (arguementsTokens.Length > nThArguement &&
-                currToken.Children.Length > nThArguement)
+            int nThArgument = 0;
+            while (argumentsTokens.Length > nThArgument &&
+                currToken.Children.Length > nThArgument)
             {
-                arguementTokenTreeBuilder.RawTokens = arguementsTokens[nThArguement];
-                arguementTokenTreeBuilder.CreateExpressionTree();
-                currToken.Children[nThArguement] = arguementTokenTreeBuilder.TreeTop;
+                argumentTokenTreeBuilder.RawTokens = argumentsTokens[nThArgument];
+                argumentTokenTreeBuilder.CreateExpressionTree();
+                currToken.Children[nThArgument] = argumentTokenTreeBuilder.TreeTop;
 
-                nThArguement++;
+                nThArgument++;
             }
         }
     }

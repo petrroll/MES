@@ -178,13 +178,13 @@ namespace MathExpressionSolver.Tokens
     {
         public IEnumerable<IFactorableToken<T>>[] BracketedTokens { get; set; }
 
-        public FuncToken(int arguements) : base()
+        public FuncToken(int arguments) : base()
         {
             Type = TokenType.Function;
             Priority = int.MaxValue;
 
-            Children = new IToken<T>[arguements];
-            BracketedTokens = new IEnumerable<IFactorableToken<T>>[arguements];
+            Children = new IToken<T>[arguments];
+            BracketedTokens = new IEnumerable<IFactorableToken<T>>[arguments];
         }
 
         public override T ReturnValue()

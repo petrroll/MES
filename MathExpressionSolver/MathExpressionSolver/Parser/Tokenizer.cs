@@ -106,8 +106,8 @@ namespace MathExpressionSolver.Parser
         {
             if(isAfterCurrTokenIndexSomething())
             {
-                List<IFactorableToken<T>[]> arguements = new List<IFactorableToken<T>[]>();
-                Tokenizer<T> arguementsTokenizer = new Tokenizer<T>() { TokenFactory = this.TokenFactory };
+                List<IFactorableToken<T>[]> arguments = new List<IFactorableToken<T>[]>();
+                Tokenizer<T> argumentsTokenizer = new Tokenizer<T>() { TokenFactory = this.TokenFactory };
 
                 int firstItemIndex = ++currTokenIndex;
                 int length = 0;
@@ -119,7 +119,7 @@ namespace MathExpressionSolver.Parser
                     if ((bracketsLevel == 1 && isEndOfArgument()) ||
                         isCurrTokenIndexLast())
                     {
-                        arguements.Add(returnTokenizedSubArray(arguementsTokenizer, firstItemIndex, length));
+                        arguments.Add(returnTokenizedSubArray(argumentsTokenizer, firstItemIndex, length));
 
                         firstItemIndex = currTokenIndex + 1;
                         length = 0;
@@ -139,17 +139,17 @@ namespace MathExpressionSolver.Parser
                     if (isCurrTokenIndexOutOfRange()) { break; }
                 }
 
-                return arguements.ToArray();
+                return arguments.ToArray();
 
             } else { return null; }
 
         }
 
-        private IFactorableToken<T>[] returnTokenizedSubArray(Tokenizer<T> arguementsTokenizer, int firstItemIndex, int length)
+        private IFactorableToken<T>[] returnTokenizedSubArray(Tokenizer<T> argumentsTokenizer, int firstItemIndex, int length)
         {
-            arguementsTokenizer.SetDataToBeTokenized(parsedExpressions.SubArray(firstItemIndex, length), parsedTypes.SubArray(firstItemIndex, length));
-            arguementsTokenizer.Tokenize();
-            return arguementsTokenizer.Tokens;
+            argumentsTokenizer.SetDataToBeTokenized(parsedExpressions.SubArray(firstItemIndex, length), parsedTypes.SubArray(firstItemIndex, length));
+            argumentsTokenizer.Tokenize();
+            return argumentsTokenizer.Tokens;
         }
 
         private bool isEndOfArgument()
@@ -183,27 +183,27 @@ namespace MathExpressionSolver.Parser
     {
         public Dictionary<string, T> CustomVariables { get; set; }
 
-        public IFactorableBracketsToken<T> CreateBrackets(IEnumerable<IFactorableToken<T>>[] arguements)
+        public IFactorableBracketsToken<T> CreateBrackets(IEnumerable<IFactorableToken<T>>[] arguments)
         {
             IFactorableBracketsToken<T> bracketToken = new BracketToken<T>();
-            bracketToken.BracketedTokens[0] = arguements[0];
+            bracketToken.BracketedTokens[0] = arguments[0];
             return bracketToken;
         }
 
-        public IFactorableBracketsToken<T> CrateFunction(string funcName, IEnumerable<IFactorableToken<T>>[] arguements)
+        public IFactorableBracketsToken<T> CrateFunction(string funcName, IEnumerable<IFactorableToken<T>>[] arguments)
         {
             IFactorableBracketsToken<T> bracketToken;
             switch (funcName)
             {
                 case "exp":
                     bracketToken = (IFactorableBracketsToken<T>)new ExpToken();
-                    bracketToken.BracketedTokens[0] = arguements[0];
+                    bracketToken.BracketedTokens[0] = arguments[0];
                     return bracketToken;
                 case "if":
                     bracketToken = (IFactorableBracketsToken<T>)new IfToken();
-                    bracketToken.BracketedTokens[0] = arguements[0];
-                    bracketToken.BracketedTokens[1] = arguements[1];
-                    bracketToken.BracketedTokens[2] = arguements[2];
+                    bracketToken.BracketedTokens[0] = arguments[0];
+                    bracketToken.BracketedTokens[1] = arguments[1];
+                    bracketToken.BracketedTokens[2] = arguments[2];
                     return bracketToken;
                 default:
                     return null;
