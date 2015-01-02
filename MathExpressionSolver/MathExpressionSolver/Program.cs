@@ -14,7 +14,7 @@ namespace MathExpressionSolver
         }
     }
 
-    class ProgramController<T>
+    class ProgramController<T> 
     {
         ExpressionParser parser;
         string[] expressions;
