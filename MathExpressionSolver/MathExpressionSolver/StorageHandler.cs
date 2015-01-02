@@ -24,7 +24,14 @@ namespace MathExpressionSolver
 
         public StorageHandler()
         {
-            LoadVariables();
+            try
+            {
+                LoadVariables();
+            }
+            catch
+            {
+
+            }
         }
 
         public void SaveVariables()
