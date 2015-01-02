@@ -248,7 +248,7 @@ namespace MathExpressionSolver.Tokens
 
         public override string ToString()
         {
-            return "if(" + Children[0].ToString() + ")then(" + Children[1].ToString() + ")else(" + Children[2].ToString() + ")";
+            return "if(" + Children[0].ToString() + ";" + Children[1].ToString() + ";" + Children[2].ToString() + ")";
         }
     }
 
