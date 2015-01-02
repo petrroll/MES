@@ -116,20 +116,15 @@ namespace MathExpressionSolver.Parser
 
                 while (bracketsLevel > 0)
                 {
-                    if ((bracketsLevel == 1 &&
-                        (parsedTypes[currTokenIndex] == ParsedItemType.RBracket ||
-                        parsedTypes[currTokenIndex] == ParsedItemType.Separator)) ||
+                    if ((bracketsLevel == 1 && isEndOfArgument()) ||
                         isCurrTokenIndexLast())
                     {
-                        arguementsTokenizer.SetDataToBeTokenized(parsedExpressions.SubArray(firstItemIndex, length), parsedTypes.SubArray(firstItemIndex, length));
-                        arguementsTokenizer.Tokenize();
-
-                        arguements.Add(arguementsTokenizer.Tokens);
+                        arguements.Add(returnTokenizedSubArray(arguementsTokenizer, firstItemIndex, length));
 
                         firstItemIndex = currTokenIndex + 1;
                         length = 0;
 
-                        if(parsedTypes[currTokenIndex] == ParsedItemType.RBracket) { break; }
+                        if (parsedTypes[currTokenIndex] == ParsedItemType.RBracket) { break; }
                     }
                     else
                     {
@@ -148,6 +143,19 @@ namespace MathExpressionSolver.Parser
 
             } else { return null; }
 
+        }
+
+        private IFactorableToken<T>[] returnTokenizedSubArray(Tokenizer<T> arguementsTokenizer, int firstItemIndex, int length)
+        {
+            arguementsTokenizer.SetDataToBeTokenized(parsedExpressions.SubArray(firstItemIndex, length), parsedTypes.SubArray(firstItemIndex, length));
+            arguementsTokenizer.Tokenize();
+            return arguementsTokenizer.Tokens;
+        }
+
+        private bool isEndOfArgument()
+        {
+            return (parsedTypes[currTokenIndex] == ParsedItemType.RBracket ||
+                     parsedTypes[currTokenIndex] == ParsedItemType.Separator);
         }
 
         private bool isCurrTokenIndexInRange()
