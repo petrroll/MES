@@ -205,6 +205,27 @@ namespace MathExpressionSolver.Parser
                     bracketToken.BracketedTokens[1] = arguments[1];
                     bracketToken.BracketedTokens[2] = arguments[2];
                     return bracketToken;
+                case "ln":
+                    bracketToken = (IFactorableBracketsToken<T>)new LnFunc();
+                    bracketToken.BracketedTokens[0] = arguments[0];
+                    return bracketToken;
+                case "sin":
+                    bracketToken = (IFactorableBracketsToken<T>)new SinFunc();
+                    bracketToken.BracketedTokens[0] = arguments[0];
+                    return bracketToken;
+                case "cos":
+                    bracketToken = (IFactorableBracketsToken<T>)new CosFunc();
+                    bracketToken.BracketedTokens[0] = arguments[0];
+                    return bracketToken;
+                case "tan":
+                    bracketToken = (IFactorableBracketsToken<T>)new TanFunc();
+                    bracketToken.BracketedTokens[0] = arguments[0];
+                    return bracketToken;
+                case "sqrt":
+                    bracketToken = (IFactorableBracketsToken<T>)new SqrtFunc();
+                    bracketToken.BracketedTokens[0] = arguments[0];
+                    return bracketToken;
+
                 default:
                     return null;
             }
@@ -234,6 +255,8 @@ namespace MathExpressionSolver.Parser
                     return new DivToken<T>();
                 case ">":
                     return (IFactorableToken<T>)new GrtToken();
+                case "<":
+                    return (IFactorableToken<T>)new SmlrToken();
                 default:
                     return null;
             }

@@ -174,6 +174,27 @@ namespace MathExpressionSolver.Tokens
         }
     }
 
+    public class SmlrToken : BinOpToken<double>
+    {
+        public SmlrToken() : base()
+        {
+            Priority = 0;
+        }
+
+        public override double ReturnValue()
+        {
+            dynamic l = LeftChild.ReturnValue();
+            dynamic r = RightChild.ReturnValue();
+
+            return l < r ? 1 : 0;
+        }
+
+        public override string ToString()
+        {
+            return LeftChild.ToString() + " >" + RightChild.ToString();
+        }
+    }
+
     public abstract class FuncToken<T> : Token<T>, IFactorableBracketsToken<T>
     {
         public IEnumerable<IFactorableToken<T>>[] BracketedTokens { get; set; }
@@ -231,6 +252,96 @@ namespace MathExpressionSolver.Tokens
         public override string ToString()
         {
             return "exp(" + Children[0].ToString() + ")";
+        }
+    }
+
+    public class LnFunc : FuncToken<double>
+    {
+        public LnFunc() : base(1)
+        {
+            Type = TokenType.Function;
+        }
+
+        public override double ReturnValue()
+        {
+            return System.Math.Log(Children[0].ReturnValue());
+        }
+
+        public override string ToString()
+        {
+            return "ln(" + Children[0].ToString() + ")";
+        }
+    }
+
+    public class SqrtFunc : FuncToken<double>
+    {
+        public SqrtFunc() : base(1)
+        {
+            Type = TokenType.Function;
+        }
+
+        public override double ReturnValue()
+        {
+            return System.Math.Sqrt(Children[0].ReturnValue());
+        }
+
+        public override string ToString()
+        {
+            return "sqrt(" + Children[0].ToString() + ")";
+        }
+    }
+
+    public class SinFunc : FuncToken<double>
+    {
+        public SinFunc() : base(1)
+        {
+            Type = TokenType.Function;
+        }
+
+        public override double ReturnValue()
+        {
+            return System.Math.Sin(Children[0].ReturnValue());
+        }
+
+        public override string ToString()
+        {
+            return "sin(" + Children[0].ToString() + ")";
+        }
+    }
+
+    public class CosFunc : FuncToken<double>
+    {
+        public CosFunc() : base(1)
+        {
+            Type = TokenType.Function;
+        }
+
+        public override double ReturnValue()
+        {
+            return System.Math.Cos(Children[0].ReturnValue());
+        }
+
+        public override string ToString()
+        {
+            return "cos(" + Children[0].ToString() + ")";
+        }
+    }
+
+    public class TanFunc : FuncToken<double>
+    {
+        public TanFunc() : base(1)
+        {
+            Type = TokenType.Function;
+        }
+
+        public override double ReturnValue()
+        {
+            return System.Math.Tan(Children[0].ReturnValue());
+        }
+
+        public override string ToString()
+        {
+            return "tan(" + Children[0].ToString() + ")";
         }
     }
 
