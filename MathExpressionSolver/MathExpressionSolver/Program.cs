@@ -104,11 +104,19 @@ namespace MathExpressionSolver
             }
 
             prepareTree();
-            T result = computeResult();
 
             if(isVariable)
             {
-                storageHandler.AddVariable(variableName, result);
+                try
+                {
+                    T result = computeResult();
+                    storageHandler.AddVariable(variableName, result);
+                }
+                catch
+                {
+                    
+                }
+  
             }
         }
 
