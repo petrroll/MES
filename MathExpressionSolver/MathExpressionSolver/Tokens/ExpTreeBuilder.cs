@@ -41,7 +41,7 @@ namespace MathExpressionSolver.Tokens
                 tokenStack.Push(currToken);
                 lastToken = currToken;
             }
-            TreeTop = tokenStack.Last();
+            if (tokenStack.Count > 0) { TreeTop = tokenStack.Last(); } else { TreeTop = null; }
         }
 
         private static void placeCurrentToken(Stack<IFactorableToken<T>> tokenStack, IFactorableToken<T> lastToken, IFactorableToken<T> currToken)
