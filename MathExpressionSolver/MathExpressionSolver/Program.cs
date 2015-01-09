@@ -9,8 +9,14 @@ namespace MathExpressionSolver
     {
         static void Main(string[] args)
         {
+            string input;
             ProgramController<double> controller = new ProgramController<double>();
-            controller.TestIfWorks();
+            while (true)
+            {
+                input = Console.ReadLine();
+                if (input == "!TEST!") controller.TestIfWorks();
+                else controller.Work(input);
+            }
         }
     }
 
@@ -34,6 +40,13 @@ namespace MathExpressionSolver
             storageHandler = new StorageHandler<T>();
 
             tokenizer.CustomVariables = storageHandler.Variables;
+        }
+
+        public void Work(string input)
+        {
+            handleInput(input);
+            work();
+            writeOutResult();
         }
 
         public void TestIfWorks()
@@ -62,8 +75,6 @@ namespace MathExpressionSolver
 
             testInput("if((exp(100)> Pi)*2;exp(a) + asdfsdf - 2*Pi;2*3-asdfsdf)", "13,3824939607035");
             testInput("(if((exp(100)> Pi)*2;exp(a) + asdfsdf - 2*Pi;2*3-asdfsdf))*2>1", "1");
-
-            Console.ReadLine();
         }
 
         private void testInput(string input, string output)
