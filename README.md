@@ -1,5 +1,7 @@
 ###About:
-__MES__ is a mathematical expressions evaluator (let's just say a clever calculator) written in .NET. While being fairly simple it's heavily focused on being generic, modular, and extensible. Thanks to that it has some nice features such as support for arbitrary operators priority or basically any custom function. 
+__MES__ is a mathematical expressions evaluator (let's just say a clever calculator) written in .NET. While being fairly simple it's heavily focused on being generic, modular, and extensible. 
+
+It's implemented in a Console application for showcase but can easily be stripped down and used as a standalone library. 
 
 ###Features:
 * Binary operators (+, -, *, ...).
