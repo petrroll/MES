@@ -6,7 +6,7 @@ namespace MathExpressionSolver.Parser
     class Tokenizer<T>
     {
         TokenFactory<T> _tokenFactory;
-        public TokenFactory<T> TokenFactory { get { if (_tokenFactory == null) { _tokenFactory = new TokenFactory<T>(); } return _tokenFactory; }  set { _tokenFactory = value; } }
+        private TokenFactory<T> tokenFactory { get { if (_tokenFactory == null) { _tokenFactory = new TokenFactory<T>(); } return _tokenFactory; }  set { _tokenFactory = value; } }
 
         private List<IFactorableToken<T>> tokens;
         private int currTokenIndex;
@@ -15,7 +15,7 @@ namespace MathExpressionSolver.Parser
 
         public IFactorableToken<T>[] Tokens { get { return tokens.ToArray(); } }
 
-        public Dictionary<string, T> CustomVariables { set { TokenFactory.CustomVariables = value; } }
+        public Dictionary<string, T> CustomVariables { set { tokenFactory.CustomVariables = value; } }
 
         public Tokenizer()
         {
@@ -62,11 +62,11 @@ namespace MathExpressionSolver.Parser
                 case ParsedItemType.Name:
                     return handleName();
                 case ParsedItemType.Element:
-                    return TokenFactory.CreateNum(parsedItems[currTokenIndex].Value);
+                    return tokenFactory.CreateNum(parsedItems[currTokenIndex].Value);
                 case ParsedItemType.LBracket:
-                    return TokenFactory.CreateBrackets(extractTokensFromBrakets());
+                    return tokenFactory.CreateBrackets(extractTokensFromBrakets());
                 case ParsedItemType.Operator:
-                    return TokenFactory.CreateOperator(parsedItems[currTokenIndex].Value);
+                    return tokenFactory.CreateOperator(parsedItems[currTokenIndex].Value);
                 case ParsedItemType.Invalid:
                     return null;
                 default:
@@ -78,11 +78,11 @@ namespace MathExpressionSolver.Parser
         {
             if (isAfterCurrTokenIndexSomething() && parsedItems[currTokenIndex + 1].Type == ParsedItemType.LBracket)
             {
-                return TokenFactory.CrateFunction(parsedItems[currTokenIndex].Value, extractTokensFromFunctionArgs());
+                return tokenFactory.CrateFunction(parsedItems[currTokenIndex].Value, extractTokensFromFunctionArgs());
             }
             else
             {
-                return TokenFactory.CreateVariable(parsedItems[currTokenIndex].Value);
+                return tokenFactory.CreateVariable(parsedItems[currTokenIndex].Value);
             }
         }
 
@@ -101,7 +101,7 @@ namespace MathExpressionSolver.Parser
             if(isAfterCurrTokenIndexSomething())
             {
                 List<IFactorableToken<T>[]> arguments = new List<IFactorableToken<T>[]>();
-                Tokenizer<T> argumentsTokenizer = new Tokenizer<T>() { TokenFactory = this.TokenFactory };
+                Tokenizer<T> argumentsTokenizer = new Tokenizer<T>() { tokenFactory = this.tokenFactory };
 
                 int firstItemIndex = ++currTokenIndex;
                 int length = 0;
