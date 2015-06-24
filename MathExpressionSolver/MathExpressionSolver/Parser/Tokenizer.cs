@@ -1,6 +1,5 @@
 ﻿using MathExpressionSolver.Tokens;
 using System.Collections.Generic;
-using System;
 
 namespace MathExpressionSolver.Parser
 {
