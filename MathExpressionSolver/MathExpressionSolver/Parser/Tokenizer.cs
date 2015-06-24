@@ -12,9 +12,18 @@ namespace MathExpressionSolver.Parser
         private int currTokenIndex;
 
         private ParsedItem[] parsedItems;
+        public ParsedItem[] DataToBeTokenized
+        {
+            set
+            {
+                Clear();
+
+                this.parsedItems = value;
+                tokens.Capacity = parsedItems.Length / 2;
+            }
+        }
 
         public IFactorableToken<T>[] Tokens { get { return tokens.ToArray(); } }
-
         public Dictionary<string, T> CustomVariables { set { tokenFactory.CustomVariables = value; } }
 
         public Tokenizer()
@@ -25,15 +34,7 @@ namespace MathExpressionSolver.Parser
 
         public Tokenizer(ParsedItem[] parsedItems) : this()
         {
-            SetDataToBeTokenized(parsedItems);
-        }
-
-        public void SetDataToBeTokenized(ParsedItem[] parsedItems)
-        {
-            Clear();
-
-            this.parsedItems = parsedItems;
-            tokens.Capacity = parsedItems.Length / 2;
+            DataToBeTokenized = parsedItems;
         }
 
         public void Clear()
@@ -76,7 +77,7 @@ namespace MathExpressionSolver.Parser
 
         private IFactorableToken<T> handleName()
         {
-            if (isAfterCurrTokenIndexSomething() && parsedItems[currTokenIndex + 1].Type == ParsedItemType.LBracket)
+            if (isSomethingAfterCurrTokenIndex() && parsedItems[currTokenIndex + 1].Type == ParsedItemType.LBracket)
             {
                 return tokenFactory.CrateFunction(parsedItems[currTokenIndex].Value, extractTokensFromFunctionArgs());
             }
@@ -88,7 +89,7 @@ namespace MathExpressionSolver.Parser
 
         private IEnumerable<IFactorableToken<T>>[] extractTokensFromFunctionArgs()
         {
-            if (isAfterCurrTokenIndexSomething())
+            if (isSomethingAfterCurrTokenIndex())
             {
                 currTokenIndex++;
                 return extractTokensFromBrakets();
@@ -98,7 +99,7 @@ namespace MathExpressionSolver.Parser
 
         private IEnumerable<IFactorableToken<T>>[] extractTokensFromBrakets()
         {
-            if(isAfterCurrTokenIndexSomething())
+            if(isSomethingAfterCurrTokenIndex())
             {
                 List<IFactorableToken<T>[]> arguments = new List<IFactorableToken<T>[]>();
                 Tokenizer<T> argumentsTokenizer = new Tokenizer<T>() { tokenFactory = this.tokenFactory };
@@ -141,7 +142,7 @@ namespace MathExpressionSolver.Parser
 
         private IFactorableToken<T>[] returnTokenizedSubArray(Tokenizer<T> argumentsTokenizer, int firstItemIndex, int length)
         {
-            argumentsTokenizer.SetDataToBeTokenized(parsedItems.SubArray(firstItemIndex, length));
+            argumentsTokenizer.DataToBeTokenized = parsedItems.SubArray(firstItemIndex, length);
             argumentsTokenizer.Tokenize();
             return argumentsTokenizer.Tokens;
         }
@@ -159,12 +160,12 @@ namespace MathExpressionSolver.Parser
 
         private bool isCurrTokenIndexOutOfRange()
         {
-            return !(currTokenIndex < parsedItems.Length);
+            return !isCurrTokenIndexInRange();
         }
 
-        private bool isAfterCurrTokenIndexSomething()
+        private bool isSomethingAfterCurrTokenIndex()
         {
-            return (parsedItems.Length - currTokenIndex > 1);
+            return isCurrTokenIndexInRange() && !isCurrTokenIndexLast();
         }
 
         private bool isCurrTokenIndexLast()

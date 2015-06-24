@@ -130,7 +130,7 @@ namespace MathExpressionSolver
 
         private void prepareTree()
         {
-            tokenizer.SetDataToBeTokenized(parsedItems);
+            tokenizer.DataToBeTokenized = parsedItems;
             tokenizer.Tokenize();
 
             treeBuilder.RawTokens = (IFactorableToken<T>[])tokenizer.Tokens;
