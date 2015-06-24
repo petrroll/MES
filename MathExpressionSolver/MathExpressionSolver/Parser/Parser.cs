@@ -5,7 +5,7 @@ using System.Text;
 namespace MathExpressionSolver.Parser
 {
     /// <summary>
-    /// Class responsible for dividing expression string into an array of substrings and their types.
+    /// Divides expression string into an array of substrings and their types.
     /// </summary>
     class ExpressionParser
     {
@@ -25,14 +25,14 @@ namespace MathExpressionSolver.Parser
 
         private List<ParsedItem> parsedItems;
         /// <summary>
-        /// Array of <see cref="ParsedItems"/> containing a parsed <see cref="StringExpression"/>.
+        /// Contains a parsed <see cref="StringExpression"/> (after <see cref="ParseExpression"/> is called).
         /// </summary>
         public ParsedItem[] ParsedItems { get { return parsedItems.ToArray(); } }
 
         private string rawExpression;
 
         /// <summary>
-        /// A setter for an expression string that is to be parsed.
+        /// Expression string that is to be parsed.
         /// </summary>
         public string StringExpression
         {
@@ -165,7 +165,7 @@ namespace MathExpressionSolver.Parser
     }
 
     /// <summary>
-    /// A struct containing both the string literal and its type (<see cref="ParsedItemType"/>) according to Parser clasification.
+    /// Container for the string literal and its type (<see cref="ParsedItemType"/>) according to Parser clasification.
     /// </summary>
     public struct ParsedItem
     {
@@ -191,7 +191,7 @@ namespace MathExpressionSolver.Parser
     public enum ParsedItemType { Name, Element, LBracket, RBracket, Operator, Separator, WhiteSpace, Invalid, NotSet };
 
     /// <summary>
-    /// Class responsible for determining what type of substring a specific char is.
+    /// Determines what type of substring a specific char is.
     /// </summary>
     /// <remarks>
     /// See <see cref="ParsedItemType"/> for more information about Parser substring types.
