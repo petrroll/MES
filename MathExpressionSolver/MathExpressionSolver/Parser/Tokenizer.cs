@@ -12,8 +12,7 @@ namespace MathExpressionSolver.Parser
         private List<IFactorableToken<T>> tokens;
         private int currTokenIndex;
 
-        private string[] parsedExpressions;
-        private ParsedItemType[] parsedTypes;
+        private ParsedItem[] parsedItems;
 
         public IFactorableToken<T>[] Tokens { get { return tokens.ToArray(); } }
 
@@ -22,24 +21,20 @@ namespace MathExpressionSolver.Parser
         public Tokenizer()
         {
             tokens = new List<IFactorableToken<T>>();
-
-            parsedExpressions = new string[0];
-            parsedTypes = new ParsedItemType[0];
+            parsedItems = new ParsedItem[0];
         }
 
-        public Tokenizer(string[] parsedExpressions, ParsedItemType[] parsedTypes) : this()
+        public Tokenizer(ParsedItem[] parsedItems) : this()
         {
-            SetDataToBeTokenized(parsedExpressions, parsedTypes);
+            SetDataToBeTokenized(parsedItems);
         }
 
-        public void SetDataToBeTokenized(string[] parsedExpressions, ParsedItemType[] parsedTypes)
+        public void SetDataToBeTokenized(ParsedItem[] parsedItems)
         {
-            this.parsedExpressions = parsedExpressions;
-            this.parsedTypes = parsedTypes;
-
             Clear();
 
-            tokens.Capacity = parsedTypes.Length / 2;
+            this.parsedItems = parsedItems;
+            tokens.Capacity = parsedItems.Length / 2;
         }
 
         public void Clear()
@@ -63,16 +58,16 @@ namespace MathExpressionSolver.Parser
 
         private IFactorableToken<T> getToken()
         {
-            switch (parsedTypes[currTokenIndex])
+            switch (parsedItems[currTokenIndex].Type)
             {
                 case ParsedItemType.Name:
                     return handleName();
                 case ParsedItemType.Element:
-                    return TokenFactory.CreateNum(parsedExpressions[currTokenIndex]);
+                    return TokenFactory.CreateNum(parsedItems[currTokenIndex].Value);
                 case ParsedItemType.LBracket:
                     return TokenFactory.CreateBrackets(extractTokensFromBrakets());
                 case ParsedItemType.Operator:
-                    return TokenFactory.CreateOperator(parsedExpressions[currTokenIndex]);
+                    return TokenFactory.CreateOperator(parsedItems[currTokenIndex].Value);
                 case ParsedItemType.Invalid:
                     return null;
                 default:
@@ -82,13 +77,13 @@ namespace MathExpressionSolver.Parser
 
         private IFactorableToken<T> handleName()
         {
-            if (isAfterCurrTokenIndexSomething() && parsedTypes[currTokenIndex + 1] == ParsedItemType.LBracket)
+            if (isAfterCurrTokenIndexSomething() && parsedItems[currTokenIndex + 1].Type == ParsedItemType.LBracket)
             {
-                return TokenFactory.CrateFunction(parsedExpressions[currTokenIndex], extractTokensFromFunctionArgs());
+                return TokenFactory.CrateFunction(parsedItems[currTokenIndex].Value, extractTokensFromFunctionArgs());
             }
             else
             {
-                return TokenFactory.CreateVariable(parsedExpressions[currTokenIndex]);
+                return TokenFactory.CreateVariable(parsedItems[currTokenIndex].Value);
             }
         }
 
@@ -124,7 +119,7 @@ namespace MathExpressionSolver.Parser
                         firstItemIndex = currTokenIndex + 1;
                         length = 0;
 
-                        if (parsedTypes[currTokenIndex] == ParsedItemType.RBracket) { break; }
+                        if (parsedItems[currTokenIndex].Type == ParsedItemType.RBracket) { break; }
                     }
                     else
                     {
@@ -132,8 +127,8 @@ namespace MathExpressionSolver.Parser
                     }
 
 
-                    if (parsedTypes[currTokenIndex] == ParsedItemType.RBracket) { bracketsLevel--; }
-                    else if (parsedTypes[currTokenIndex] == ParsedItemType.LBracket) { bracketsLevel++; }
+                    if (parsedItems[currTokenIndex].Type == ParsedItemType.RBracket) { bracketsLevel--; }
+                    else if (parsedItems[currTokenIndex].Type == ParsedItemType.LBracket) { bracketsLevel++; }
 
                     currTokenIndex++;
                     if (isCurrTokenIndexOutOfRange()) { break; }
@@ -147,35 +142,35 @@ namespace MathExpressionSolver.Parser
 
         private IFactorableToken<T>[] returnTokenizedSubArray(Tokenizer<T> argumentsTokenizer, int firstItemIndex, int length)
         {
-            argumentsTokenizer.SetDataToBeTokenized(parsedExpressions.SubArray(firstItemIndex, length), parsedTypes.SubArray(firstItemIndex, length));
+            argumentsTokenizer.SetDataToBeTokenized(parsedItems.SubArray(firstItemIndex, length));
             argumentsTokenizer.Tokenize();
             return argumentsTokenizer.Tokens;
         }
 
         private bool isCurrTypeArgumentEnding()
         {
-            return (parsedTypes[currTokenIndex] == ParsedItemType.RBracket ||
-                     parsedTypes[currTokenIndex] == ParsedItemType.Separator);
+            return (parsedItems[currTokenIndex].Type == ParsedItemType.RBracket ||
+                     parsedItems[currTokenIndex].Type == ParsedItemType.Separator);
         }
 
         private bool isCurrTokenIndexInRange()
         {
-            return (currTokenIndex < parsedExpressions.Length);
+            return (currTokenIndex < parsedItems.Length);
         }
 
         private bool isCurrTokenIndexOutOfRange()
         {
-            return !(currTokenIndex < parsedExpressions.Length);
+            return !(currTokenIndex < parsedItems.Length);
         }
 
         private bool isAfterCurrTokenIndexSomething()
         {
-            return (parsedExpressions.Length - currTokenIndex > 1);
+            return (parsedItems.Length - currTokenIndex > 1);
         }
 
         private bool isCurrTokenIndexLast()
         {
-            return (parsedExpressions.Length - currTokenIndex == 1);
+            return (parsedItems.Length - currTokenIndex == 1);
         }
     }
 

@@ -1,7 +1,6 @@
 ﻿using MathExpressionSolver.Parser;
 using MathExpressionSolver.Tokens;
 using System;
-using System.Collections.Generic;
 
 namespace MathExpressionSolver
 {
@@ -23,8 +22,7 @@ namespace MathExpressionSolver
     class ProgramController<T> 
     {
         ExpressionParser parser;
-        string[] expressions;
-        ParsedItemType[] types;
+        ParsedItem[] parsedItems;
 
         Tokenizer<T> tokenizer;
         ExpTreeBuilder<T> treeBuilder;
@@ -89,8 +87,8 @@ namespace MathExpressionSolver
             parser.StringExpression = input;
             parser.ParseExpression();
 
-            expressions = parser.ParsedExpressions;
-            types = parser.ParsedTypes;
+            parsedItems = parser.ParsedItems;
+
         }
 
         private void work()
@@ -101,16 +99,15 @@ namespace MathExpressionSolver
             string variableName = string.Empty;
             string functionName = string.Empty;
 
-            if(types[0] == ParsedItemType.Name)
+            if(parsedItems[0].Type == ParsedItemType.Name)
             {
-                if (types.Length > 1 &&
-                    (types[1] == ParsedItemType.Operator && expressions[1] == "="))
+                if (parsedItems.Length > 1 &&
+                    (parsedItems[1].Type == ParsedItemType.Operator && parsedItems[1].Value == "="))
                 {
                     isVariable = true;
-                    variableName = expressions[0];
+                    variableName = parsedItems[0].Value;
 
-                    expressions = expressions.SubArray(2);
-                    types = types.SubArray(2);
+                    parsedItems = parsedItems.SubArray(2);
                 }
             }
 
@@ -133,7 +130,7 @@ namespace MathExpressionSolver
 
         private void prepareTree()
         {
-            tokenizer.SetDataToBeTokenized(expressions, types);
+            tokenizer.SetDataToBeTokenized(parsedItems);
             tokenizer.Tokenize();
 
             treeBuilder.RawTokens = (IFactorableToken<T>[])tokenizer.Tokens;

@@ -23,12 +23,11 @@ namespace MathExpressionSolver.Parser
         /// </summary>
         public bool SkipWhiteSpace { get; set; } = true;
 
-
-        private List<string> parsedExpressions;
-        private List<ParsedItemType> parsedTypes;
-
-        public string[] ParsedExpressions { get { return parsedExpressions.ToArray(); } }
-        public ParsedItemType[] ParsedTypes { get { return parsedTypes.ToArray(); } }
+        private List<ParsedItem> parsedItems;
+        /// <summary>
+        /// Array of <see cref="ParsedItems"/> containing a parsed <see cref="StringExpression"/>.
+        /// </summary>
+        public ParsedItem[] ParsedItems { get { return parsedItems.ToArray(); } }
 
         private string rawExpression;
 
@@ -39,21 +38,17 @@ namespace MathExpressionSolver.Parser
         {
             set
             {
-                parsedExpressions.Clear();
-                parsedExpressions.Capacity = rawExpression.Length / avgParsedItemLength;
-
-                parsedTypes.Clear();
-                parsedTypes.Capacity = rawExpression.Length / avgParsedItemLength;
-
                 rawExpression = value;
+
+                parsedItems.Clear();
+                parsedItems.Capacity = rawExpression.Length / avgParsedItemLength;
+
             }
         }
 
-        public ExpressionParser() 
+        public ExpressionParser()
         {
-            parsedExpressions = new List<string>();
-            parsedTypes = new List<ParsedItemType>();
-
+            parsedItems = new List<ParsedItem>();
             rawExpression = string.Empty;
         }
 
@@ -67,23 +62,20 @@ namespace MathExpressionSolver.Parser
         }
 
         /// <summary>
-        /// Parses the expression and sets corresponding output variables.
+        /// Parses the expression and appends output to a corresponding variable.
         /// </summary>
         /// <remarks>
-        /// Parses the expression set in <see cref="StringExpression"/> and saves the result to <see cref="ParsedExpressions"/> and <see cref="ParsedTypes"/>.
+        /// Parses the expression set in <see cref="StringExpression"/> and saves the result to <see cref="ParsedItems"/>.
         /// </remarks>
         public void ParseExpression()
         {
             ParsedItemType lastType = ParsedItemType.NotSet;
 
-            parsedExpressions.Clear();
-            parsedTypes.Clear();
-
             StringBuilder expBuffer = new StringBuilder(avgParsedItemLength);
             foreach (char c in rawExpression)
             {
                 ParsedItemType currentType = getExpItemType(c);
-                if(IsCoumpnoundable(lastType) && currentType != lastType)
+                if (IsCoumpnoundable(lastType) && currentType != lastType)
                 {
                     parseNewExpression(expBuffer, lastType);
                 }
@@ -111,8 +103,7 @@ namespace MathExpressionSolver.Parser
 
             if (isSkipable(currentType)) { return; }
 
-            parsedTypes.Add(currentType);
-            parsedExpressions.Add(expression);
+            parsedItems.Add(new ParsedItem(expression, currentType));
 
         }
 
@@ -168,9 +159,27 @@ namespace MathExpressionSolver.Parser
             }
             else
             {
-                return ParsedItemType.Invalid; 
+                return ParsedItemType.Invalid;
             }
         }
+    }
+
+    /// <summary>
+    /// A struct containing both the string literal and its type (<see cref="ParsedItemType"/>) according to Parser clasification.
+    /// </summary>
+    public struct ParsedItem
+    {
+        public ParsedItem(string value, ParsedItemType type)
+        {
+            this.value = value;
+            this.type = type;
+        }
+
+        private string value;
+        private ParsedItemType type;
+
+        public string Value { get { return value; } }
+        public ParsedItemType Type { get { return type; } }
     }
 
     /// <summary>
