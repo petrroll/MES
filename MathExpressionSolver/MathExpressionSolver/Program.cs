@@ -36,7 +36,7 @@ namespace MathExpressionSolver
             parser = new ExpressionParser() { SkipWhiteSpace = true };
             tokenizer = new Tokenizer<T>();
             treeBuilder = new ExpTreeBuilder<T>();
-
+    
             storageHandler = new StorageHandler<T>();
 
             tokenizer.CustomVariables = storageHandler.Variables;

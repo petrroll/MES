@@ -4,10 +4,23 @@ using System.Text;
 
 namespace MathExpressionSolver.Parser
 {
+    /// <summary>
+    /// Class responsible for dividing expression string into an array of substrings and their types.
+    /// </summary>
     class ExpressionParser
     {
         const int avgParsedItemLength = 4;
+
+        /// <summary>
+        /// Are invalid characters to be skipped or included in result. Implicitly false.
+        /// </summary>
+        /// <remarks>
+        /// An invalid character is a character that doesn't fall into any category.
+        /// </remarks>
         public bool SkipInvalidChars { get; set; } = false;
+        /// <summary>
+        /// Is whitespace to be skipped or included in result. Implicitly false.
+        /// </summary>
         public bool SkipWhiteSpace { get; set; } = true;
 
 
@@ -19,6 +32,9 @@ namespace MathExpressionSolver.Parser
 
         private string rawExpression;
 
+        /// <summary>
+        /// A setter for an expression string that is to be parsed.
+        /// </summary>
         public string StringExpression
         {
             set
@@ -41,11 +57,21 @@ namespace MathExpressionSolver.Parser
             rawExpression = string.Empty;
         }
 
+        /// <summary>
+        /// Automacitally sets <see cref="StringExpression"/> property.
+        /// </summary>
+        /// <param name="expression">An expression string to be parsed</param>
         public ExpressionParser(string expression) : this()
         {
             StringExpression = expression;
         }
 
+        /// <summary>
+        /// Parses the expression and sets corresponding output variables.
+        /// </summary>
+        /// <remarks>
+        /// Parses the expression set in <see cref="StringExpression"/> and saves the result to <see cref="ParsedExpressions"/> and <see cref="ParsedTypes"/>.
+        /// </remarks>
         public void ParseExpression()
         {
             ParsedItemType lastType = ParsedItemType.NotSet;
@@ -147,8 +173,20 @@ namespace MathExpressionSolver.Parser
         }
     }
 
+    /// <summary>
+    /// Types of substrings that Parser understands.
+    /// </summary>
+    /// <remarks>
+    /// See <see cref="ParserHelper"/> for more information about specific types.
+    /// </remarks>
     public enum ParsedItemType { Name, Element, LBracket, RBracket, Operator, Separator, WhiteSpace, Invalid, NotSet };
 
+    /// <summary>
+    /// Class responsible for determining what type of substring a specific char is.
+    /// </summary>
+    /// <remarks>
+    /// See <see cref="ParsedItemType"/> for more information about Parser substring types.
+    /// </remarks>
     public static class ParserHelper
     {
         public static bool IsNameChar(char a)
