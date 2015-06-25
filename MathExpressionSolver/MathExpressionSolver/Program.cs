@@ -24,6 +24,7 @@ namespace MathExpressionSolver
         ExpressionParser parser;
         ParsedItem[] parsedItems;
 
+        TokenFactory<T> tokenFactory;
         Tokenizer<T> tokenizer;
         ExpTreeBuilder<T> treeBuilder;
 
@@ -32,7 +33,8 @@ namespace MathExpressionSolver
         public ProgramController()
         {
             parser = new ExpressionParser() { SkipWhiteSpace = true, SkipInvalidChars = true };
-            tokenizer = new Tokenizer<T>();
+            tokenFactory = new TokenFactory<T>();
+            tokenizer = new Tokenizer<T>() { TokenFactory = tokenFactory };
             treeBuilder = new ExpTreeBuilder<T>();
     
             storageHandler = new StorageHandler<T>();

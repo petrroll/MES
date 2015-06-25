@@ -119,7 +119,7 @@ namespace MathExpressionSolver.Parser
         private bool IsCoumpnoundable(ParsedItemType type)
         {
             return (
-                    type == ParsedItemType.Element ||
+                    type == ParsedItemType.Value ||
                     type == ParsedItemType.Name ||
                     type == ParsedItemType.WhiteSpace
                  );
@@ -144,7 +144,7 @@ namespace MathExpressionSolver.Parser
             }
             else if (ParserHelper.IsNum(c))
             {
-                return ParsedItemType.Element;
+                return ParsedItemType.Value;
             }
             else if (ParserHelper.IsWhiteSpace(c))
             {
@@ -202,7 +202,7 @@ namespace MathExpressionSolver.Parser
     /// <remarks>
     /// See <see cref="ParserHelper"/> for more information about specific types.
     /// </remarks>
-    public enum ParsedItemType { Name, Element, LBracket, RBracket, Operator, Separator, WhiteSpace, Invalid, NotSet };
+    public enum ParsedItemType { Name, Value, LBracket, RBracket, Operator, Separator, WhiteSpace, Invalid, NotSet };
 
     /// <summary>
     /// Determines what type of substring a specific char is.
