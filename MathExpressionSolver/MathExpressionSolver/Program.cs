@@ -31,7 +31,7 @@ namespace MathExpressionSolver
 
         public ProgramController()
         {
-            parser = new ExpressionParser() { SkipWhiteSpace = true };
+            parser = new ExpressionParser() { SkipWhiteSpace = true, SkipInvalidChars = true };
             tokenizer = new Tokenizer<T>();
             treeBuilder = new ExpTreeBuilder<T>();
     

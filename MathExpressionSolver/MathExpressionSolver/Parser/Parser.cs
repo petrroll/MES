@@ -175,6 +175,11 @@ namespace MathExpressionSolver.Parser
             this.type = type;
         }
 
+        public override string ToString()
+        {
+            return Value;
+        }
+
         private string value;
         private ParsedItemType type;
 

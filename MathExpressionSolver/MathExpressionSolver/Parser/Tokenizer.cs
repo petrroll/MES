@@ -69,9 +69,9 @@ namespace MathExpressionSolver.Parser
                 case ParsedItemType.Operator:
                     return tokenFactory.CreateOperator(parsedItems[currTokenIndex].Value);
                 case ParsedItemType.Invalid:
-                    return null;
+                    throw new TokenizerException(parsedItems[currTokenIndex].Value + " is not a valid expression.");
                 default:
-                    return null;
+                    throw new TokenizerException(parsedItems[currTokenIndex].Value + " is not a valid expression.");
             }
         }
 
@@ -89,12 +89,8 @@ namespace MathExpressionSolver.Parser
 
         private IEnumerable<IFactorableToken<T>>[] extractTokensFromFunctionArgs()
         {
-            if (isSomethingAfterCurrTokenIndex())
-            {
-                currTokenIndex++;
-                return extractTokensFromBrakets();
-            }
-            return null;
+            currTokenIndex++;
+            return extractTokensFromBrakets();
         }
 
         private IEnumerable<IFactorableToken<T>>[] extractTokensFromBrakets()
@@ -104,39 +100,41 @@ namespace MathExpressionSolver.Parser
                 List<IFactorableToken<T>[]> arguments = new List<IFactorableToken<T>[]>();
                 Tokenizer<T> argumentsTokenizer = new Tokenizer<T>() { tokenFactory = this.tokenFactory };
 
-                int firstItemIndex = ++currTokenIndex;
+                currTokenIndex++;
+
+                int firstItemIndex = currTokenIndex;
                 int length = 0;
 
                 int bracketsLevel = 1;
 
-                while (bracketsLevel > 0)
+                while (bracketsLevel != 0)
                 {
-                    if ((bracketsLevel == 1 && isCurrTypeArgumentEnding()) ||
-                        isCurrTokenIndexLast())
+                    if(isCurrTokenIndexOutOfRange())
+                    {
+                        throw new TokenizerException("Closing brackets for \"" + string.Join(string.Empty, parsedItems.SubArray(firstItemIndex - 1)) + "\" not found.");
+                    }
+
+                    if (parsedItems[currTokenIndex].Type == ParsedItemType.RBracket) { bracketsLevel--; }
+                    else if (parsedItems[currTokenIndex].Type == ParsedItemType.LBracket) { bracketsLevel++; }
+
+                    if (bracketsLevel == 1 && parsedItems[currTokenIndex].Type == ParsedItemType.Separator ||
+                        bracketsLevel == 0 && parsedItems[currTokenIndex].Type == ParsedItemType.RBracket)
                     {
                         arguments.Add(returnTokenizedSubArray(argumentsTokenizer, firstItemIndex, length));
 
                         firstItemIndex = currTokenIndex + 1;
                         length = 0;
-
-                        if (parsedItems[currTokenIndex].Type == ParsedItemType.RBracket) { break; }
                     }
-                    else
-                    {
-                        length++;
-                    }
-
-
-                    if (parsedItems[currTokenIndex].Type == ParsedItemType.RBracket) { bracketsLevel--; }
-                    else if (parsedItems[currTokenIndex].Type == ParsedItemType.LBracket) { bracketsLevel++; }
+                    else { length++; }
 
                     currTokenIndex++;
-                    if (isCurrTokenIndexOutOfRange()) { break; }
+                 
                 }
 
+                currTokenIndex--; //corrects index to last brackets token.
                 return arguments.ToArray();
 
-            } else { return null; }
+            } else { throw new TokenizerException("Unended bracket at the end of the expression."); }
 
         }
 
@@ -145,12 +143,6 @@ namespace MathExpressionSolver.Parser
             argumentsTokenizer.DataToBeTokenized = parsedItems.SubArray(firstItemIndex, length);
             argumentsTokenizer.Tokenize();
             return argumentsTokenizer.Tokens;
-        }
-
-        private bool isCurrTypeArgumentEnding()
-        {
-            return (parsedItems[currTokenIndex].Type == ParsedItemType.RBracket ||
-                     parsedItems[currTokenIndex].Type == ParsedItemType.Separator);
         }
 
         private bool isCurrTokenIndexInRange()
@@ -165,7 +157,7 @@ namespace MathExpressionSolver.Parser
 
         private bool isSomethingAfterCurrTokenIndex()
         {
-            return isCurrTokenIndexInRange() && !isCurrTokenIndexLast();
+            return (isCurrTokenIndexInRange() && !isCurrTokenIndexLast());
         }
 
         private bool isCurrTokenIndexLast()
@@ -256,6 +248,19 @@ namespace MathExpressionSolver.Parser
                     return null;
             }
         }
+    }
+
+
+    [System.Serializable]
+    public class TokenizerException : System.Exception
+    {
+        public TokenizerException() { }
+        public TokenizerException(string message) : base(message) { }
+        public TokenizerException(string message, System.Exception inner) : base(message, inner) { }
+        protected TokenizerException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context)
+        { }
     }
 
 }
