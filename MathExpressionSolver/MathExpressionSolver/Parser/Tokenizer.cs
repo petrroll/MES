@@ -40,6 +40,7 @@ namespace MathExpressionSolver.Parser
         /// <summary>
         /// Contains dictionary of custom varibles with signare of 'name - value'.
         /// </summary>
+        /// <exception cref="InvalidOperationException">Set before <see cref="TokenFactory"/> has been specified.</exception>
         public Dictionary<string, T> CustomVariables { set { if (TokenFactory == null) { throw new InvalidOperationException("Token factory not set."); } TokenFactory.CustomVariables = value; } }
 
         public Tokenizer()
@@ -70,6 +71,8 @@ namespace MathExpressionSolver.Parser
         /// <summary>
         /// Tokenizes the <see cref="DataToBeTokenized"/> and appends the result to <see cref="Tokens"/>.
         /// </summary>
+        /// <exception cref="TokenizerException">Expression can't be properly tokenized.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="Tokenize"/> is called before <see cref="TokenFactory"/> is set.</exception>
         public void Tokenize()
         {
             if(TokenFactory == null)
