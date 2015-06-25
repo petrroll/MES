@@ -25,7 +25,7 @@ namespace MathExpressionSolver.Parser
 
         private List<ParsedItem> parsedItems;
         /// <summary>
-        /// Contains a parsed <see cref="StringExpression"/> (after <see cref="ParseExpression"/> is called).
+        /// Parsed <see cref="StringExpression"/> (after <see cref="ParseExpression"/> is called).
         /// </summary>
         public ParsedItem[] ParsedItems { get { return parsedItems.ToArray(); } }
 
@@ -38,9 +38,9 @@ namespace MathExpressionSolver.Parser
         {
             set
             {
-                rawExpression = value;
+                Clear();
 
-                parsedItems.Clear();
+                rawExpression = value;
                 parsedItems.Capacity = rawExpression.Length / avgParsedItemLength;
 
             }
@@ -50,6 +50,7 @@ namespace MathExpressionSolver.Parser
         {
             parsedItems = new List<ParsedItem>();
             rawExpression = string.Empty;
+            Clear();
         }
 
         /// <summary>
@@ -59,6 +60,14 @@ namespace MathExpressionSolver.Parser
         public ExpressionParser(string expression) : this()
         {
             StringExpression = expression;
+        }
+
+        /// <summary>
+        /// Clears <see cref="ParsedItems"/> and resets <see cref="ExpressionParser"/> state.
+        /// </summary>
+        public void Clear()
+        {
+            parsedItems.Clear();
         }
 
         /// <summary>

@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 namespace MathExpressionSolver.Parser
 {
+    /// <summary>
+    /// Creates linear array of <see cref="IFactorableToken<T>"/> out of <see cref="ParsedItem"/> array.
+    /// </summary>
+    /// <typeparam name="T">Token base type.</typeparam>
     class Tokenizer<T>
     {
         TokenFactory<T> _tokenFactory;
@@ -12,6 +16,9 @@ namespace MathExpressionSolver.Parser
         private int currTokenIndex;
 
         private ParsedItem[] parsedItems;
+        /// <summary>
+        /// <see cref="ParsedItem"/>s to be tokenized.
+        /// </summary>
         public ParsedItem[] DataToBeTokenized
         {
             set
@@ -23,35 +30,48 @@ namespace MathExpressionSolver.Parser
             }
         }
 
+        /// <summary>
+        /// Tokenized <see cref="DataToBeTokenized"/> (after <see cref="Tokenize"/> is called).
+        /// </summary>
         public IFactorableToken<T>[] Tokens { get { return tokens.ToArray(); } }
+        /// <summary>
+        /// Contains dictionary of custom varibles with signare of 'name - value'.
+        /// </summary>
         public Dictionary<string, T> CustomVariables { set { tokenFactory.CustomVariables = value; } }
 
         public Tokenizer()
         {
             tokens = new List<IFactorableToken<T>>();
             parsedItems = new ParsedItem[0];
+            Clear();
         }
 
+        /// <summary>
+        /// Automatically sets <see cref="DataToBeTokenized"/> property.
+        /// </summary>
+        /// <param name="parsedItems">Data to be tokenized.</param>
         public Tokenizer(ParsedItem[] parsedItems) : this()
         {
             DataToBeTokenized = parsedItems;
         }
 
+        /// <summary>
+        /// Clears data in <see cref="Tokens"/> and resets <see cref="Tokenizer"/> state.
+        /// </summary>
         public void Clear()
         {
             currTokenIndex = 0;
             tokens.Clear();
         }
 
+        /// <summary>
+        /// Tokenizes the <see cref="DataToBeTokenized"/> and appends the result to <see cref="Tokens"/>.
+        /// </summary>
         public void Tokenize()
         {
-            Clear();
-            IFactorableToken<T> currToken;
-
             while (isCurrTokenIndexInRange())
             {
-                currToken = getToken();
-                if (currToken != null) { tokens.Add(currToken); }
+                tokens.Add(getToken());
                 currTokenIndex++;
             }
         }
