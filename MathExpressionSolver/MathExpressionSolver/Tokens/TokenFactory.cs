@@ -31,38 +31,30 @@ namespace MathExpressionSolver.Tokens
             {
                 case "exp":
                     bracketToken = (IFactorableBracketsToken<T>)new ExpToken();
-                    bracketToken.BracketedTokens[0] = arguments[0];
-                    return bracketToken;
+                    break;
                 case "if":
                     bracketToken = (IFactorableBracketsToken<T>)new IfToken();
-                    bracketToken.BracketedTokens[0] = arguments[0];
-                    bracketToken.BracketedTokens[1] = arguments[1];
-                    bracketToken.BracketedTokens[2] = arguments[2];
-                    return bracketToken;
+                    break;
                 case "ln":
                     bracketToken = (IFactorableBracketsToken<T>)new LnFunc();
-                    bracketToken.BracketedTokens[0] = arguments[0];
-                    return bracketToken;
+                    break;
                 case "sin":
                     bracketToken = (IFactorableBracketsToken<T>)new SinFunc();
-                    bracketToken.BracketedTokens[0] = arguments[0];
-                    return bracketToken;
+                    break;
                 case "cos":
                     bracketToken = (IFactorableBracketsToken<T>)new CosFunc();
-                    bracketToken.BracketedTokens[0] = arguments[0];
-                    return bracketToken;
+                    break;
                 case "tan":
                     bracketToken = (IFactorableBracketsToken<T>)new TanFunc();
-                    bracketToken.BracketedTokens[0] = arguments[0];
-                    return bracketToken;
+                    break;
                 case "sqrt":
                     bracketToken = (IFactorableBracketsToken<T>)new SqrtFunc();
-                    bracketToken.BracketedTokens[0] = arguments[0];
-                    return bracketToken;
-
+                    break;
                 default:
                     return null;
             }
+            bracketToken.BracketedTokens = arguments;
+            return bracketToken;
         }
 
         public IFactorableToken<T> CreateValue(string s)

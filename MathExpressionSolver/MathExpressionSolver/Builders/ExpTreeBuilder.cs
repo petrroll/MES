@@ -13,7 +13,7 @@ namespace MathExpressionSolver.Tokens
         /// <summary>
         /// Array of <see cref="IFactorableToken<T>"/> to be rebuild into an expression tree. 
         /// </summary>
-        public IEnumerable<IFactorableToken<T>> RawTokens { private get { return rawTokens; } set { rawTokens = value; Clear(); } }
+        public IEnumerable<IFactorableToken<T>> RawTokens { private get { return rawTokens; } set { Clear(); rawTokens = value; } }
         /// <summary>
         /// The top <see cref="IToken{T}"/> of expression tree determined by <see cref="CreateExpressionTree"/>.
         /// </summary>
@@ -54,7 +54,7 @@ namespace MathExpressionSolver.Tokens
             {
                 if (currToken.Type == TokenType.Brackets || currToken.Type == TokenType.Function)
                 {
-                    buildExpTreeInArguments(currToken);
+                    buildExpTreeInArguments((IFactorableBracketsToken<T>)currToken);
                 }
 
                 if (lastToken != null)
@@ -65,7 +65,7 @@ namespace MathExpressionSolver.Tokens
                 tokenStack.Push(currToken);
                 lastToken = currToken;
             }
-            if (tokenStack.Count > 0) { TreeTop = tokenStack.Last(); } else { TreeTop = null; }
+            if (tokenStack.Count > 0) { TreeTop = tokenStack.Last(); } else { TreeTop = null; } //?Throw an exception?
         }
 
         private static void placeCurrentToken(Stack<IFactorableToken<T>> tokenStack, IFactorableToken<T> lastToken, IFactorableToken<T> currToken)
@@ -83,21 +83,35 @@ namespace MathExpressionSolver.Tokens
             }
         }
 
-        private static void buildExpTreeInArguments(IFactorableToken<T> currToken)
+        private static void buildExpTreeInArguments(IFactorableBracketsToken<T> currToken)
         {
             ExpTreeBuilder<T> argumentTokenTreeBuilder = new ExpTreeBuilder<T>();
-            IEnumerable<IFactorableToken<T>>[] argumentsTokens = ((IFactorableBracketsToken<T>)currToken).BracketedTokens;
+            IEnumerable<IFactorableToken<T>>[] argumentsTokens = currToken.BracketedTokens;
 
-            int nThArgument = 0;
-            while (argumentsTokens.Length > nThArgument &&
-                currToken.Children.Length > nThArgument)
+            if (argumentsTokens.Length != currToken.Children.Length)
+            {
+                throw new ExpTreeBuilderException("Number of supplied (" + argumentsTokens.Length + ") and required (" + currToken.Children.Length + ") arguments for " + currToken.ToString() + " doesn't match.");
+            }
+
+            for (int nThArgument = 0; nThArgument < argumentsTokens.Length; nThArgument++)
             {
                 argumentTokenTreeBuilder.RawTokens = argumentsTokens[nThArgument];
                 argumentTokenTreeBuilder.CreateExpressionTree();
                 currToken.Children[nThArgument] = argumentTokenTreeBuilder.TreeTop;
-
-                nThArgument++;
             }
         }
+    }
+
+
+    [System.Serializable]
+    public class ExpTreeBuilderException : System.Exception
+    {
+        public ExpTreeBuilderException() { }
+        public ExpTreeBuilderException(string message) : base(message) { }
+        public ExpTreeBuilderException(string message, System.Exception inner) : base(message, inner) { }
+        protected ExpTreeBuilderException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context)
+        { }
     }
 }
