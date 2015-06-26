@@ -9,11 +9,11 @@ namespace MathExpressionSolver.Tokens
     /// <typeparam name="T">Token base type.</typeparam>
     class ExpTreeBuilder<T>
     {
-        private IEnumerable<IFactorableToken<T>> rawTokens;
+        private IFactorableToken<T>[] rawTokens;
         /// <summary>
         /// Array of <see cref="IFactorableToken<T>"/> to be rebuild into an expression tree. 
         /// </summary>
-        public IEnumerable<IFactorableToken<T>> RawTokens { private get { return rawTokens; } set { Clear(); rawTokens = value; } }
+        public IFactorableToken<T>[] RawTokens { set { Clear(); rawTokens = value; } }
         /// <summary>
         /// The top <see cref="IToken{T}"/> of expression tree determined by <see cref="CreateExpressionTree"/>.
         /// </summary>
@@ -29,7 +29,7 @@ namespace MathExpressionSolver.Tokens
         /// Automatically sets <see cref="RawTokens"/> property.
         /// </summary>
         /// <param name="tokens">Array of <see cref="IFactorableToken<T>"/> to be rebuild into an expression tree.</param>
-        public ExpTreeBuilder(IEnumerable<IFactorableToken<T>> tokens) : this()
+        public ExpTreeBuilder(IFactorableToken<T>[] tokens) : this()
         {
             RawTokens = tokens;
         }
@@ -45,48 +45,63 @@ namespace MathExpressionSolver.Tokens
         /// <summary>
         /// Creates an expression tree out of <see cref="RawTokens"/> and puts its top to <see cref="TreeTop"/>.
         /// </summary>
+        /// <exception cref="ExpTreeBuilderException">Expression tree can't be build.</exception>
         public void CreateExpressionTree()
         {
             Stack<IFactorableToken<T>> tokenStack = new Stack<IFactorableToken<T>>();
+            bool rightIsEmpty = false;
 
-            IFactorableToken<T> lastToken = null;
-            foreach (IFactorableToken<T> currToken in RawTokens)
+            foreach (IFactorableToken<T> currToken in rawTokens)
             {
                 if (currToken.Type == TokenType.Brackets || currToken.Type == TokenType.Function)
                 {
                     buildExpTreeInArguments((IFactorableBracketsToken<T>)currToken);
                 }
 
-                if (lastToken != null)
-                {
-                    placeCurrentToken(tokenStack, lastToken, currToken);
-                }
+                placeCurrentToken(tokenStack, currToken);
 
-                tokenStack.Push(currToken);
-                lastToken = currToken;
             }
             if (tokenStack.Count > 0) { TreeTop = tokenStack.Last(); } else { TreeTop = null; } //?Throw an exception?
         }
 
-        private void placeCurrentToken(Stack<IFactorableToken<T>> tokenStack, IFactorableToken<T> lastToken, IFactorableToken<T> currToken)
+        private void placeCurrentToken(Stack<IFactorableToken<T>> tokenStack, IFactorableToken<T> currToken)
         {
-            while (!tokenStack.IsEmpty() && tokenStack.Peek().Priority >= currToken.Priority) { lastToken = tokenStack.Pop(); }
+            IFactorableToken<T> lastToken = (!tokenStack.IsEmpty()) ? tokenStack.Peek() : null;
+            IToken<T> subHierarchyToken = null;
+            while (!tokenStack.IsEmpty() && tokenStack.Peek().Priority >= currToken.Priority) { subHierarchyToken = tokenStack.Pop(); }
+            IFactorableToken<T> upHierarchyToken = (!tokenStack.IsEmpty()) ? tokenStack.Peek() : null;
 
-            if (currToken.Type == TokenType.BinOperator)
+            if(lastToken?.Type == TokenType.BinOperator && currToken.Type == TokenType.BinOperator)
             {
-                if (!tokenStack.IsEmpty() && tokenStack.Peek().Type == TokenType.BinOperator) { ((IBinToken<T>)tokenStack.Peek()).RightChild = currToken; }
-                ((IBinToken<T>)currToken).LeftChild = lastToken;
+                throw new ExpTreeBuilderException("Two binary operators next to each other: " + lastToken.ToString() + " " + currToken.ToString());
             }
-            else if (currToken.Type != TokenType.BinOperator && lastToken.Type == TokenType.BinOperator)
+
+            if (currToken.Type == TokenType.BinOperator && subHierarchyToken != null)
             {
-                ((IBinToken<T>)lastToken).RightChild = currToken;
+                ((IBinToken<T>)currToken).LeftChild = subHierarchyToken;
             }
+            else if(currToken.Type == TokenType.BinOperator)
+            {
+                throw new ExpTreeBuilderException("Binary operator: " + currToken.ToString() + " does't have left side");
+            }
+
+            if(upHierarchyToken?.Type == TokenType.BinOperator)
+            {
+                ((IBinToken<T>)upHierarchyToken).RightChild = currToken;
+            }
+            else if (!(tokenStack.IsEmpty() && 
+                (currToken.Type == TokenType.BinOperator ^ subHierarchyToken == null)))
+            {
+                throw new ExpTreeBuilderException("Token " + currToken.ToString() + " isn't connected to any operator");
+            }
+
+            tokenStack.Push(currToken);
         }
 
         private void buildExpTreeInArguments(IFactorableBracketsToken<T> currToken)
         {
             ExpTreeBuilder<T> argumentTokenTreeBuilder = new ExpTreeBuilder<T>();
-            IEnumerable<IFactorableToken<T>>[] argumentsTokens = currToken.BracketedTokens;
+            IFactorableToken<T>[][] argumentsTokens = currToken.BracketedTokens;
 
             if (argumentsTokens.Length != currToken.Children.Length)
             {

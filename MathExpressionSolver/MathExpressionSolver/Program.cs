@@ -55,7 +55,7 @@ namespace MathExpressionSolver
             testInput("3 > 1", "1");
             testInput("((2+1)-(3+1)*2)", "-5");
 
-            testInput("2&3 + 5", "8");
+            //testInput("2&3 + 5", "8");
 
             testInput("a=(3/6*5)", "2,5");
             testInput("asdfsdf=(5 + 3)", "8");

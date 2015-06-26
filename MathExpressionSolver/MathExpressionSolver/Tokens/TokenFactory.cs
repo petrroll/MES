@@ -5,8 +5,8 @@ namespace MathExpressionSolver.Tokens
     public interface ITokenFactory<T>
     {
         Dictionary<string, T> CustomVariables { get; set; }
-        IFactorableBracketsToken<T> CreateBrackets(IEnumerable<IFactorableToken<T>>[] arguments);
-        IFactorableBracketsToken<T> CrateFunction(string funcName, IEnumerable<IFactorableToken<T>>[] arguments);
+        IFactorableBracketsToken<T> CreateBrackets(IFactorableToken<T>[][] arguments);
+        IFactorableBracketsToken<T> CrateFunction(string funcName, IFactorableToken<T>[][] arguments);
         IFactorableToken<T> CreateValue(string s);
         IFactorableToken<T> CreateVariable(string s);
         IFactorableToken<T> CreateOperator(string s);
@@ -17,14 +17,14 @@ namespace MathExpressionSolver.Tokens
     {
         public Dictionary<string, T> CustomVariables { get; set; }
 
-        public IFactorableBracketsToken<T> CreateBrackets(IEnumerable<IFactorableToken<T>>[] arguments)
+        public IFactorableBracketsToken<T> CreateBrackets(IFactorableToken<T>[][] arguments)
         {
             IFactorableBracketsToken<T> bracketToken = new BracketToken<T>();
             bracketToken.BracketedTokens[0] = arguments[0];
             return bracketToken;
         }
 
-        public IFactorableBracketsToken<T> CrateFunction(string funcName, IEnumerable<IFactorableToken<T>>[] arguments)
+        public IFactorableBracketsToken<T> CrateFunction(string funcName, IFactorableToken<T>[][] arguments)
         {
             IFactorableBracketsToken<T> bracketToken;
             switch (funcName)

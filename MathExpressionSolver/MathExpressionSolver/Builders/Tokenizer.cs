@@ -113,13 +113,13 @@ namespace MathExpressionSolver.Parser
             }
         }
 
-        private IEnumerable<IFactorableToken<T>>[] extractTokensFromFunctionArgs()
+        private IFactorableToken<T>[][] extractTokensFromFunctionArgs()
         {
             currTokenIndex++;
             return extractTokensFromBrakets();
         }
 
-        private IEnumerable<IFactorableToken<T>>[] extractTokensFromBrakets()
+        private IFactorableToken<T>[][] extractTokensFromBrakets()
         {
             if(isSomethingAfterCurrTokenIndex())
             {

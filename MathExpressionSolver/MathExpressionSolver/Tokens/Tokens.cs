@@ -197,7 +197,7 @@ namespace MathExpressionSolver.Tokens
 
     public abstract class FuncToken<T> : Token<T>, IFactorableBracketsToken<T>
     {
-        public IEnumerable<IFactorableToken<T>>[] BracketedTokens { get; set; }
+        public IFactorableToken<T>[][] BracketedTokens { get; set; }
 
         public FuncToken(int arguments) : base()
         {
@@ -205,7 +205,7 @@ namespace MathExpressionSolver.Tokens
             Priority = int.MaxValue;
 
             Children = new IToken<T>[arguments];
-            BracketedTokens = new IEnumerable<IFactorableToken<T>>[arguments];
+            BracketedTokens = new IFactorableToken<T>[arguments][];
         }
 
         public override T ReturnValue()
