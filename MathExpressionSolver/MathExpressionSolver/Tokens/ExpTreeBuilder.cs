@@ -3,23 +3,48 @@ using System.Linq;
 
 namespace MathExpressionSolver.Tokens
 {
+    /// <summary>
+    /// Converts linear array of <see cref="IFactorableToken"/> into an expression tree.
+    /// </summary>
+    /// <typeparam name="T">Token base type.</typeparam>
     class ExpTreeBuilder<T>
     {
         private IEnumerable<IFactorableToken<T>> rawTokens;
-        public IEnumerable<IFactorableToken<T>> RawTokens { private get { return rawTokens; } set { rawTokens = value; TreeTop = null; } }
-
-        public IToken<T> TreeTop { get; set; }
+        /// <summary>
+        /// Array of <see cref="IFactorableToken<T>"/> to be rebuild into an expression tree. 
+        /// </summary>
+        public IEnumerable<IFactorableToken<T>> RawTokens { private get { return rawTokens; } set { rawTokens = value; Clear(); } }
+        /// <summary>
+        /// The top <see cref="IToken{T}"/> of expression tree determined by <see cref="CreateExpressionTree"/>.
+        /// </summary>
+        public IToken<T> TreeTop { get; private set; }
 
         public ExpTreeBuilder()
         {
             rawTokens = new IFactorableToken<T>[0];
+            Clear();
         }
 
+        /// <summary>
+        /// Automatically sets <see cref="RawTokens"/> property.
+        /// </summary>
+        /// <param name="tokens">Array of <see cref="IFactorableToken<T>"/> to be rebuild into an expression tree.</param>
         public ExpTreeBuilder(IEnumerable<IFactorableToken<T>> tokens) : this()
         {
             RawTokens = tokens;
         }
 
+        /// <summary>
+        /// Cleares <see cref="TreeTop"/> and resets <see cref="ExpTreeBuilder{T}"/> state.
+        /// </summary>
+        public void Clear()
+        {
+            TreeTop = null;
+        }
+
+        /// <summary>
+        /// Creates an expression tree out of <see cref="RawTokens"/> and puts its top to <see cref="TreeTop"/>.
+        /// </summary>
         public void CreateExpressionTree()
         {
             Stack<IFactorableToken<T>> tokenStack = new Stack<IFactorableToken<T>>();
