@@ -60,7 +60,13 @@ namespace MathExpressionSolver.Tokens
                 placeCurrentToken(tokenStack, currToken);
 
             }
-            if (tokenStack.Count > 0) { TreeTop = tokenStack.Last(); } else { TreeTop = null; } //?Throw an exception?
+
+            if (tokenStack.Count > 0)
+            {
+                if(tokenStack.Peek().Type == TokenType.BinOperator) { throw new ExpTreeBuilderException("Binary operator: " + tokenStack.Peek().ToString() + " doesn't have right side."); }
+                TreeTop = tokenStack.Last();
+            }
+            else { TreeTop = null; } 
         }
 
         private void placeCurrentToken(Stack<IFactorableToken<T>> tokenStack, IFactorableToken<T> currToken)
