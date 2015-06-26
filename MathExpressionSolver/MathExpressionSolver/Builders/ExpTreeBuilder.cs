@@ -68,7 +68,7 @@ namespace MathExpressionSolver.Tokens
             if (tokenStack.Count > 0) { TreeTop = tokenStack.Last(); } else { TreeTop = null; } //?Throw an exception?
         }
 
-        private static void placeCurrentToken(Stack<IFactorableToken<T>> tokenStack, IFactorableToken<T> lastToken, IFactorableToken<T> currToken)
+        private void placeCurrentToken(Stack<IFactorableToken<T>> tokenStack, IFactorableToken<T> lastToken, IFactorableToken<T> currToken)
         {
             while (!tokenStack.IsEmpty() && tokenStack.Peek().Priority >= currToken.Priority) { lastToken = tokenStack.Pop(); }
 
@@ -83,7 +83,7 @@ namespace MathExpressionSolver.Tokens
             }
         }
 
-        private static void buildExpTreeInArguments(IFactorableBracketsToken<T> currToken)
+        private void buildExpTreeInArguments(IFactorableBracketsToken<T> currToken)
         {
             ExpTreeBuilder<T> argumentTokenTreeBuilder = new ExpTreeBuilder<T>();
             IEnumerable<IFactorableToken<T>>[] argumentsTokens = currToken.BracketedTokens;
