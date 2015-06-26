@@ -1,6 +1,7 @@
 ﻿using MathExpressionSolver.Parser;
 using MathExpressionSolver.Tokens;
 using System;
+using System.Collections.Generic;
 
 namespace MathExpressionSolver
 {
@@ -28,14 +29,17 @@ namespace MathExpressionSolver
         Tokenizer<T> tokenizer;
         ExpTreeBuilder<T> treeBuilder;
 
-        StorageHandler<T> storageHandler;
+        Dictionary<string, T> customVariables;
+
+  //      StorageHandler<T> storageHandler;
 
         public ProgramController()
         {
-            storageHandler = new StorageHandler<T>();
+            //     storageHandler = new StorageHandler<T>();
+            customVariables = new Dictionary<string, T>();
 
             parser = new ExpressionParser() { SkipWhiteSpace = true, SkipInvalidChars = true };
-            tokenFactory = new TokenFactory<T>() { CustomVariables = storageHandler.Variables };
+            tokenFactory = new TokenFactory<T>() { CustomVariables = customVariables };
             tokenizer = new Tokenizer<T>() { TokenFactory = tokenFactory };
             treeBuilder = new ExpTreeBuilder<T>();
         }
@@ -118,7 +122,7 @@ namespace MathExpressionSolver
                 try
                 {
                     T result = computeResult();
-                    storageHandler.AddVariable(variableName, result);
+                    customVariables.Add(variableName, result);
                 }
                 catch
                 {
