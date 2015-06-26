@@ -49,7 +49,6 @@ namespace MathExpressionSolver.Tokens
         public void CreateExpressionTree()
         {
             Stack<IFactorableToken<T>> tokenStack = new Stack<IFactorableToken<T>>();
-            bool rightIsEmpty = false;
 
             foreach (IFactorableToken<T> currToken in rawTokens)
             {
