@@ -17,14 +17,14 @@ namespace MathExpressionSolver.Tokens
     {
         public Dictionary<string, T> CustomVariables { get; set; }
 
-        public IFactorableBracketsToken<T> CreateBrackets(IFactorableToken<T>[][] arguments)
+        public virtual IFactorableBracketsToken<T> CreateBrackets(IFactorableToken<T>[][] arguments)
         {
             IFactorableBracketsToken<T> bracketToken = new BracketToken<T>();
             bracketToken.BracketedTokens[0] = arguments[0];
             return bracketToken;
         }
 
-        public IFactorableBracketsToken<T> CrateFunction(string funcName, IFactorableToken<T>[][] arguments)
+        public virtual IFactorableBracketsToken<T> CrateFunction(string funcName, IFactorableToken<T>[][] arguments)
         {
             IFactorableBracketsToken<T> bracketToken;
             switch (funcName)
@@ -57,17 +57,17 @@ namespace MathExpressionSolver.Tokens
             return bracketToken;
         }
 
-        public IFactorableToken<T> CreateValue(string s)
+        public virtual IFactorableToken<T> CreateValue(string s)
         {
             return (IFactorableToken<T>)new ItemToken<double>() { Child = double.Parse(s) };
         }
 
-        public IFactorableToken<T> CreateVariable(string s)
+        public virtual IFactorableToken<T> CreateVariable(string s)
         {
             return (CustomVariables != null && CustomVariables.ContainsKey(s)) ? new ItemToken<T>() { Child = CustomVariables[s] } : null;
         }
 
-        public IFactorableToken<T> CreateOperator(string s)
+        public virtual IFactorableToken<T> CreateOperator(string s)
         {
             switch (s)
             {
