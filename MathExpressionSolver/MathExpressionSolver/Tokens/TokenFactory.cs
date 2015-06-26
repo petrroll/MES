@@ -6,7 +6,7 @@ namespace MathExpressionSolver.Tokens
     {
         Dictionary<string, T> CustomVariables { get; set; }
         IFactorableBracketsToken<T> CreateBrackets(IFactorableToken<T>[][] arguments);
-        IFactorableBracketsToken<T> CrateFunction(string funcName, IFactorableToken<T>[][] arguments);
+        IFactorableBracketsToken<T> CrateFunction(string s, IFactorableToken<T>[][] arguments);
         IFactorableToken<T> CreateValue(string s);
         IFactorableToken<T> CreateVariable(string s);
         IFactorableToken<T> CreateOperator(string s);
@@ -24,10 +24,10 @@ namespace MathExpressionSolver.Tokens
             return bracketToken;
         }
 
-        public virtual IFactorableBracketsToken<T> CrateFunction(string funcName, IFactorableToken<T>[][] arguments)
+        public virtual IFactorableBracketsToken<T> CrateFunction(string s, IFactorableToken<T>[][] arguments)
         {
             IFactorableBracketsToken<T> bracketToken;
-            switch (funcName)
+            switch (s)
             {
                 case "exp":
                     bracketToken = (IFactorableBracketsToken<T>)new ExpToken();
@@ -51,7 +51,7 @@ namespace MathExpressionSolver.Tokens
                     bracketToken = (IFactorableBracketsToken<T>)new SqrtFunc();
                     break;
                 default:
-                    throw new TokenizerException("No function named " + funcName + " exists.");
+                    throw new TokenizerException("No function named " + s + " exists.");
             }
             bracketToken.BracketedTokens = arguments;
             return bracketToken;
