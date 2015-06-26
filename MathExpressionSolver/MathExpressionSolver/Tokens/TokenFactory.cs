@@ -2,6 +2,10 @@
 
 namespace MathExpressionSolver.Tokens
 {
+    /// <summary>
+    /// Handles Token creation out of string description.
+    /// </summary>
+    /// <typeparam name="T">Token base type.</typeparam>
     public interface ITokenFactory<T>
     {
         Dictionary<string, T> CustomVariables { get; set; }

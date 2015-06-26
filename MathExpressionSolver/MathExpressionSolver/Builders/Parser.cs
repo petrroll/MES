@@ -71,11 +71,8 @@ namespace MathExpressionSolver.Parser
         }
 
         /// <summary>
-        /// Parses the expression and appends output to a corresponding variable.
+        /// Parses the expression set in <see cref="StringExpression"/> and appends result to <see cref="ParsedItems"/>.
         /// </summary>
-        /// <remarks>
-        /// Parses the expression set in <see cref="StringExpression"/> and saves the result to <see cref="ParsedItems"/>.
-        /// </remarks>
         public void ParseExpression()
         {
             ParsedItemType lastType = ParsedItemType.NotSet;
