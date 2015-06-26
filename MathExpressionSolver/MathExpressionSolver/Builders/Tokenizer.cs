@@ -1,8 +1,8 @@
-﻿using MathExpressionSolver.Tokens;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using MathExpressionSolver.Parser;
 
-namespace MathExpressionSolver.Parser
+namespace MathExpressionSolver.Tokens
 {
     /// <summary>
     /// Creates linear array of <see cref="IFactorableToken<T>"/> out of <see cref="ParsedItem"/> array.
