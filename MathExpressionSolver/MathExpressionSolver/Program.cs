@@ -32,14 +32,12 @@ namespace MathExpressionSolver
 
         public ProgramController()
         {
-            parser = new ExpressionParser() { SkipWhiteSpace = true, SkipInvalidChars = true };
-            tokenFactory = new TokenFactory<T>();
-            tokenizer = new Tokenizer<T>() { TokenFactory = tokenFactory };
-            treeBuilder = new ExpTreeBuilder<T>();
-    
             storageHandler = new StorageHandler<T>();
 
-            tokenizer.CustomVariables = storageHandler.Variables;
+            parser = new ExpressionParser() { SkipWhiteSpace = true, SkipInvalidChars = true };
+            tokenFactory = new TokenFactory<T>() { CustomVariables = storageHandler.Variables };
+            tokenizer = new Tokenizer<T>() { TokenFactory = tokenFactory };
+            treeBuilder = new ExpTreeBuilder<T>();
         }
 
         public void Work(string input)

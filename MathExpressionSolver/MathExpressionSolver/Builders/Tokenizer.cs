@@ -37,11 +37,6 @@ namespace MathExpressionSolver.Parser
         /// Tokenized <see cref="DataToBeTokenized"/> (after <see cref="Tokenize"/> is called).
         /// </summary>
         public IFactorableToken<T>[] Tokens { get { return tokens.ToArray(); } }
-        /// <summary>
-        /// Contains dictionary of custom varibles with signare of 'name - value'.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">Set before <see cref="TokenFactory"/> has been specified.</exception>
-        public Dictionary<string, T> CustomVariables { set { if (TokenFactory == null) { throw new InvalidOperationException("Token factory not set."); } TokenFactory.CustomVariables = value; } }
 
         public Tokenizer()
         {
