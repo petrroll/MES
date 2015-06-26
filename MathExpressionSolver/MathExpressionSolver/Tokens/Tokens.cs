@@ -86,7 +86,7 @@ namespace MathExpressionSolver.Tokens
 
         public override string ToString()
         {
-            return LeftChild.ToString() + " - " + RightChild.ToString();
+            return LeftChild?.ToString() + " - " + RightChild?.ToString();
         }
     }
 
@@ -107,7 +107,7 @@ namespace MathExpressionSolver.Tokens
 
         public override string ToString()
         {
-            return LeftChild.ToString() + " + " + RightChild.ToString();
+            return LeftChild?.ToString() + " + " + RightChild?.ToString();
         }
     }
 
@@ -128,7 +128,7 @@ namespace MathExpressionSolver.Tokens
 
         public override string ToString()
         {
-            return LeftChild.ToString() + " * " + RightChild.ToString();
+            return LeftChild?.ToString() + " * " + RightChild?.ToString();
         }
     }
 
@@ -149,7 +149,7 @@ namespace MathExpressionSolver.Tokens
 
         public override string ToString()
         {
-            return LeftChild.ToString() + " / " + RightChild.ToString();
+            return LeftChild?.ToString() + " / " + RightChild?.ToString();
         }
     }
 
@@ -170,7 +170,7 @@ namespace MathExpressionSolver.Tokens
 
         public override string ToString()
         {
-            return LeftChild.ToString() + " >" + RightChild.ToString();
+            return LeftChild?.ToString() + " >" + RightChild?.ToString();
         }
     }
 
@@ -191,7 +191,7 @@ namespace MathExpressionSolver.Tokens
 
         public override string ToString()
         {
-            return LeftChild.ToString() + " >" + RightChild.ToString();
+            return LeftChild?.ToString() + " >" + RightChild?.ToString();
         }
     }
 
@@ -233,7 +233,7 @@ namespace MathExpressionSolver.Tokens
 
         public override string ToString()
         {
-            return "(" + Children[0].ToString() + ")";
+            return "(" + Children[0]?.ToString() + ")";
         }
     }
 
@@ -251,7 +251,7 @@ namespace MathExpressionSolver.Tokens
 
         public override string ToString()
         {
-            return "exp(" + Children[0].ToString() + ")";
+            return "exp(" + Children[0]?.ToString() + ")";
         }
     }
 
@@ -269,7 +269,7 @@ namespace MathExpressionSolver.Tokens
 
         public override string ToString()
         {
-            return "ln(" + Children[0].ToString() + ")";
+            return "ln(" + Children[0]?.ToString() + ")";
         }
     }
 
@@ -287,7 +287,7 @@ namespace MathExpressionSolver.Tokens
 
         public override string ToString()
         {
-            return "sqrt(" + Children[0].ToString() + ")";
+            return "sqrt(" + Children[0]?.ToString() + ")";
         }
     }
 
@@ -305,7 +305,7 @@ namespace MathExpressionSolver.Tokens
 
         public override string ToString()
         {
-            return "sin(" + Children[0].ToString() + ")";
+            return "sin(" + Children[0]?.ToString() + ")";
         }
     }
 
@@ -323,7 +323,7 @@ namespace MathExpressionSolver.Tokens
 
         public override string ToString()
         {
-            return "cos(" + Children[0].ToString() + ")";
+            return "cos(" + Children[0]?.ToString() + ")";
         }
     }
 
@@ -341,7 +341,7 @@ namespace MathExpressionSolver.Tokens
 
         public override string ToString()
         {
-            return "tan(" + Children[0].ToString() + ")";
+            return "tan(" + Children[0]?.ToString() + ")";
         }
     }
 
@@ -359,7 +359,7 @@ namespace MathExpressionSolver.Tokens
 
         public override string ToString()
         {
-            return "if(" + Children[0].ToString() + ";" + Children[1].ToString() + ";" + Children[2].ToString() + ")";
+            return "if(" + Children[0]?.ToString() + ";" + Children[1]?.ToString() + ";" + Children[2]?.ToString() + ")";
         }
     }
 
