@@ -51,7 +51,7 @@ namespace MathExpressionSolver.Tokens
                     bracketToken = (IFactorableBracketsToken<T>)new SqrtFunc();
                     break;
                 default:
-                    return null;
+                    throw new TokenizerException("No function named " + funcName + " exists.");
             }
             bracketToken.BracketedTokens = arguments;
             return bracketToken;
@@ -64,7 +64,8 @@ namespace MathExpressionSolver.Tokens
 
         public virtual IFactorableToken<T> CreateVariable(string s)
         {
-            return (CustomVariables != null && CustomVariables.ContainsKey(s)) ? new ItemToken<T>() { Child = CustomVariables[s] } : null;
+            if(CustomVariables != null && CustomVariables.ContainsKey(s)) { return new ItemToken<T>() { Child = CustomVariables[s] }; }
+            else { throw new TokenizerException("No variable named " + s + " exists."); }
         }
 
         public virtual IFactorableToken<T> CreateOperator(string s)
@@ -84,7 +85,7 @@ namespace MathExpressionSolver.Tokens
                 case "<":
                     return (IFactorableToken<T>)new SmlrToken();
                 default:
-                    return null;
+                    throw new TokenizerException("No operator named " + s + " exists.");
             }
         }
     }
