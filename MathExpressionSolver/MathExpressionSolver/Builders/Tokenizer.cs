@@ -193,7 +193,7 @@ namespace MathExpressionSolver.Tokens
     }
 
     [System.Serializable]
-    public class TokenizerException : System.Exception
+    public class TokenizerException : ExpressionException
     {
         public TokenizerException() { }
         public TokenizerException(string message) : base(message) { }

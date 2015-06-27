@@ -2,6 +2,7 @@
 using MathExpressionSolver.Tokens;
 using System;
 using System.Collections.Generic;
+using MathExpressionSolver.Controller;
 
 namespace MathExpressionSolver
 {
@@ -10,166 +11,59 @@ namespace MathExpressionSolver
         static void Main(string[] args)
         {
             string input;
-            ProgramController<double> controller = new ProgramController<double>();
+            Controller<double> controller = initController();
+
             while (true)
             {
                 input = Console.ReadLine();
-                if (input == "!TEST!") controller.TestIfWorks();
-                else controller.Work(input);
-            }
-        }
-    }
-
-    class ProgramController<T> 
-    {
-        ExpressionParser parser;
-        ParsedItem[] parsedItems;
-
-        TokenFactory<T> tokenFactory;
-        Tokenizer<T> tokenizer;
-        ExpTreeBuilder<T> treeBuilder;
-
-        Dictionary<string, T> customVariables;
-
-  //      StorageHandler<T> storageHandler;
-
-        public ProgramController()
-        {
-            //     storageHandler = new StorageHandler<T>();
-            customVariables = new Dictionary<string, T>();
-
-            parser = new ExpressionParser() { SkipWhiteSpace = true, SkipInvalidChars = true };
-            tokenFactory = new TokenFactory<T>() { CustomVariables = customVariables };
-            tokenizer = new Tokenizer<T>() { TokenFactory = tokenFactory };
-            treeBuilder = new ExpTreeBuilder<T>();
-        }
-
-        public void Work(string input)
-        {
-            handleInput(input);
-            work();
-            writeOutResult();
-        }
-
-        public void TestIfWorks()
-        {
-            testInput("3*(7+7)/2-2*6/7- &&&  (&6 +&9) *8-  (2+ 2/3*(6+exp  (2*7-6* 2 ) - 8)+(2>1))", "-107,306989780239");
-            testInput("3*(7+7)/2-2*6/7-(6+9)*8-(2+2/3*(6+exp(2*7-6*2)-8)+(2>1))", "-107,306989780239");
-
-            testInput("3 > 1", "1");
-            testInput("((2+1)-(3+1)*2)", "-5");
-
-            //testInput("2&3 + 5", "8");
-
-            testInput("a=(3/6*5)", "2,5");
-            testInput("asdfsdf=(5 + 3)", "8");
-
-            testInput("Pi = 3,4", "3,4");
-            testInput("3 - Pi + 8", "7,6");
-
-            testInput("a", "2,5");
-            testInput("asdfsdf", "8");
-
-            testInput("exp(a) + asdfsdf - 2*Pi", "13,3824939607035");
-
-            testInput("if(1;2;3)", "2");
-            testInput("if(0;2;3)", "3");
-
-            testInput("if((exp(100)> Pi)*2;exp(a) + asdfsdf - 2*Pi;2*3-asdfsdf)", "13,3824939607035");
-            testInput("(if((exp(100)> Pi)*2;exp(a) + asdfsdf - 2*Pi;2*3-asdfsdf))*2>1", "1");
-        }
-
-        private void testInput(string input, string output)
-        {
-            handleInput(input);
-            work();
-            testIfWorking(output);
-        }
-
-        private void handleInput(string input)
-        {
-            parser.StringExpression = input;
-            parser.ParseExpression();
-
-            parsedItems = parser.ParsedItems;
-
-        }
-
-        private void work()
-        {
-            bool isVariable = false;
-            bool isFunctrion = false;
-
-            string variableName = string.Empty;
-            string functionName = string.Empty;
-
-            if(parsedItems[0].Type == ParsedItemType.Name)
-            {
-                if (parsedItems.Length > 1 &&
-                    (parsedItems[1].Type == ParsedItemType.Operator && parsedItems[1].Value == "="))
-                {
-                    isVariable = true;
-                    variableName = parsedItems[0].Value;
-
-                    parsedItems = parsedItems.SubArray(2);
-                }
-            }
-
-            prepareTree();
-
-            if(isVariable)
-            {
-                try
-                {
-                    T result = computeResult();
-                    customVariables.Add(variableName, result);
-                }
-                catch
-                {
-                    
-                }
-  
+                if (input == "!TEST!") testSystem(controller);
+                else Console.WriteLine(controller.ExecuteExpressionSafe(input));
             }
         }
 
-        private void prepareTree()
+        private static Controller<double> initController()
         {
-            tokenizer.DataToBeTokenized = parsedItems;
-            tokenizer.Tokenize();
+            ExpressionParser parser = new ExpressionParser() { SkipWhiteSpace = true, SkipInvalidChars = true };
 
-            treeBuilder.RawTokens = (IFactorableToken<T>[])tokenizer.Tokens;
-            treeBuilder.CreateExpressionTree();  
+            Dictionary<string, double> customVariables = new Dictionary<string, double>();
+            TokenFactory<double> factory = new TokenFactory<double>() { CustomVariables = customVariables };
+            Tokenizer<double> tokenizer = new Tokenizer<double>() { TokenFactory = factory };
+
+            ExpTreeBuilder<double> treeBuilder = new ExpTreeBuilder<double>();
+
+            return new Controller<double>() { CustomVariables = customVariables, ExpTreeBuilder = treeBuilder, Parser = parser, Tokenizer = tokenizer };
         }
 
-        private void testIfWorking(string exptectedResult)
+        private static void testSystem(Controller<double> contr)
         {
-            string realResult = computeResult().ToString();
-            bool isOk = (exptectedResult == realResult);
-            Console.WriteLine(isOk.ToString() + " | " + realResult);
+            testInput("3*(7+7)/2-2*6/7- &&&  (&6 +&9) *8-  (2+ 2/3*(6+exp  (2*7-6* 2 ) - 8)+(2>1))", "-107,306989780239", contr);
+            testInput("3*(7+7)/2-2*6/7-(6+9)*8-(2+2/3*(6+exp(2*7-6*2)-8)+(2>1))", "-107,306989780239", contr);
 
-            if (!isOk)
-            {
-                //Breakpoint;
-            }
+            testInput("3 > 1", "1", contr);
+            testInput("((2+1)-(3+1)*2)", "-5", contr);
+
+            testInput("a=(3/6*5)", "a = 2,5", contr);
+            testInput("asdfsdf=(5 + 3)", "asdfsdf = 8", contr);
+
+            testInput("Pi = 3,4", "Pi = 3,4", contr);
+            testInput("3 - Pi + 8", "7,6", contr);
+
+            testInput("a", "2,5", contr);
+            testInput("asdfsdf", "8", contr);
+
+            testInput("exp(a) + asdfsdf - 2*Pi", "13,3824939607035", contr);
+
+            testInput("if(1;2;3)", "2", contr);
+            testInput("if(0;2;3)", "3", contr);
+
+            testInput("if((exp(100)> Pi)*2;exp(a) + asdfsdf - 2*Pi;2*3-asdfsdf)", "13,3824939607035", contr);
+            testInput("(if((exp(100)> Pi)*2;exp(a) + asdfsdf - 2*Pi;2*3-asdfsdf))*2>1", "1", contr);
         }
 
-        private T computeResult()
+        private static void testInput(string expression, string wantedResult, Controller<double> controller)
         {
-            return treeBuilder.TreeTop.ReturnValue();
-        }
-
-        private void writeOutResult()
-        {
-            string result = string.Empty;
-            try
-            {
-                result = computeResult().ToString();
-            }
-            catch (Exception ex)
-            {
-                result = "Expression not entered correctly.";
-            }
-            Console.WriteLine(result);
+            string result = controller.ExecuteExpression(expression);
+            Console.WriteLine("{0} | {1} -EQ {2}", result == wantedResult, result, wantedResult);
         }
     }
 }

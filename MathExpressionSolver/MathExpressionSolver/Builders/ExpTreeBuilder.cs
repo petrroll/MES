@@ -124,7 +124,7 @@ namespace MathExpressionSolver.Tokens
 
 
     [System.Serializable]
-    public class ExpTreeBuilderException : System.Exception
+    public class ExpTreeBuilderException : ExpressionException
     {
         public ExpTreeBuilderException() { }
         public ExpTreeBuilderException(string message) : base(message) { }
