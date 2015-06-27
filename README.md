@@ -5,17 +5,20 @@ __MES__ is a mathematical expressions evaluator (let's just say a clever calcula
 * Binary operators (+, -, *, ...).
 * Goniometric functions (sin, cos, tan).
 * Automatic bool-double retyping (true : 1; false : 0).
-* Variables memory (useful for constans).
-* Support for (though right know just hard coded) custom functions with arbitrary number of arguments.
+* Custom variables support (useful for e.g. constans).
+* Functions with arbitrary number of arguments support.
   * Proof-of-conncept 'if(condition > 0; true-result; false-result)' function.
-* Completely modular 'Parser-Tokenizer-Expression tree builder' system where any component can be changed.
-  * Enabling matrix calculations requires only adding some logic to Tokenizer and Parser and implementing matrix operators tokens.
+* Modular 'Parser-Tokenizer-Expression tree builder' system..
+  * Adding matrixes support requires only: 
+    * Adding some logic to TokenFactory and Parser
+	* Implementing matrix operators tokens.
+* Comprehensive Exception system 
+  * With reasonable Exceptions messages indicating where the error is.
+* Robust Parser engine.
 
 ###Issues:
-- The controller class has never been refactored. 
-- The generics are overused and the whole object architecture is a bit too bit complicated.
-- The Storage variable and Storage function architecture is not very well thought through.
-- Exceptions are not (yet) implemented so MES always tries to calculate something which results in nonsensical results on invalid input.
+- Custom functions are not yet implemented.
+- Tokens hierarchy and TokenFactory are not best designed.
 
 ###Lisense:
 Do whatever you wish with it.
