@@ -105,7 +105,7 @@ namespace MathExpressionSolver.Tokens
         {
             if (isSomethingAfterCurrTokenIndex() && parsedItems[currTokenIndex + 1].Type == ParsedItemType.LBracket)
             {
-                return TokenFactory.CrateFunction(parsedItems[currTokenIndex].Value, extractTokensFromFunctionArgs());
+                return TokenFactory.CreateFunction(parsedItems[currTokenIndex].Value, extractTokensFromFunctionArgs());
             }
             else
             {

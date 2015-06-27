@@ -6,7 +6,7 @@ namespace MathExpressionSolver.Tokens
     {
         Dictionary<string, T> CustomVariables { get; set; }
         IFactorableBracketsToken<T> CreateBrackets(IFactorableToken<T>[][] arguments);
-        IFactorableBracketsToken<T> CrateFunction(string s, IFactorableToken<T>[][] arguments);
+        IFactorableBracketsToken<T> CreateFunction(string s, IFactorableToken<T>[][] arguments);
         IFactorableToken<T> CreateValue(string s);
         IFactorableToken<T> CreateVariable(string s);
         IFactorableToken<T> CreateOperator(string s);
@@ -28,7 +28,7 @@ namespace MathExpressionSolver.Tokens
             return bracketToken;
         }
 
-        public virtual IFactorableBracketsToken<T> CrateFunction(string s, IFactorableToken<T>[][] arguments)
+        public virtual IFactorableBracketsToken<T> CreateFunction(string s, IFactorableToken<T>[][] arguments)
         {
             IFactorableBracketsToken<T> bracketToken;
             switch (s)
@@ -69,7 +69,7 @@ namespace MathExpressionSolver.Tokens
 
     public class DoubleTokenFactory : TokenFactory<double>
     {
-        public override IFactorableBracketsToken<double> CrateFunction(string s, IFactorableToken<double>[][] arguments)
+        public override IFactorableBracketsToken<double> CreateFunction(string s, IFactorableToken<double>[][] arguments)
         {
             IFactorableBracketsToken<double> bracketToken;
             switch (s)
@@ -96,7 +96,7 @@ namespace MathExpressionSolver.Tokens
                     bracketToken = new SqrtFunc();
                     break;
                 default:
-                    return base.CrateFunction(s, arguments);
+                    return base.CreateFunction(s, arguments);
             }
             bracketToken.BracketedTokens = arguments;
             return bracketToken;
