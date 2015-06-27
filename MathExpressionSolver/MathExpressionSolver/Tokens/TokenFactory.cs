@@ -2,10 +2,6 @@
 
 namespace MathExpressionSolver.Tokens
 {
-    /// <summary>
-    /// Handles Token creation out of string description.
-    /// </summary>
-    /// <typeparam name="T">Token base type.</typeparam>
     public interface ITokenFactory<T>
     {
         Dictionary<string, T> CustomVariables { get; set; }
@@ -17,6 +13,10 @@ namespace MathExpressionSolver.Tokens
 
     }
 
+    /// <summary>
+    /// Handles <see cref="IFactorableToken{T}"/> creation out of <see cref="string"/> description.
+    /// </summary>
+    /// <typeparam name="T">Token base type.</typeparam>
     public class TokenFactory<T> : ITokenFactory<T>
     {
         public Dictionary<string, T> CustomVariables { get; set; }
