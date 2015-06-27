@@ -26,7 +26,7 @@ namespace MathExpressionSolver
             ExpressionParser parser = new ExpressionParser() { SkipWhiteSpace = true, SkipInvalidChars = true };
 
             Dictionary<string, double> customVariables = new Dictionary<string, double>();
-            TokenFactory<double> factory = new TokenFactory<double>() { CustomVariables = customVariables };
+            TokenFactory<double> factory = new DoubleTokenFactory() { CustomVariables = customVariables };
             Tokenizer<double> tokenizer = new Tokenizer<double>() { TokenFactory = factory };
 
             ExpTreeBuilder<double> treeBuilder = new ExpTreeBuilder<double>();
