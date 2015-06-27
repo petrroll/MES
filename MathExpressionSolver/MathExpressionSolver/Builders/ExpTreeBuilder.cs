@@ -66,7 +66,7 @@ namespace MathExpressionSolver.Tokens
                 if(tokenStack.Peek().Type == TokenType.BinOperator) { throw new ExpTreeBuilderException("Binary operator: " + tokenStack.Peek().ToString() + " doesn't have right side."); }
                 TreeTop = tokenStack.Last();
             }
-            else { TreeTop = null; } 
+            else { TreeTop = null; throw new ExpTreeBuilderException("Expression is empty."); } 
         }
 
         private void placeCurrentToken(Stack<IFactorableToken<T>> tokenStack, IFactorableToken<T> currToken)

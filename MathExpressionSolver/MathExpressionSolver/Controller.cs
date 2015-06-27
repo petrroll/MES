@@ -127,7 +127,7 @@ namespace MathExpressionSolver.Controller
             try { return ExecuteExpression(expression); }
             catch(ExpressionException ex)
             {
-               return ex.Message;
+               return "Error: " + ex.Message;
             }
             catch(Exception ex)
             {
