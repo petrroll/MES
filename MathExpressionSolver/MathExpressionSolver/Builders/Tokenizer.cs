@@ -67,7 +67,7 @@ namespace MathExpressionSolver.Tokens
         /// Tokenizes the <see cref="DataToBeTokenized"/> and appends the result to <see cref="Tokens"/>.
         /// </summary>
         /// <exception cref="TokenizerException">Expression can't be properly tokenized.</exception>
-        /// <exception cref="InvalidOperationException"><see cref="Tokenize"/> is called before <see cref="TokenFactory"/> is set.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="Tokenize"/> is called without set <see cref="TokenFactory"/>.</exception>
         public void Tokenize()
         {
             if(TokenFactory == null)
