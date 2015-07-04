@@ -99,17 +99,29 @@ namespace MathExpressionSolver.Controller
         /// <returns>String with information about expression result.</returns>
         public string ExecuteExpression(string expression)
         {
+
+            string exprRegex = @"\s*=\s*(?<expr>.*)";
             string nameRegex = @"(\p{Ll}|\p{Lu}|\p{Lt}|\p{Lo}|\p{Lm}|_)+";
+            Match custVar = Regex.Match(expression, @"^(?<varName>" + nameRegex + @")" + exprRegex);
 
-            if (Regex.IsMatch(expression, @"^" + nameRegex + @"\s*="))
+            string argumentsRegex = @"((?<argName>" + nameRegex + @")(;)?|(;\s)?)+";
+            Match custFunc = Regex.Match(expression, @"^(?<funcName>" + nameRegex + @")\(" + argumentsRegex + @"\)" + exprRegex);
+
+            if (custVar.Success)
             {
-                Match exprMatch = Regex.Match(expression, @"^(?<varName>" + nameRegex + @")\s*=\s*(?<varExpr>.*)");
-
-                string variableName = exprMatch.Groups["varName"].Value;
-                string variableExpression = exprMatch.Groups["varExpr"].Value;
+                string variableName = custVar.Groups["varName"].Value;
+                string variableExpression = custVar.Groups["expr"].Value;
 
                 string variableValue = SaveVariable(variableName, variableExpression).ToString();
                 return variableName + " = " + variableValue;
+            }
+            else if (custFunc.Success)
+            {
+                string funcName = custFunc.Groups["funcName"].Value;
+                string variableExpression = custFunc.Groups["expr"].Value;
+                string[] argumentsNames = custFunc.Groups["argName"].Captures.ToArray();
+
+                throw new NotImplementedException("Custom functions not yet implemented.");
             }
             else
             {

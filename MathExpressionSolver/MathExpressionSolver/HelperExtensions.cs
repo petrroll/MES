@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace MathExpressionSolver
 {
@@ -36,6 +37,23 @@ namespace MathExpressionSolver
         public static bool IsEmpty<T>(this Stack<T> stack)
         {
             return (stack.Count == 0);
+        }
+
+        /// <summary>
+        /// Returns an array of <see cref="string"/> consisting of captured substrings.
+        /// </summary>
+        /// <returns>Returns array of strings with values from <see cref="CaptureCollection"/></returns>
+        public static string[] ToArray(this CaptureCollection cc)
+        {
+            int index = 0;
+            string[] results = new string[cc.Count];
+            foreach(Capture capture in cc)
+            {
+                results[index] = capture.Value;
+                index++;
+            }
+
+            return results;
         }
     }
 
