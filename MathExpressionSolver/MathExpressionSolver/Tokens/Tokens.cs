@@ -4,7 +4,7 @@ namespace MathExpressionSolver.Tokens
 {
     public enum TokenType { BinOperator, Function, Element, Brackets };
 
-    public abstract class Token<T> : IToken<T>, IFactorableToken<T>
+    public abstract class Token<T> : IFactorableToken<T>
     {
         virtual public int Priority { get; protected set; }
         virtual public TokenType Type { get; protected set; }

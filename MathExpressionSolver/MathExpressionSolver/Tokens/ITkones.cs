@@ -18,14 +18,25 @@ namespace MathExpressionSolver.Tokens
         IToken<T> RightChild { get; set; }
     }
 
+    public interface IChildrenToken<T> : IToken<T>
+    {
+        IToken<T>[] Children { get; }
+    }
+
+    public interface ICustFuncToken<T> : IChildrenToken<T> { }
+    public interface IArgumentToken<T> : IToken<T>
+    {
+        ICustFuncToken<T> CustFunction { get; set; }
+        int NthArgument { get; set; }
+    }
+
     public interface IFactorableToken<T> : IToken<T>
     {
         int Priority { get; }
         TokenType Type { get; }
-        IToken<T>[] Children { get; }
     }
 
-    public interface IFactorableBracketsToken<T> : IFactorableToken<T>
+    public interface IFactorableBracketsToken<T> : IFactorableToken<T>, IChildrenToken<T>
     {
         IFactorableToken<T>[][] BracketedTokens { get; set; }
     }
