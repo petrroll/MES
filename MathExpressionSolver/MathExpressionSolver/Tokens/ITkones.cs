@@ -5,7 +5,6 @@ namespace MathExpressionSolver.Tokens
     public interface IToken<T>
     {
         T ReturnValue();
-        IToken<T>[] Children { get; }
     }
 
     public interface IUnToken<T> : IToken<T>
@@ -23,6 +22,7 @@ namespace MathExpressionSolver.Tokens
     {
         int Priority { get; }
         TokenType Type { get; }
+        IToken<T>[] Children { get; }
     }
 
     public interface IFactorableBracketsToken<T> : IFactorableToken<T>
