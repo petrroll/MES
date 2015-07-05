@@ -23,11 +23,16 @@ namespace MathExpressionSolver.Tokens
         IToken<T>[] Children { get; }
     }
 
-    public interface ICustFuncToken<T> : IChildrenToken<T> { }
+    public interface ICustFuncToken<T> : IChildrenToken<T>
+    {
+        IToken<T> FuncTopToken { get; set; }
+        T GetArgValue(int ArgID);
+    }
+
     public interface IArgumentToken<T> : IToken<T>
     {
         ICustFuncToken<T> CustFunction { get; set; }
-        int NthArgument { get; set; }
+        int ArgID { get; set; }
     }
 
     public interface IFactorableToken<T> : IToken<T>

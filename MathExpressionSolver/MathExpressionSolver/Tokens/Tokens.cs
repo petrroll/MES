@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace MathExpressionSolver.Tokens
+﻿namespace MathExpressionSolver.Tokens
 {
     public enum TokenType { BinOperator, Function, Element, Brackets };
 
@@ -49,6 +47,46 @@ namespace MathExpressionSolver.Tokens
         public override string ToString()
         {
             return Child.ToString();
+        }
+    }
+
+    public class ArgToken<T> : Token<T>, IArgumentToken<T>
+    {
+        public virtual ICustFuncToken<T> CustFunction { get; set; }
+        public virtual int ArgID { get; set; }
+
+        public ArgToken()
+        {
+            Children = new IToken<T>[0];
+            Type = TokenType.Function;
+            Priority = int.MaxValue;
+        }
+
+        public override T ReturnValue()
+        {
+            return CustFunction.GetArgValue(ArgID);
+        }
+    }
+
+    public class CustFuncToken<T> : Token<T>, ICustFuncToken<T>
+    {
+        public IToken<T> FuncTopToken { get; set; }
+
+        public CustFuncToken(int numOfArgs)
+        {
+            Children = new IToken<T>[numOfArgs];
+            Type = TokenType.Function;
+            Priority = int.MaxValue;
+        }
+
+        public T GetArgValue(int ArgID)
+        {
+            return Children[ArgID].ReturnValue();
+        }
+
+        public override T ReturnValue()
+        {
+            return FuncTopToken.ReturnValue();
         }
     }
 
