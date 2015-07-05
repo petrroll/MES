@@ -9,7 +9,7 @@ namespace MathExpressionSolver.Tokens
         virtual public int Priority { get; protected set; }
         virtual public TokenType Type { get; protected set; }
 
-        public IToken<T>[] Children { get; protected set; }
+        virtual public IToken<T>[] Children { get; protected set; }
         abstract public T ReturnValue();
     }
 
@@ -32,8 +32,8 @@ namespace MathExpressionSolver.Tokens
 
     public class ItemToken<T> : UnToken<T>
     {
-        new public T Child { get { return Children[0]; } set { Children[0] = value; } }
-        new public T[] Children { get; protected set; }
+        new virtual public T Child { get { return Children[0]; } set { Children[0] = value; } }
+        new virtual public T[] Children { get; protected set; }
 
         public ItemToken() : base()
         {
@@ -54,8 +54,8 @@ namespace MathExpressionSolver.Tokens
 
     public abstract class BinOpToken<T> : Token<T>, IBinToken<T>
     {
-        public IToken<T> LeftChild { get { return Children[0]; } set { Children[0] = value; } }
-        public IToken<T> RightChild { get { return Children[1]; } set { Children[1] = value; } }
+        public virtual IToken<T> LeftChild { get { return Children[0]; } set { Children[0] = value; } }
+        public virtual IToken<T> RightChild { get { return Children[1]; } set { Children[1] = value; } }
 
         public BinOpToken() : base()
         {
@@ -197,7 +197,7 @@ namespace MathExpressionSolver.Tokens
 
     public abstract class FuncToken<T> : Token<T>, IFactorableBracketsToken<T>
     {
-        public IFactorableToken<T>[][] BracketedTokens { get; set; }
+        public virtual IFactorableToken<T>[][] BracketedTokens { get; set; }
 
         public FuncToken(int arguments) : base()
         {
