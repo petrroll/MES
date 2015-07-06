@@ -144,7 +144,7 @@ namespace MathExpressionSolver.Tokens
                     else if (parsedItems[currTokenIndex].Type == ParsedItemType.LBracket) { bracketsLevel++; }
 
                     if (bracketsLevel == 1 && parsedItems[currTokenIndex].Type == ParsedItemType.Separator ||
-                        bracketsLevel == 0 && parsedItems[currTokenIndex].Type == ParsedItemType.RBracket)
+                        (bracketsLevel == 0 && parsedItems[currTokenIndex].Type == ParsedItemType.RBracket && length > 0))
                     {
                         arguments.Add(returnTokenizedSubArray(argumentsTokenizer, firstItemIndex, length)); 
 

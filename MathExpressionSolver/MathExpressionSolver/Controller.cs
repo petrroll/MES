@@ -61,6 +61,7 @@ namespace MathExpressionSolver.Controller
         public T ReturnResult(string expression)
         {
             IToken<T> treeTop = ReturnExpressionTopToken(expression);
+            if(treeTop == null) { throw new ControllerException("Expression is empty."); }
             return treeTop.ReturnValue();
         }
 
@@ -103,6 +104,7 @@ namespace MathExpressionSolver.Controller
             advTokenFactory.CustomFunction = newFunction;
 
             newFunction.FuncTopToken = ReturnExpressionTopToken(expression);
+            if(newFunction.FuncTopToken == null) { throw new ControllerException("Custom function body is empty."); }
 
             if (advTokenFactory.CustomFunctions == null) { throw new InvalidOperationException("Controller object not properly iniciazed."); }
             advTokenFactory.CustomFunctions[funcName] = newFunction;

@@ -66,7 +66,7 @@ namespace MathExpressionSolver.Tokens
                 if(tokenStack.Peek().Type == TokenType.BinOperator) { throw new ExpTreeBuilderException("Binary operator: " + tokenStack.Peek().ToString() + " doesn't have right side."); }
                 TreeTop = tokenStack.Last();
             }
-            else { TreeTop = null; throw new ExpTreeBuilderException("Expression is empty."); } 
+            else { TreeTop = null; } 
         }
 
         private void placeCurrentToken(Stack<IFactorableToken<T>> tokenStack, IFactorableToken<T> currToken)
@@ -117,6 +117,8 @@ namespace MathExpressionSolver.Tokens
             {
                 argumentTokenTreeBuilder.RawTokens = argumentsTokens[nThArgument];
                 argumentTokenTreeBuilder.CreateExpressionTree();
+
+                if(argumentTokenTreeBuilder.TreeTop == null) { throw new ExpTreeBuilderException(nThArgument + "th argument of " + currToken.ToString() + " is empty." ); }
                 currToken.Children[nThArgument] = argumentTokenTreeBuilder.TreeTop;
             }
         }
