@@ -27,6 +27,7 @@ namespace MathExpressionSolver.Tokens
             set
             {
                 Clear();
+                if (value == null) { throw new ArgumentNullException("DataToBeTokenized"); }
 
                 this.parsedItems = value;
                 tokens.Capacity = parsedItems.Length / 2;
@@ -70,10 +71,7 @@ namespace MathExpressionSolver.Tokens
         /// <exception cref="InvalidOperationException"><see cref="Tokenize"/> is called without set <see cref="TokenFactory"/>.</exception>
         public void Tokenize()
         {
-            if(TokenFactory == null)
-            {
-                throw new InvalidOperationException("Token factory not set.");
-            }
+            if (TokenFactory == null) { throw new InvalidOperationException("Token factory not set."); }
 
             while (isCurrTokenIndexInRange())
             {

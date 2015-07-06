@@ -16,8 +16,8 @@ namespace MathExpressionSolver.Tokens
 
     public interface IAdvancedTokenFactory<T> : ITokenFactory<T>
     {
-        string[] ArgsArray { get; set; }
-        ICustFuncToken<T> CustomFunction { get; set; }
+        string[] ArgsArray { set; }
+        ICustFuncToken<T> CustomFunction { set; }
         Dictionary<string, IFactorableBracketsToken<T>> CustomFunctions { get; set; }
 
         void Clear();
@@ -79,8 +79,9 @@ namespace MathExpressionSolver.Tokens
 
     public abstract class AdvancedTokenFactory<T> : TokenFactory<T>, IAdvancedTokenFactory<T>
     {
-        public string[] ArgsArray { get; set; }
-        public ICustFuncToken<T> CustomFunction { get; set; }
+        private string[] argsArray;
+        public string[] ArgsArray { set { if (value == null) { throw new ArgumentNullException("ArgsArray"); } argsArray = value; } }
+        public ICustFuncToken<T> CustomFunction { private get; set; }
 
         public Dictionary<string, IFactorableBracketsToken<T>> CustomFunctions { get; set; }
 
@@ -98,7 +99,7 @@ namespace MathExpressionSolver.Tokens
 
         public override IFactorableToken<T> CreateVariable(string s)
         {
-            int argID = Array.IndexOf(ArgsArray, s);
+            int argID = Array.IndexOf(argsArray, s);
             if (argID != -1)
             {
                 if (CustomFunction == null) { throw new InvalidOperationException("Custom function not set."); } 

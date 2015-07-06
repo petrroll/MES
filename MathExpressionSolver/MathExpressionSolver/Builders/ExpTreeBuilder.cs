@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MathExpressionSolver.Tokens
@@ -13,7 +14,13 @@ namespace MathExpressionSolver.Tokens
         /// <summary>
         /// Array of <see cref="IFactorableToken<T>"/> to be rebuild into an expression tree. 
         /// </summary>
-        public IFactorableToken<T>[] RawTokens { set { Clear(); rawTokens = value; } }
+        public IFactorableToken<T>[] RawTokens {
+            set {
+                Clear();
+                if (value == null) { throw new ArgumentNullException("RawTokens"); }
+                rawTokens = value;
+            }
+        }
         /// <summary>
         /// The top <see cref="IToken{T}"/> of expression tree determined by <see cref="CreateExpressionTree"/>.
         /// </summary>

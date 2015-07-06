@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
@@ -39,6 +40,7 @@ namespace MathExpressionSolver.Parser
             set
             {
                 Clear();
+                if (value == null) { throw new ArgumentNullException("StringExpression"); }
 
                 rawExpression = value;
                 parsedItems.Capacity = rawExpression.Length / avgParsedItemLength;
