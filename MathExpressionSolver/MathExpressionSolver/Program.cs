@@ -26,12 +26,14 @@ namespace MathExpressionSolver
             ExpressionParser parser = new ExpressionParser() { SkipWhiteSpace = true, SkipInvalidChars = true };
 
             Dictionary<string, double> customVariables = new Dictionary<string, double>();
-            TokenFactory<double> factory = new DoubleTokenFactory() { CustomVariables = customVariables };
+            Dictionary<string, IFactorableBracketsToken<double>> customFunctions = new Dictionary<string, IFactorableBracketsToken<double>>();
+
+            TokenFactory<double> factory = new DoubleTokenFactory() { CustomVariables = customVariables, CustomFunctions = customFunctions };
             Tokenizer<double> tokenizer = new Tokenizer<double>() { TokenFactory = factory };
 
             ExpTreeBuilder<double> treeBuilder = new ExpTreeBuilder<double>();
 
-            return new Controller<double>() { CustomVariables = customVariables, ExpTreeBuilder = treeBuilder, Parser = parser, Tokenizer = tokenizer };
+            return new Controller<double>() { CustomVariables = customVariables, ExpTreeBuilder = treeBuilder, Parser = parser, Tokenizer = tokenizer, CustomFunctions = customFunctions };
         }
 
         private static void testSystem(Controller<double> contr)
@@ -58,6 +60,13 @@ namespace MathExpressionSolver
 
             testInput("if((exp(100)> Pi)*2;exp(a) + asdfsdf - 2*Pi;2*3-asdfsdf)", "13,3824939607035", contr);
             testInput("(if((exp(100)> Pi)*2;exp(a) + asdfsdf - 2*Pi;2*3-asdfsdf))*2>1", "1", contr);
+
+            testInput("funA(a;b) = a + b", "Function funA set.", contr);
+            testInput("funA(2;5)", "7", contr);
+
+            testInput("funB(height_in_m; diameter_in_cm) = Pi * ((diameter_in_cm / 100) * (diameter_in_cm / 100)) * height_in_m", "Function funB set.", contr);
+            testInput("funB(20; 8)", "0,4352", contr);
+            testInput("funB(Pi; sin(20))", "0,000963490199635007", contr);
         }
 
         private static void testInput(string expression, string wantedResult, Controller<double> controller)

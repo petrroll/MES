@@ -58,35 +58,13 @@
         public ArgToken()
         {
             Children = new IToken<T>[0];
-            Type = TokenType.Function;
+            Type = TokenType.Element;
             Priority = int.MaxValue;
         }
 
         public override T ReturnValue()
         {
-            return CustFunction.GetArgValue(ArgID);
-        }
-    }
-
-    public class CustFuncToken<T> : Token<T>, ICustFuncToken<T>
-    {
-        public IToken<T> FuncTopToken { get; set; }
-
-        public CustFuncToken(int numOfArgs)
-        {
-            Children = new IToken<T>[numOfArgs];
-            Type = TokenType.Function;
-            Priority = int.MaxValue;
-        }
-
-        public T GetArgValue(int ArgID)
-        {
-            return Children[ArgID].ReturnValue();
-        }
-
-        public override T ReturnValue()
-        {
-            return FuncTopToken.ReturnValue();
+            return CustFunction.Children[ArgID].ReturnValue();
         }
     }
 
@@ -254,6 +232,22 @@
         public override string ToString()
         {
             return "(" + default(T) + ")";
+        }
+    }
+
+    public class CustFuncToken<T> : FuncToken<T>, IFactorableCustFuncToken<T>
+    {
+        public IToken<T> FuncTopToken { get; set; }
+
+        public CustFuncToken(int numOfArgs)
+            : base(numOfArgs)
+        {
+
+        }
+
+        public override T ReturnValue()
+        {
+            return FuncTopToken.ReturnValue();
         }
     }
 

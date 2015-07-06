@@ -26,7 +26,6 @@ namespace MathExpressionSolver.Tokens
     public interface ICustFuncToken<T> : IChildrenToken<T>
     {
         IToken<T> FuncTopToken { get; set; }
-        T GetArgValue(int ArgID);
     }
 
     public interface IArgumentToken<T> : IToken<T>
@@ -44,6 +43,11 @@ namespace MathExpressionSolver.Tokens
     public interface IFactorableBracketsToken<T> : IFactorableToken<T>, IChildrenToken<T>
     {
         IFactorableToken<T>[][] BracketedTokens { get; set; }
+    }
+
+    public interface IFactorableCustFuncToken<T> : IFactorableBracketsToken<T>, ICustFuncToken<T>
+    {
+
     }
 
 }

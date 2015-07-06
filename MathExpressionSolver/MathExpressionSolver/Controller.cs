@@ -29,6 +29,10 @@ namespace MathExpressionSolver.Controller
         /// Dictionary with custom-defined variables usable in expressions, should be the same object as in <see cref="ITokenFactory{T}"/>.
         /// </summary>
         public Dictionary<string, T> CustomVariables { get; set; }
+        /// <summary>
+        /// Dictionary with custom-defined functions usable in expressions, should be the same object as in <see cref="IAdvancedTokenFactory{T}{T}"/>.
+        /// </summary>
+        public Dictionary<string, IFactorableBracketsToken<T>> CustomFunctions { get; set; }
 
 
 
@@ -90,6 +94,32 @@ namespace MathExpressionSolver.Controller
         }
 
         /// <summary>
+        /// Creates an expression tree for a function and assign this newly created function to <see cref="CustomFunctions"/>.
+        /// </summary>
+        /// <param name="funcName">Custom function descriptor (name).</param>
+        /// <param name="expression">An expression describing what the function will do.</param>
+        /// <param name="argumentsNames">An array of argument descriptors (names).</param>
+        /// <exception cref="InvalidOperationException">Some object has not been properly inicialized.</exception>
+        /// <exception cref="TokenizerException">Expression can't be properly tokenized.</exception>
+        /// <exception cref="ExpTreeBuilderException">Expression tree can't be build.</exception>
+        public void SaveFunction(string funcName, string expression, string[] argumentsNames)
+        {
+            if (!(Tokenizer.TokenFactory is IAdvancedTokenFactory<T>)) { throw new InvalidOperationException("Token factory doesn't support custom functions."); }
+            IFactorableCustFuncToken<T> newFunction = new CustFuncToken<T>(argumentsNames.Length);
+
+            IAdvancedTokenFactory<T> advTokenFactory = (IAdvancedTokenFactory<T>)Tokenizer.TokenFactory;
+            advTokenFactory.ArgsArray = argumentsNames;
+            advTokenFactory.CustomFunction = newFunction;
+
+
+            newFunction.FuncTopToken = ReturnExpressionTopToken(expression);
+            if (CustomFunctions == null) { throw new InvalidOperationException("Controller object not properly iniciazed."); }
+            CustomFunctions.Add(funcName, newFunction);
+
+            advTokenFactory.Clear();
+        }
+
+        /// <summary>
         /// Executes a expression command (compute an expression, assign variable, assign custom function) and returns its result.
         /// </summary>
         /// <param name="expression">An expression to be executed.</param>
@@ -118,10 +148,11 @@ namespace MathExpressionSolver.Controller
             else if (custFunc.Success)
             {
                 string funcName = custFunc.Groups["funcName"].Value;
-                string variableExpression = custFunc.Groups["expr"].Value;
+                string funcExpression = custFunc.Groups["expr"].Value;
                 string[] argumentsNames = custFunc.Groups["argName"].Captures.ToArray();
 
-                throw new NotImplementedException("Custom functions not yet implemented.");
+                SaveFunction(funcName, funcExpression, argumentsNames);
+                return "Function " + funcName + " set.";
             }
             else
             {

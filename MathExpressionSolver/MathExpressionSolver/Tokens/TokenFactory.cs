@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MathExpressionSolver.Tokens
 {
@@ -11,6 +12,15 @@ namespace MathExpressionSolver.Tokens
         IFactorableToken<T> CreateVariable(string s);
         IFactorableToken<T> CreateOperator(string s);
 
+    }
+
+    public interface IAdvancedTokenFactory<T> : ITokenFactory<T>
+    {
+        string[] ArgsArray { get; set; }
+        ICustFuncToken<T> CustomFunction { get; set; }
+        Dictionary<string, IFactorableBracketsToken<T>> CustomFunctions { get; set; }
+
+        void Clear();
     }
 
     /// <summary>
@@ -67,7 +77,52 @@ namespace MathExpressionSolver.Tokens
         }
     }
 
-    public class DoubleTokenFactory : TokenFactory<double>
+    public abstract class AdvancedTokenFactory<T> : TokenFactory<T>, IAdvancedTokenFactory<T>
+    {
+        public string[] ArgsArray { get; set; }
+        public ICustFuncToken<T> CustomFunction { get; set; }
+
+        public Dictionary<string, IFactorableBracketsToken<T>> CustomFunctions { get; set; }
+
+        public AdvancedTokenFactory()
+            : base()
+        {
+            Clear();
+        }
+
+        public void Clear()
+        {
+            ArgsArray = new string[0];
+            CustomFunction = null;
+        }
+
+        public override IFactorableToken<T> CreateVariable(string s)
+        {
+            int argID = Array.IndexOf(ArgsArray, s);
+            if (argID != -1)
+            {
+                if (CustomFunction == null) { throw new InvalidOperationException("Custom function not set."); } 
+                else if (!(CustomFunction.Children.Length > argID)) { throw new TokenizerException("Number of arguments for custom function don't match up."); }
+                else { return new ArgToken<T>() { ArgID = argID, CustFunction = CustomFunction }; }
+            }
+            else { return base.CreateVariable(s); }
+            
+        }
+
+        public override IFactorableBracketsToken<T> CreateFunction(string s, IFactorableToken<T>[][] arguments)
+        {
+            if(CustomFunctions != null && CustomFunctions.ContainsKey(s))
+            {
+                IFactorableBracketsToken<T> custFunc =  CustomFunctions[s];
+                custFunc.BracketedTokens = arguments;
+                return custFunc;
+            }
+            else { return base.CreateFunction(s, arguments); }
+            
+        }
+    }
+
+    public class DoubleTokenFactory : AdvancedTokenFactory<double>
     {
         public override IFactorableBracketsToken<double> CreateFunction(string s, IFactorableToken<double>[][] arguments)
         {
