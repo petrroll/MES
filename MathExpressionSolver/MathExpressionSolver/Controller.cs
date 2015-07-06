@@ -26,17 +26,6 @@ namespace MathExpressionSolver.Controller
         public ExpTreeBuilder<T> ExpTreeBuilder { private get; set; }
 
         /// <summary>
-        /// Dictionary with custom-defined variables usable in expressions, should be the same object as in <see cref="ITokenFactory{T}"/>.
-        /// </summary>
-        public Dictionary<string, T> CustomVariables { get; set; }
-        /// <summary>
-        /// Dictionary with custom-defined functions usable in expressions, should be the same object as in <see cref="IAdvancedTokenFactory{T}{T}"/>.
-        /// </summary>
-        public Dictionary<string, IFactorableBracketsToken<T>> CustomFunctions { get; set; }
-
-
-
-        /// <summary>
         /// Returns a top <see cref="IToken{T}"/> of a expression tree to specified <see cref="string"/> expression.
         /// </summary>
         /// <param name="expression">Expression whose top <see cref="IToken{T}"/> is wanted.</param>
@@ -86,10 +75,11 @@ namespace MathExpressionSolver.Controller
         /// <returns>String in a form of "variableName = variableValue".</returns>
         public T SaveVariable(string variableName, string expression)
         {
-            if(CustomVariables == null) { throw new InvalidOperationException("Controller object not properly iniciazed."); }
-
             T variableValue = ReturnResult(expression);
-            CustomVariables.Add(variableName, variableValue);
+
+            if (Tokenizer.TokenFactory.CustomVariables == null) { throw new InvalidOperationException("Controller object not properly iniciazed."); }
+            Tokenizer.TokenFactory.CustomVariables.Add(variableName, variableValue);
+
             return variableValue;
         }
 
@@ -112,10 +102,10 @@ namespace MathExpressionSolver.Controller
             advTokenFactory.ArgsArray = argumentsNames;
             advTokenFactory.CustomFunction = newFunction;
 
-
             newFunction.FuncTopToken = ReturnExpressionTopToken(expression);
-            if (CustomFunctions == null) { throw new InvalidOperationException("Controller object not properly iniciazed."); }
-            CustomFunctions.Add(funcName, newFunction);
+
+            if (advTokenFactory.CustomFunctions == null) { throw new InvalidOperationException("Controller object not properly iniciazed."); }
+            advTokenFactory.CustomFunctions.Add(funcName, newFunction);
 
             advTokenFactory.Clear();
         }

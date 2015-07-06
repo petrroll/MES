@@ -33,7 +33,7 @@ namespace MathExpressionSolver
 
             ExpTreeBuilder<double> treeBuilder = new ExpTreeBuilder<double>();
 
-            return new Controller<double>() { CustomVariables = customVariables, ExpTreeBuilder = treeBuilder, Parser = parser, Tokenizer = tokenizer, CustomFunctions = customFunctions };
+            return new Controller<double>() { ExpTreeBuilder = treeBuilder, Parser = parser, Tokenizer = tokenizer };
         }
 
         private static void testSystem(Controller<double> contr)
