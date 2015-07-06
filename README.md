@@ -8,6 +8,7 @@ __MES__ is a mathematical expressions evaluator (let's just say a clever calcula
 * Custom variables support (useful for e.g. constans).
 * Functions with arbitrary number of arguments support.
   * Proof-of-conncept 'if(condition > 0; true-result; false-result)' function.
+  * Support for custom functions with arbitrary argument names.
 * Modular 'Parser-Tokenizer-Expression tree builder' system..
   * Adding matrixes support requires only: 
     * Adding some logic to TokenFactory and Parser
@@ -17,7 +18,6 @@ __MES__ is a mathematical expressions evaluator (let's just say a clever calcula
 * Robust Parser engine.
 
 ###Issues:
-- Custom functions are not yet implemented.
 - Tokens hierarchy and TokenFactory are not best designed.
 
 ###Lisense:
