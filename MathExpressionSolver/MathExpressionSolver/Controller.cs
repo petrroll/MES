@@ -78,7 +78,7 @@ namespace MathExpressionSolver.Controller
             T variableValue = ReturnResult(expression);
 
             if (Tokenizer.TokenFactory.CustomVariables == null) { throw new InvalidOperationException("Controller object not properly iniciazed."); }
-            Tokenizer.TokenFactory.CustomVariables.Add(variableName, variableValue);
+            Tokenizer.TokenFactory.CustomVariables[variableName] = variableValue;
 
             return variableValue;
         }
@@ -105,7 +105,7 @@ namespace MathExpressionSolver.Controller
             newFunction.FuncTopToken = ReturnExpressionTopToken(expression);
 
             if (advTokenFactory.CustomFunctions == null) { throw new InvalidOperationException("Controller object not properly iniciazed."); }
-            advTokenFactory.CustomFunctions.Add(funcName, newFunction);
+            advTokenFactory.CustomFunctions[funcName] = newFunction;
 
             advTokenFactory.Clear();
         }
