@@ -105,9 +105,10 @@ namespace MathExpressionSolver.Controller
         public void SaveFunction(string funcName, string expression, string[] argumentsNames)
         {
             if (!(Tokenizer.TokenFactory is IAdvancedTokenFactory<T>)) { throw new InvalidOperationException("Token factory doesn't support custom functions."); }
+            IAdvancedTokenFactory<T> advTokenFactory = (IAdvancedTokenFactory<T>)Tokenizer.TokenFactory;
+
             IFactorableCustFuncToken<T> newFunction = new CustFuncToken<T>(argumentsNames.Length);
 
-            IAdvancedTokenFactory<T> advTokenFactory = (IAdvancedTokenFactory<T>)Tokenizer.TokenFactory;
             advTokenFactory.ArgsArray = argumentsNames;
             advTokenFactory.CustomFunction = newFunction;
 
