@@ -30,7 +30,7 @@ namespace MathExpressionSolver.Controller
         /// </summary>
         /// <param name="expression">Expression whose top <see cref="IToken{T}"/> is wanted.</param>
         /// <exception cref="InvalidOperationException">Some object has not been properly inicialized.</exception>
-        /// <exception cref="TokenizerException">Expression can't be properly tokenized.</exception>
+        /// <exception cref="ControllerException">Expression can't be properly tokenized.</exception>
         /// <exception cref="ExpTreeBuilderException">Expression tree can't be build.</exception>
         /// <returns>Top <see cref="IToken{T}"/> of specified expression.</returns>
         public IToken<T> ReturnExpressionTopToken(string expression)
@@ -55,7 +55,7 @@ namespace MathExpressionSolver.Controller
         /// </summary>
         /// <param name="expression">Expression whose result is wanted.</param>
         /// <exception cref="InvalidOperationException">Some object has not been properly inicialized.</exception>
-        /// <exception cref="TokenizerException">Expression can't be properly tokenized.</exception>
+        /// <exception cref="ControllerException">Expression can't be properly tokenized.</exception>
         /// <exception cref="ExpTreeBuilderException">Expression tree can't be build.</exception>
         /// <returns>Result of specified expression.</returns>
         public T ReturnResult(string expression)
@@ -70,7 +70,7 @@ namespace MathExpressionSolver.Controller
         /// <param name="variableName">Custom variable name.</param>
         /// <param name="expression">An expression whose result is to be set as a value of the variable.</param>
         /// <exception cref="InvalidOperationException">Some object has not been properly inicialized.</exception>
-        /// <exception cref="TokenizerException">Expression can't be properly tokenized.</exception>
+        /// <exception cref="ControllerException">Expression can't be properly tokenized.</exception>
         /// <exception cref="ExpTreeBuilderException">Expression tree can't be build.</exception>
         /// <returns>String in a form of "variableName = variableValue".</returns>
         public T SaveVariable(string variableName, string expression)
@@ -90,7 +90,7 @@ namespace MathExpressionSolver.Controller
         /// <param name="expression">An expression describing what the function will do.</param>
         /// <param name="argumentsNames">An array of argument descriptors (names).</param>
         /// <exception cref="InvalidOperationException">Some object has not been properly inicialized.</exception>
-        /// <exception cref="TokenizerException">Expression can't be properly tokenized.</exception>
+        /// <exception cref="ControllerException">Expression can't be properly tokenized.</exception>
         /// <exception cref="ExpTreeBuilderException">Expression tree can't be build.</exception>
         public void SaveFunction(string funcName, string expression, string[] argumentsNames)
         {
@@ -115,29 +115,35 @@ namespace MathExpressionSolver.Controller
         /// </summary>
         /// <param name="expression">An expression to be executed.</param>
         /// <exception cref="InvalidOperationException">Some object has not been properly inicialized.</exception>
-        /// <exception cref="TokenizerException">Expression can't be properly tokenized.</exception>
+        /// <exception cref="ControllerException">Expression can't be properly tokenized.</exception>
         /// <exception cref="ExpTreeBuilderException">Expression tree can't be build.</exception>
         /// <returns>String with information about expression result.</returns>
         public string ExecuteExpression(string expression)
         {
 
+            string possVariableRegex = @"^[^\(\)]+=.*$";
+            string possFuncRegex = @"^.+\(.+=.*$";
+
             string exprRegex = @"\s*=\s*(?<expr>.*)";
             string nameRegex = @"(\p{Ll}|\p{Lu}|\p{Lt}|\p{Lo}|\p{Lm}|_)+";
-            Match custVar = Regex.Match(expression, @"^(?<varName>" + nameRegex + @")" + exprRegex);
 
-            string argumentsRegex = @"((?<argName>" + nameRegex + @")(;)?|(;\s)?)+";
-            Match custFunc = Regex.Match(expression, @"^(?<funcName>" + nameRegex + @")\(" + argumentsRegex + @"\)" + exprRegex);
-
-            if (custVar.Success)
+            if (Regex.IsMatch(expression, possVariableRegex))
             {
+                Match custVar = Regex.Match(expression, @"^(?<varName>" + nameRegex + @")" + exprRegex + "$");
+                if (!custVar.Success) { throw new ControllerException("Given expression is not a valid variable assigment."); }
+
                 string variableName = custVar.Groups["varName"].Value;
                 string variableExpression = custVar.Groups["expr"].Value;
 
                 string variableValue = SaveVariable(variableName, variableExpression).ToString();
                 return variableName + " = " + variableValue;
             }
-            else if (custFunc.Success)
+            else if (Regex.IsMatch(expression, possFuncRegex))
             {
+                string argumentsRegex = @"((?<argName>" + nameRegex + @")(;)?|(;\s)?)+";
+                Match custFunc = Regex.Match(expression, @"^(?<funcName>" + nameRegex + @")\(" + argumentsRegex + @"\)" + exprRegex + "$");
+                if(!custFunc.Success) { throw new ControllerException("Given expression is not a valid custom function assigment."); }
+
                 string funcName = custFunc.Groups["funcName"].Value;
                 string funcExpression = custFunc.Groups["expr"].Value;
                 string[] argumentsNames = custFunc.Groups["argName"].Captures.ToArray();
@@ -178,5 +184,17 @@ namespace MathExpressionSolver.Controller
                 throw new InvalidOperationException("Controller object not properly iniciazed.");
             }
         }
+    }
+
+    [System.Serializable]
+    public class ControllerException : ExpressionException
+    {
+        public ControllerException() { }
+        public ControllerException(string message) : base(message) { }
+        public ControllerException(string message, System.Exception inner) : base(message, inner) { }
+        protected ControllerException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context)
+        { }
     }
 }
