@@ -14,7 +14,7 @@ MES should be able to handle any valid math expression in infix notation. Whites
 
 In addition to plain math expressions without external dependencies MES supports custom functions and variables as well. Descriptors of both variables and functions (as well as functions' arguments) must consist of only Unicode letters and underscore character. 
 
-Individual argumenents are separated by a semilocolon followed by an optional whitespace. Last empty argument is ignored. Nested arguments (i.e functions and expressions inside arguments) are supported.
+Individual argumenents are separated by a semilocolon followed by an optional whitespace. Last empty argument is ignored. Nested arguments (i.e functions and expressions inside arguments) are supported, recursion is not.
 
 ###Examples:
 Call a function 'fun' with two parameters '2' and '5'.
