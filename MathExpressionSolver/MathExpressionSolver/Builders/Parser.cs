@@ -8,7 +8,7 @@ namespace MathExpressionSolver.Parser
     /// <summary>
     /// Divides expression string into an array of substrings and their types.
     /// </summary>
-    class ExpressionParser
+    public class ExpressionParser
     {
         const int avgParsedItemLength = 4;
 
@@ -40,7 +40,7 @@ namespace MathExpressionSolver.Parser
             set
             {
                 Clear();
-                if (value == null) { throw new ArgumentNullException("StringExpression"); }
+                if (value == null) { throw new ArgumentNullException(nameof(value), "StringExpression null"); }
 
                 rawExpression = value;
                 parsedItems.Capacity = rawExpression.Length / avgParsedItemLength;
@@ -106,7 +106,7 @@ namespace MathExpressionSolver.Parser
         }
         private void parseNewExpression(StringBuilder charBuffer, ParsedItemType currentType)
         {
-            string expression = (isTrashable(currentType)) ? string.Empty : charBuffer.ToString();
+            string expression = charBuffer.ToString();
             charBuffer.Clear();
 
             if (isSkipable(currentType)) { return; }
@@ -122,11 +122,6 @@ namespace MathExpressionSolver.Parser
                     type == ParsedItemType.Name ||
                     type == ParsedItemType.WhiteSpace
                  );
-        }
-
-        private bool isTrashable(ParsedItemType type)
-        {
-            return (type == ParsedItemType.WhiteSpace);
         }
 
         private bool isSkipable(ParsedItemType type)
