@@ -386,7 +386,7 @@
 
         public override double ReturnValue()
         {
-            return (Children[0].ReturnValue() != 0) ? Children[1].ReturnValue() : Children[2].ReturnValue();
+            return (Children[0].ReturnValue() > 0) ? Children[1].ReturnValue() : Children[2].ReturnValue();
         }
 
         public override string ToString()
