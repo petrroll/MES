@@ -40,15 +40,7 @@ namespace MathExpressionSolver.Tokens
 
         public virtual IFactorableBracketsToken<T> CreateFunction(string s, IFactorableToken<T>[][] arguments)
         {
-            IFactorableBracketsToken<T> bracketToken;
-            switch (s)
-            {
-                default:
-                    throw new TokenizerException("No function named " + s + " exists.");
-            }
-
-            bracketToken.BracketedTokens = arguments;
-            return bracketToken;
+            throw new TokenizerException("Using a factory that doesn's support custom functions.");
         }
 
         public abstract IFactorableToken<T> CreateValue(string s);
@@ -80,7 +72,7 @@ namespace MathExpressionSolver.Tokens
     public abstract class AdvancedTokenFactory<T> : TokenFactory<T>, IAdvancedTokenFactory<T>
     {
         private string[] argsArray;
-        public string[] ArgsArray { set { if (value == null) { throw new ArgumentNullException("ArgsArray"); } argsArray = value; } }
+        public string[] ArgsArray { set { if (value == null) { throw new ArgumentNullException(nameof(value), $"{nameof(ArgsArray)} doesn't accept null"); } argsArray = value; } }
         public ICustFuncToken<T> CustomFunction { private get; set; }
 
         public Dictionary<string, IFactorableBracketsToken<T>> CustomFunctions { get; set; }

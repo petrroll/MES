@@ -17,7 +17,7 @@ namespace MathExpressionSolver.Tokens
         public IFactorableToken<T>[] RawTokens {
             set {
                 Clear();
-                if (value == null) { throw new ArgumentNullException("RawTokens"); }
+                if (value == null) { throw new ArgumentNullException(nameof(value), $"{nameof(RawTokens)} doesn't accept null"); }
                 rawTokens = value;
             }
         }

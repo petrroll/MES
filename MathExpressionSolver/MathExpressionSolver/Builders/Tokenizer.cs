@@ -27,7 +27,7 @@ namespace MathExpressionSolver.Tokens
             set
             {
                 Clear();
-                if (value == null) { throw new ArgumentNullException("DataToBeTokenized"); }
+                if (value == null) { throw new ArgumentNullException(nameof(value), $"{nameof(DataToBeTokenized)} doesn't accept null" ); }
 
                 this.parsedItems = value;
                 tokens.Capacity = parsedItems.Length / 2;
