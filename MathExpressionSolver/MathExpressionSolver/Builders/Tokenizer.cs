@@ -121,8 +121,8 @@ namespace MathExpressionSolver.Tokens
         {
             if(isSomethingAfterCurrTokenIndex())
             {
-                List<IFactorableToken<T>[]> arguments = new List<IFactorableToken<T>[]>();
-                Tokenizer<T> argumentsTokenizer = new Tokenizer<T>() { TokenFactory = this.TokenFactory };
+                var arguments = new List<IFactorableToken<T>[]>();
+                var argumentsTokenizer = new Tokenizer<T>() { TokenFactory = this.TokenFactory };
 
                 currTokenIndex++;
 

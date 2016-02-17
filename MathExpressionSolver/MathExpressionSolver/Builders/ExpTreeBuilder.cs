@@ -55,7 +55,7 @@ namespace MathExpressionSolver.Tokens
         /// <exception cref="ExpTreeBuilderException">Expression tree can't be build.</exception>
         public void CreateExpressionTree()
         {
-            Stack<IFactorableToken<T>> tokenStack = new Stack<IFactorableToken<T>>();
+            var tokenStack = new Stack<IFactorableToken<T>>();
 
             foreach (IFactorableToken<T> currToken in rawTokens)
             {
@@ -112,7 +112,7 @@ namespace MathExpressionSolver.Tokens
 
         private void buildExpTreeInArguments(IFactorableBracketsToken<T> currToken)
         {
-            ExpTreeBuilder<T> argumentTokenTreeBuilder = new ExpTreeBuilder<T>();
+            var argumentTokenTreeBuilder = new ExpTreeBuilder<T>();
             IFactorableToken<T>[][] argumentsTokens = currToken.BracketedTokens;
 
             if (argumentsTokens.Length != currToken.Children.Length)

@@ -23,15 +23,15 @@ namespace MathExpressionSolver
 
         private static Controller<double> initController()
         {
-            ExpressionParser parser = new ExpressionParser() { SkipWhiteSpace = true, SkipInvalidChars = true };
+            var parser = new ExpressionParser() { SkipWhiteSpace = true, SkipInvalidChars = true };
 
-            Dictionary<string, double> customVariables = new Dictionary<string, double>();
-            Dictionary<string, IFactorableBracketsToken<double>> customFunctions = new Dictionary<string, IFactorableBracketsToken<double>>();
+            var customVariables = new Dictionary<string, double>();
+            var customFunctions = new Dictionary<string, IFactorableBracketsToken<double>>();
 
             TokenFactory<double> factory = new DoubleTokenFactory() { CustomVariables = customVariables, CustomFunctions = customFunctions };
-            Tokenizer<double> tokenizer = new Tokenizer<double>() { TokenFactory = factory };
+            var tokenizer = new Tokenizer<double>() { TokenFactory = factory };
 
-            ExpTreeBuilder<double> treeBuilder = new ExpTreeBuilder<double>();
+            var treeBuilder = new ExpTreeBuilder<double>();
 
             return new Controller<double>() { ExpTreeBuilder = treeBuilder, Parser = parser, Tokenizer = tokenizer };
         }

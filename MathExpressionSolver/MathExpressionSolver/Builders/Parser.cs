@@ -79,7 +79,7 @@ namespace MathExpressionSolver.Parser
         {
             ParsedItemType lastType = ParsedItemType.NotSet;
 
-            StringBuilder expBuffer = new StringBuilder(avgParsedItemLength);
+            var expBuffer = new StringBuilder(avgParsedItemLength);
             foreach (char c in rawExpression)
             {
                 ParsedItemType currentType = getExpItemType(c);
