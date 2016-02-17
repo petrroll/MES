@@ -15,7 +15,7 @@
     {
         public virtual IToken<T> Child { get { return Children[0]; } set { Children[0] = value; } }
 
-        public UnToken() : base()
+        protected UnToken()
         {
             Priority = int.MaxValue;
             Children = new IToken<T>[1];
@@ -33,7 +33,7 @@
         new virtual public T Child { get { return Children[0]; } set { Children[0] = value; } }
         new virtual public T[] Children { get; protected set; }
 
-        public ItemToken() : base()
+        public ItemToken()
         {
             Type = TokenType.Element;
             Children = new T[1];
@@ -73,7 +73,7 @@
         public virtual IToken<T> LeftChild { get { return Children[0]; } set { Children[0] = value; } }
         public virtual IToken<T> RightChild { get { return Children[1]; } set { Children[1] = value; } }
 
-        public BinOpToken() : base()
+        protected BinOpToken()
         {
             Type = TokenType.BinOperator;
             Children = new IToken<T>[2];
@@ -87,7 +87,7 @@
 
     public class MinusToken<T> : BinOpToken<T>
     {
-        public MinusToken() : base()
+        public MinusToken()
         {
             Priority = 2;
         }
@@ -108,7 +108,7 @@
 
     public class PlusToken<T> : BinOpToken<T>
     {
-        public PlusToken() : base()
+        public PlusToken()
         {
             Priority = 2;
         }
@@ -129,7 +129,7 @@
 
     public class TimesToken<T> : BinOpToken<T>
     {
-        public TimesToken() : base()
+        public TimesToken()
         {
             Priority = 3;
         }
@@ -150,7 +150,7 @@
 
     public class DivToken<T> : BinOpToken<T>
     {
-        public DivToken() : base()
+        public DivToken()
         {
             Priority = 3;
         }
@@ -171,7 +171,7 @@
 
     public class GrtToken : BinOpToken<double>
     {
-        public GrtToken() : base()
+        public GrtToken()
         {
             Priority = 0;
         }
@@ -192,7 +192,7 @@
 
     public class SmlrToken : BinOpToken<double>
     {
-        public SmlrToken() : base()
+        public SmlrToken()
         {
             Priority = 0;
         }
@@ -215,7 +215,7 @@
     {
         public virtual IFactorableToken<T>[][] BracketedTokens { get; set; }
 
-        public FuncToken(int arguments) : base()
+        protected FuncToken(int arguments)
         {
             Type = TokenType.Function;
             Priority = int.MaxValue;

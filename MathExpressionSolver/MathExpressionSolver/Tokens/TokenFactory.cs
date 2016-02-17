@@ -47,7 +47,7 @@ namespace MathExpressionSolver.Tokens
 
         public virtual IFactorableToken<T> CreateVariable(string s)
         {
-            if(CustomVariables != null && CustomVariables.ContainsKey(s)) { return new ItemToken<T>() { Child = CustomVariables[s] }; }
+            if(CustomVariables != null && CustomVariables.ContainsKey(s)) { return new ItemToken<T> { Child = CustomVariables[s] }; }
             else { throw new TokenizerException("No variable named " + s + " exists."); }
         }
 
@@ -77,8 +77,7 @@ namespace MathExpressionSolver.Tokens
 
         public Dictionary<string, IFactorableBracketsToken<T>> CustomFunctions { get; set; }
 
-        public AdvancedTokenFactory()
-            : base()
+        protected AdvancedTokenFactory()
         {
             Clear();
         }
@@ -96,7 +95,7 @@ namespace MathExpressionSolver.Tokens
             {
                 if (CustomFunction == null) { throw new InvalidOperationException("Custom function not set."); } 
                 else if (!(CustomFunction.Children.Length > argID)) { throw new TokenizerException("Number of arguments for custom function don't match up."); }
-                else { return new ArgToken<T>() { ArgID = argID, CustFunction = CustomFunction }; }
+                else { return new ArgToken<T> { ArgID = argID, CustFunction = CustomFunction }; }
             }
             else { return base.CreateVariable(s); }
             
@@ -165,7 +164,7 @@ namespace MathExpressionSolver.Tokens
 
         public override IFactorableToken<double> CreateValue(string s)
         {
-            return new ItemToken<double>() { Child = double.Parse(s) };
+            return new ItemToken<double> { Child = double.Parse(s) };
         }
     }
 }

@@ -122,7 +122,7 @@ namespace MathExpressionSolver.Tokens
             if(isSomethingAfterCurrTokenIndex())
             {
                 var arguments = new List<IFactorableToken<T>[]>();
-                var argumentsTokenizer = new Tokenizer<T>() { TokenFactory = this.TokenFactory };
+                var argumentsTokenizer = new Tokenizer<T> { TokenFactory = this.TokenFactory };
 
                 currTokenIndex++;
 
