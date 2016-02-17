@@ -8,7 +8,7 @@ namespace MathExpressionSolver.Tokens
     /// Converts linear array of <see cref="IFactorableToken"/> into an expression tree.
     /// </summary>
     /// <typeparam name="T">Token base type.</typeparam>
-    class ExpTreeBuilder<T>
+    public class ExpTreeBuilder<T>
     {
         private IFactorableToken<T>[] rawTokens;
         /// <summary>

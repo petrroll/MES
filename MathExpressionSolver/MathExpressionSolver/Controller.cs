@@ -10,7 +10,7 @@ namespace MathExpressionSolver.Controller
     /// Executes expressions and handles custom variables and functions assigment.
     /// </summary>
     /// <typeparam name="T">Token base type.</typeparam>
-    class Controller<T>
+    public class Controller<T>
     {
         /// <summary>
         /// Is used for expression parsing from <see cref="string"/> to <see cref="ParsedItem[]"/>.
