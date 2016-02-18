@@ -1,0 +1,6 @@
+version: 0.0.{build}
+before_build:
+- ps: nuget restore MathExpressionSolver/MathExpressionSolver.sln
+build:
+  project: MathExpressionSolver/MathExpressionSolver.sln
+  verbosity: minimal
