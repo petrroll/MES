@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/petrroll/MES.svg?branch=master)](https://travis-ci.org/petrroll/MES)
+
 __MES__ is a mathematical expressions evaluator (let's just say a fancy calculator) written in .NET. While being fairly simple it's heavily focused on being generic, modular, and extensible. It's wrapped in a console application for a showcase but can easily be stripped down and used as a standalone library. 
 
 ##Features:
@@ -59,4 +61,4 @@ Due to aforementioned modular nature extending MES is an easy task. For example 
 
 ----
 ###Lisense:
-Do whatever you wish with it.
+[MIT](https://opensource.org/licenses/MIT)
