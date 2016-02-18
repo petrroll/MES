@@ -43,13 +43,13 @@ module ControllerIntegrationTests =
 
         
     [<Fact>]
-    let testSimpleExpression() =
+    let SimpleExpression() =
         let controller = initController()
         let result = controller.ReturnResult("2 + 3")
         result |> should (equalWithin 0.1) 5
 
     [<Fact>]
-    let testComplexExpressions() =
+    let ComplexExpressions() =
         let testWithCurrInstance = testInput (initController())
         testWithCurrInstance "-107,306989780239" "3*(7+7)/2-2*6/7- &&&  (&6 +&9) *8-  (2+ 2/3*(6+exp  (2*7-6* 2 ) - 8)+(2>1))"
         testWithCurrInstance "-107,306989780239" "3*(7+7)/2-2*6/7-(6+9)*8-(2+2/3*(6+exp(2*7-6*2)-8)+(2>1))"
@@ -58,7 +58,7 @@ module ControllerIntegrationTests =
         testWithCurrInstance "-5" "((2+1)-(3+1)*2)"
 
     [<Fact>]
-    let testVariables() =
+    let Variables() =
         let testWithCurrInstance = testInput (initController())
         testWithCurrInstance "a = 2,5" "a=(3/6*5)"
         testWithCurrInstance "asdfsdf = 8" "asdfsdf=(5 + 3)"
@@ -72,7 +72,7 @@ module ControllerIntegrationTests =
         testWithCurrInstance "13,3824939607035" "exp(a) + asdfsdf - 2*Pi"
 
     [<Fact>]
-    let testIfsSimple() =
+    let IfsSimple() =
         let testWithCurrInstance = testInput (initController())
         testWithCurrInstance "2" "if(1;2;3)" 
         testWithCurrInstance "3" "if(0;2;3)" 
@@ -84,7 +84,7 @@ module ControllerIntegrationTests =
         controller.ExecuteExpression "Pi = 3,4"|> ignore
 
     [<Fact>]
-    let testIfsAdv() =
+    let IfsAdv() =
         let controller = initController()
         prepareVariables controller
         let testWithCurrInstance = testInput controller
@@ -93,14 +93,14 @@ module ControllerIntegrationTests =
         testWithCurrInstance "1" "(if((exp(100)> Pi)*2;exp(a) + asdfsdf - 2*Pi;2*3-asdfsdf))*2>1" 
 
     [<Fact>]
-    let testFuncsSimple() =
+    let FuncsSimple() =
         let testWithCurrInstance = testInput (initController())
 
         testWithCurrInstance "Function funA set." "funA(a;b) = a + b" 
         testWithCurrInstance "7" "funA(2;5)"
 
     [<Fact>]
-    let testFuncsAdv() =
+    let FuncsAdv() =
         let contr = initController()
         contr.ExecuteExpression("Pi = 3,4") |> ignore
         let testWithCurrInstance = testInput contr
