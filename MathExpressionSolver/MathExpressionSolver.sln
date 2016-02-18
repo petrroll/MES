@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathExpressionSolver", "Mat
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "MathExpressionSolverTests", "MathExpressionSolverTests\MathExpressionSolverTests.fsproj", "{56AC3F9B-8826-47D0-B1DA-927D882B3EED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathExpressionSolverConsoleApp", "MathExpressionSolverConsoleApp\MathExpressionSolverConsoleApp.csproj", "{C1574172-198E-48DC-B096-C9AC90BB13E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{56AC3F9B-8826-47D0-B1DA-927D882B3EED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56AC3F9B-8826-47D0-B1DA-927D882B3EED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56AC3F9B-8826-47D0-B1DA-927D882B3EED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1574172-198E-48DC-B096-C9AC90BB13E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1574172-198E-48DC-B096-C9AC90BB13E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1574172-198E-48DC-B096-C9AC90BB13E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1574172-198E-48DC-B096-C9AC90BB13E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

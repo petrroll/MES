@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BB3DC4D5-6B85-40F7-9176-8EDB9DC4D823}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{C1574172-198E-48DC-B096-C9AC90BB13E1}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MathExpressionSolver</RootNamespace>
-    <AssemblyName>MathExpressionSolver</AssemblyName>
+    <RootNamespace>MathExpressionSolverConsoleApp</RootNamespace>
+    <AssemblyName>MathExpressionSolverConsoleApp</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -21,7 +21,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,9 +31,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -42,21 +38,21 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controller.cs" />
-    <Compile Include="HelperExtensions.cs" />
-    <Compile Include="Builders\Parser.cs" />
-    <Compile Include="Tokens\TokenFactory.cs" />
-    <Compile Include="Builders\Tokenizer.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Builders\ExpTreeBuilder.cs" />
-    <Compile Include="Tokens\ITkones.cs" />
-    <Compile Include="Tokens\Tokens.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MathExpressionSolver\MathExpressionSolver.csproj">
+      <Project>{bb3dc4d5-6b85-40f7-9176-8edb9dc4d823}</Project>
+      <Name>MathExpressionSolver</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

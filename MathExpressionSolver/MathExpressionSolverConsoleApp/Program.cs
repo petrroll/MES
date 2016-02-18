@@ -1,10 +1,11 @@
-﻿using MathExpressionSolver.Parser;
+﻿using MathExpressionSolver.Controller;
+using MathExpressionSolver.Parser;
 using MathExpressionSolver.Tokens;
+
 using System;
 using System.Collections.Generic;
-using MathExpressionSolver.Controller;
 
-namespace MathExpressionSolver
+namespace MathExpressionSolverConsoleApp
 {
     class Program
     {
@@ -16,7 +17,7 @@ namespace MathExpressionSolver
             while (true)
             {
                 input = Console.ReadLine();
-                controller.ExecuteExpressionSafe(input);
+                Console.WriteLine(controller.ExecuteExpressionSafe(input));
             }
         }
 
