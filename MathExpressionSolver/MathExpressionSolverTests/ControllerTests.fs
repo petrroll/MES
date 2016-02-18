@@ -14,6 +14,8 @@ open MathExpressionSolver.Parser
 module ControllerIntegrationTests =
 
     let initController() = 
+        System.Threading.Thread.CurrentThread.CurrentCulture <- new System.Globalization.CultureInfo("cs-CZ", false);
+        
         let parser = new ExpressionParser()
         parser.SkipWhiteSpace <- true
         parser.SkipInvalidChars <- true
