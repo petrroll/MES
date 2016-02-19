@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace MathExpressionSolver.Tokens
 {
@@ -164,7 +165,16 @@ namespace MathExpressionSolver.Tokens
 
         public override IFactorableToken<double> CreateValue(string s)
         {
-            return new ItemToken<double> { Child = double.Parse(s) };
+            double result = 0;
+            if(double.TryParse(s, NumberStyles.AllowDecimalPoint, NumberFormatInfo.InvariantInfo, out result))
+            {
+                return new ItemToken<double> { Child = result };
+            }
+            else
+            {
+                throw new TokenizerException($"Number {s} is not in an appropriate format.");
+            }
+
         }
     }
 }

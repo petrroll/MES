@@ -211,10 +211,9 @@ namespace MathExpressionSolver.Parser
             return (a == '_' || char.IsLetter(a));
         }
 
-        private static char decimalSeparator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator[0];
         public static bool IsNum(char a)
         {
-            return (a == decimalSeparator) || char.IsDigit(a);
+            return (a.ToString() == NumberFormatInfo.InvariantInfo.NumberDecimalSeparator) || char.IsDigit(a);
         }
 
 

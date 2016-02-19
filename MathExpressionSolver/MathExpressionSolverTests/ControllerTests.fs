@@ -65,7 +65,7 @@ module ControllerIntegrationTests =
         testWithCurrInstance "a = 2,5" "a=(3/6*5)"
         testWithCurrInstance "asdfsdf = 8" "asdfsdf=(5 + 3)"
 
-        testWithCurrInstance "Pi = 3,4" "Pi = 3,4"
+        testWithCurrInstance "Pi = 3,4" "Pi = 3.4"
         testWithCurrInstance "7,6" "3 - Pi + 8"
 
         testWithCurrInstance "2,5" "a"
@@ -83,7 +83,7 @@ module ControllerIntegrationTests =
         controller.ExecuteExpression "a=(3/6*5)" |> ignore
         controller.ExecuteExpression "asdfsdf=(5 + 3)" |> ignore
 
-        controller.ExecuteExpression "Pi = 3,4"|> ignore
+        controller.ExecuteExpression "Pi = 3.4"|> ignore
 
     [<Fact>]
     let IfsAdv() =
@@ -104,7 +104,7 @@ module ControllerIntegrationTests =
     [<Fact>]
     let FuncsAdv() =
         let contr = initController()
-        contr.ExecuteExpression("Pi = 3,4") |> ignore
+        contr.ExecuteExpression("Pi = 3.4") |> ignore
         let testWithCurrInstance = testInput contr
 
         testWithCurrInstance "Function funB set." "funB(height_in_m; diameter_in_cm) = Pi * ((diameter_in_cm / 100) * (diameter_in_cm / 100)) * height_in_m"
