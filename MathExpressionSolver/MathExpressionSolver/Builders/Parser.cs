@@ -254,7 +254,7 @@ namespace MathExpressionSolver.Parser
 
         public static bool IsSeparator(char a)
         {
-            return (a == ';'); 
+            return (a == ';' || a == ','); 
         }
 
         public static bool IsWhiteSpace(char a)
