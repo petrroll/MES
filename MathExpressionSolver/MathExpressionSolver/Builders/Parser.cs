@@ -10,7 +10,7 @@ namespace MathExpressionSolver.Parser
     /// </summary>
     public class ExpressionParser
     {
-        const int avgParsedItemLength = 4;
+        const int _avgParsedItemLength = 4;
 
         /// <summary>
         /// Are invalid characters to be skipped or included in result. Implicitly false.
@@ -24,90 +24,49 @@ namespace MathExpressionSolver.Parser
         /// </summary>
         public bool SkipWhiteSpace { get; set; } = true;
 
-        private List<ParsedItem> parsedItems;
-        /// <summary>
-        /// Parsed <see cref="StringExpression"/> (after <see cref="ParseExpression"/> is called).
-        /// </summary>
-        public ParsedItem[] ParsedItems { get { return parsedItems.ToArray(); } }
-
-        private string rawExpression;
-
-        /// <summary>
-        /// Expression string that is to be parsed.
-        /// </summary>
-        public string StringExpression
-        {
-            set
-            {
-                Clear();
-                if (value == null) { throw new ArgumentNullException(nameof(value), "StringExpression null"); }
-
-                rawExpression = value;
-                parsedItems.Capacity = rawExpression.Length / avgParsedItemLength;
-
-            }
-        }
-
-        public ExpressionParser()
-        {
-            parsedItems = new List<ParsedItem>();
-            rawExpression = string.Empty;
-            Clear();
-        }
-
-        /// <summary>
-        /// Automacitally sets <see cref="StringExpression"/> property.
-        /// </summary>
-        /// <param name="expression">An expression string to be parsed</param>
-        public ExpressionParser(string expression) : this()
-        {
-            StringExpression = expression;
-        }
-
-        /// <summary>
-        /// Clears <see cref="ParsedItems"/> and resets <see cref="ExpressionParser"/> state.
-        /// </summary>
-        public void Clear()
-        {
-            parsedItems.Clear();
-        }
-
         /// <summary>
         /// Parses the expression set in <see cref="StringExpression"/> and appends result to <see cref="ParsedItems"/>.
         /// </summary>
-        public void ParseExpression()
+        public ParsedItem[] ParseExpression(string rawExpression)
         {
-            ParsedItemType lastType = ParsedItemType.NotSet;
+            if (rawExpression == null) { throw new ArgumentNullException(nameof(rawExpression), "StringExpression null"); }
 
-            var expBuffer = new StringBuilder(avgParsedItemLength);
+            var expBuffer = new StringBuilder(_avgParsedItemLength);
+            var parsedItems = new List<ParsedItem>(rawExpression.Length / _avgParsedItemLength);
+
+            ParsedItemType lastType = ParsedItemType.NotSet;
             foreach (char c in rawExpression)
             {
                 ParsedItemType currentType = getExpItemType(c);
-                if (IsCoumpnoundable(lastType) && currentType != lastType)
-                {
-                    parseNewExpression(expBuffer, lastType);
-                }
+                if (isCoumpnoundable(lastType) && currentType != lastType) { parseNewExpression(expBuffer, parsedItems, lastType); }
 
                 lastType = currentType;
-                if (IsCoumpnoundable(currentType))
-                {
-                    expBuffer.Append(c);
-                    continue;
-                }
-
                 expBuffer.Append(c);
-                parseNewExpression(expBuffer, currentType);
-            }
 
+                if (!isCoumpnoundable(currentType)) { parseNewExpression(expBuffer, parsedItems, currentType); }
+            }
+            flushBuffer(expBuffer, parsedItems, lastType);
+
+            var result = parsedItems.ToArray();
+
+            parsedItems.Clear();
+            expBuffer.Clear();
+
+            return result;
+        }
+
+        private void flushBuffer(StringBuilder expBuffer, List<ParsedItem> parsedItems, ParsedItemType lastType)
+        {
             if (expBuffer.Length > 0)
             {
-                parseNewExpression(expBuffer, lastType);
+                parseNewExpression(expBuffer, parsedItems, lastType);
             }
         }
-        private void parseNewExpression(StringBuilder charBuffer, ParsedItemType currentType)
+
+        private void parseNewExpression(StringBuilder expBuffer, List<ParsedItem> parsedItems, ParsedItemType currentType)
         {
-            string expression = charBuffer.ToString();
-            charBuffer.Clear();
+            string expression = expBuffer.ToString();
+            expBuffer.Clear();
 
             if (isSkipable(currentType)) { return; }
 
@@ -115,7 +74,7 @@ namespace MathExpressionSolver.Parser
 
         }
 
-        private bool IsCoumpnoundable(ParsedItemType type)
+        private bool isCoumpnoundable(ParsedItemType type)
         {
             return (
                     type == ParsedItemType.Value ||
@@ -172,22 +131,19 @@ namespace MathExpressionSolver.Parser
     /// </summary>
     public struct ParsedItem
     {
+        public string Value { get; private set; }
+        public ParsedItemType Type { get; private set; }
+
         public ParsedItem(string value, ParsedItemType type)
         {
-            this.value = value;
-            this.type = type;
+            this.Value = value;
+            this.Type = type;
         }
 
         public override string ToString()
         {
             return Value;
         }
-
-        private string value;
-        private ParsedItemType type;
-
-        public string Value { get { return value; } }
-        public ParsedItemType Type { get { return type; } }
     }
 
     /// <summary>

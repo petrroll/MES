@@ -37,10 +37,7 @@ namespace MathExpressionSolver.Controller
         {
             testInicialization();
 
-            Parser.StringExpression = expression;
-            Parser.ParseExpression();
-
-            Tokenizer.DataToBeTokenized = Parser.ParsedItems;
+            Tokenizer.DataToBeTokenized = Parser.ParseExpression(expression);
             Tokenizer.Tokenize();
 
             ExpTreeBuilder.RawTokens = Tokenizer.Tokens;
