@@ -167,6 +167,38 @@ module ControllerIntegrationTests =
 
         valueTester "funB(y; 1)" 37.0
 
+    [<Fact>]
+    let FuncsVariablesAndScope() =
+      
+        let controller = initController()
+
+        let valueTester = bindController controller testValue
+        let funcTester = bindController controller testNewFunction
+        let variableTester = bindController (controller) testAssigment
+
+        funcTester "funA(x; y) = x - y" "funA"
+        variableTester "x = 10" 10.0 "x"        
+        valueTester "funA(2, 1)" 1.0
+
+        funcTester "funB(x; y) = x - y" "funB"
+        valueTester "funB(3,1)" 2.0
+
+    [<Fact(Skip="Not sure about enclosures yet.")>]
+    let FuncsAndEnclosures() =
+      
+        let controller = initController()
+
+        let valueTester = bindController controller testValue
+        let funcTester = bindController controller testNewFunction
+        let variableTester = bindController (controller) testAssigment
+
+        variableTester "x = 10" 10.0 "x"        
+        funcTester "funC(parA) = x - parA" "funC"
+        valueTester "funC(7)" 3.0
+
+        variableTester "x = 100" 100.0 "x"
+        valueTester "funC(2.0)" -98.0
+
 
     [<Fact(Skip="Throws stackoverflow. Will get fixed during ExpTree builder refactoring")>]
     let FuncDeep() =
