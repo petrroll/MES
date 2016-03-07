@@ -122,10 +122,9 @@ namespace MathExpressionSolver.Controller
         /// <exception cref="TokenizerException">Expression can't be properly tokenized.</exception>
         /// <exception cref="ExpTreeBuilderException">Expression tree can't be build.</exception>
         /// <exception cref="ControllerException">Invalid expression.</exception>
-        /// <returns>String with information about expression result.</returns>
-        public string ExecuteExpression(string expression)
+        /// <returns>A struct containing all information about result.</returns>
+        public Result<T> ExecuteExpression(string expression)
         {
-
             string possVariableRegex = @"^[^\(\)]+=.*$";
             string possFuncRegex = @"^.+\(.+=.*$";
 
@@ -140,8 +139,8 @@ namespace MathExpressionSolver.Controller
                 string variableName = custVar.Groups["varName"].Value;
                 string variableExpression = custVar.Groups["expr"].Value;
 
-                string variableValue = SaveVariable(variableName, variableExpression).ToString();
-                return variableName + " = " + variableValue;
+                T variableValue = SaveVariable(variableName, variableExpression);
+                return new Result<T>(ExpressionType.NewVariable, variableValue, additionalData: variableName);
             }
             else if (Regex.IsMatch(expression, possFuncRegex))
             {
@@ -154,11 +153,12 @@ namespace MathExpressionSolver.Controller
                 string[] argumentsNames = custFunc.Groups["argName"].Captures.ToArray();
 
                 SaveFunction(funcName, funcExpression, argumentsNames);
-                return "Function " + funcName + " set.";
+                return new Result<T>(ExpressionType.NewFunction, default(T), additionalData: funcName);
             }
             else
             {
-                return ReturnResult(expression).ToString();
+                T result = ReturnResult(expression);
+                return new Result<T>(ExpressionType.Evaluation, result);
             }
         }
 
@@ -166,17 +166,13 @@ namespace MathExpressionSolver.Controller
         /// Executes a expression command (compute an expression, assign variable, assign custom function) and returns its result.
         /// </summary>
         /// <param name="expression">An expression to be executed</param>
-        /// <returns>String with information about expression result.</returns>
-        public string ExecuteExpressionSafe(string expression)
+        /// <returns>Struct containing all information about result.</returns>
+        public Result<T> ExecuteExpressionSafe(string expression)
         {
             try { return ExecuteExpression(expression); }
             catch(ExpressionException ex)
             {
-               return "Error: " + ex.Message;
-            }
-            catch(Exception ex)
-            {
-                return "Expression unrelated exception: " + ex.Message;
+                return new Result<T>(ex);
             }
         }
 
@@ -187,6 +183,57 @@ namespace MathExpressionSolver.Controller
                 ExpTreeBuilder == null)
             {
                 throw new InvalidOperationException("Controller object not properly iniciazed.");
+            }
+        }
+    }
+
+    public enum ExpressionType { Evaluation, NewFunction, NewVariable }
+    /// <summary>
+    /// Struct encapsulating result from ExpressionEvaluator.
+    /// 
+    /// If Exception is empty then the operation succeeded. If it's non-empty then it failed.
+    /// </summary>
+    /// <typeparam name="T">Type of results.</typeparam>
+    public struct Result<T>
+    {
+        public Exception Exception { get; private set; }
+        public ExpressionType Type { get; private set; }   
+        public T Value { get; private set; }
+        public string AdditionalData { get; private set; }
+
+        public Result(ExpressionType expressionType, T value, string additionalData = null, Exception ex = null)
+        {
+            Exception = ex;
+            Value = value;
+            Type = expressionType;
+            AdditionalData = additionalData;
+        }
+
+        public Result(Exception ex)
+        {
+            Exception = ex;
+            Value = default(T);
+            Type = default(ExpressionType);
+            AdditionalData = null;
+        }
+
+        public override string ToString()
+        {
+            if (Exception != null)
+            {
+                return $"Error: {Exception.Message}";
+            }
+
+            switch (Type)
+            {
+                case ExpressionType.Evaluation:
+                    return Value.ToString();
+                case ExpressionType.NewFunction:
+                    return $"Function {AdditionalData} set.";
+                case ExpressionType.NewVariable:
+                    return $"{AdditionalData} = {Value}";
+                default:
+                    throw new InvalidOperationException("Unimplemented type.");
             }
         }
     }

@@ -41,7 +41,7 @@ module ControllerIntegrationTests =
 
     let testInput (contr : Controller<double>) (expectedValue : string) (expression : string) = 
         let result = contr.ExecuteExpression expression
-        result |> should equal expectedValue
+        result.ToString() |> should equal expectedValue
 
         
     [<Fact>]
