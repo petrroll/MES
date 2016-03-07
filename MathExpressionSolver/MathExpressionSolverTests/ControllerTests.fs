@@ -138,10 +138,47 @@ module ControllerIntegrationTests =
         let valueTester = bindController controller testValue
         let funcTester = bindController controller testNewFunction
 
+        funcTester "funA(x; y) = x + x * y" "funA"
+        valueTester "funA(3; 2)" 9.0
+
         funcTester "funB(height_in_m; diameter_in_cm) = Pi * ((diameter_in_cm / 100) * (diameter_in_cm / 100)) * height_in_m" "funB"
 
         valueTester "funB(Pi; sin(20))" 0.000963490199635007
         valueTester "funB(20; 8)" 0.4352
+
+
+    [<Fact>]
+    let FuncsAndVars() =
+        
+        let controller = initController()
+
+        let valueTester = bindController controller testValue
+        let funcTester = bindController controller testNewFunction
+        let variableTester = bindController (controller) testAssigment
+
+        funcTester "funA(x; y) = x + x * y" "funA"
+        valueTester "funA(3; 2)" 9.0
+
+        variableTester "x = 3" 3.0 "x"
+        variableTester "y = funA(x; 5)" 18.0 "y"
+
+        funcTester "funB(parA; parB) = parA + parB + y" "funB"
+        valueTester "funB(y; x)" 39.0
+
+        valueTester "funB(y; 1)" 37.0
+
+
+    [<Fact(Skip="Throws stackoverflow. Will get fixed during ExpTree builder refactoring")>]
+    let FuncDeep() =
+        let controller = initController()
+
+        let valueTester = bindController controller testValue
+        let funcTester = bindController controller testNewFunction
+
+        funcTester "funC(x; y) = x + x * y" "funC"
+
+        valueTester "funC(funC(1;2); 3)" 12.0
+        valueTester "funC(funC(1; 3); funC(20; funC(1; 3)))" 404.0
 
 
          
