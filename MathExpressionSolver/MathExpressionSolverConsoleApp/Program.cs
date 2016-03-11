@@ -23,7 +23,7 @@ namespace MathExpressionSolverConsoleApp
 
         private static Controller<double> initController()
         {
-            var parser = new ExpressionParser { SkipWhiteSpace = true, SkipInvalidChars = true };
+            var parser = new ExpressionParser { SkipWhiteSpace = true };
 
             var customVariables = new Dictionary<string, double>();
             var customFunctions = new Dictionary<string, IFactorableBracketsToken<double>>();

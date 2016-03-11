@@ -13,13 +13,6 @@ namespace MathExpressionSolver.Parser
         const int _avgParsedItemLength = 4;
 
         /// <summary>
-        /// Are invalid characters to be skipped or included in result. Implicitly false.
-        /// </summary>
-        /// <remarks>
-        /// An invalid character is a character that doesn't fall into any category.
-        /// </remarks>
-        public bool SkipInvalidChars { get; set; } = false;
-        /// <summary>
         /// Is whitespace to be skipped or included in result. Implicitly false.
         /// </summary>
         public bool SkipWhiteSpace { get; set; } = true;
@@ -85,8 +78,7 @@ namespace MathExpressionSolver.Parser
 
         private bool isSkipable(ParsedItemType type)
         {
-            return ((type == ParsedItemType.Invalid && SkipInvalidChars) ||
-                (type == ParsedItemType.WhiteSpace && SkipWhiteSpace));
+            return (type == ParsedItemType.WhiteSpace && SkipWhiteSpace);
         }
 
         private ParsedItemType getExpItemType(char c)
@@ -162,50 +154,31 @@ namespace MathExpressionSolver.Parser
     /// </remarks>
     public static class ParserHelper
     {
+        //Ascii codes taken from: http://nemesis.lonestar.org/reference/telecom/codes/ascii.html
         public static bool IsNameChar(char a)
         {
-            return (a == '_' || char.IsLetter(a));
+            return (a == '_') || (a >= 'a' && a <= 'z') || (a >= 'A' && a <= 'Z');
         }
 
         public static bool IsNum(char a)
         {
-            return (a.ToString() == NumberFormatInfo.InvariantInfo.NumberDecimalSeparator) || char.IsDigit(a);
+            return (a == '.') || (a >= '0' && a <= '9');
         }
 
 
         public static bool IsLeftBracket(char a)
         {
-            return (a == '(');
+            return (a == '(') || (a == '[') || (a == '{');
         }
 
         public static bool IsRightBracket(char a)
         {
-            return (a == ')');
+            return (a == ')') || (a == ']') || (a == '}');
         }
 
         public static bool IsOperator(char a)
         {
-            switch (a)
-            {
-                case '+':
-                    return true;
-                case '-':
-                    return true;
-                case '*':
-                    return true;
-                case '/':
-                    return true;
-                case '%':
-                    return true;
-                case '=':
-                    return true;
-                case '>':
-                    return true;
-                case '<':
-                    return true;
-                default:
-                    return false;
-            }
+            return (a == '!') || (a >= '#' && a <= '&') || (a >= '*' && a <= '/') || (a >= ':' && a <= '?') || (a == '\\') || (a == '^') || (a == '|') || (a == '~');
         }
 
         public static bool IsSeparator(char a)

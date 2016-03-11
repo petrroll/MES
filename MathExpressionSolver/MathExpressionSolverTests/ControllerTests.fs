@@ -18,7 +18,6 @@ module ControllerIntegrationTests =
         
         let parser = new ExpressionParser()
         parser.SkipWhiteSpace <- true
-        parser.SkipInvalidChars <- true
 
         let customVariables = new Dictionary<string, double>();
         let customFunctions = new Dictionary<string, IFactorableBracketsToken<double>>();
@@ -72,7 +71,6 @@ module ControllerIntegrationTests =
     [<Fact>]
     let ParserTests() =
         let valueTester = bindController (initController()) testValue
-        valueTester "3*(7+7)/2-2*6/7- &&&  (&6 +&9) *8-  (2+ 2/3*(6+exp  (2*7-6* 2 ) - 8)+(2>1))" -107.306989780239
         valueTester "3*(7+7)/2-2*6/7-(6+9)*8-(2+2/3*(6+exp(2*7-6*2)-8)+(2>1))" -107.306989780239
     
     [<Fact>]

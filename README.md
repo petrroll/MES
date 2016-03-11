@@ -13,11 +13,11 @@ __MES__ is a mathematical expressions evaluator (let's just say a fancy calculat
 * Robust Parser.
 
 ##Syntax:
-MES should be able to handle any valid math expression in infix notation. Whitespace between operators, values, and functions is recomended for better readability but is not required. Unknown characters (@, &, ...) are skipped by default but can be set to throw an error.
+MES should be able to handle any valid math expression in infix notation. Whitespace between operators, values, and functions is recomended for better readability but is not required.
 
 In addition to plain math expressions without external dependencies MES supports custom functions and variables as well. Descriptors of both variables and functions (as well as functions' arguments) must consist of only Unicode letters and underscore character. 
 
-Individual argumenents are separated by a semilocolon followed by an optional whitespace. Last empty argument is ignored. Nested arguments (i.e functions and expressions inside arguments) are supported, recursion is not.
+Individual argumenents are separated by a semilocolon/comma followed by an optional whitespace. Last empty argument is ignored. Nested arguments (i.e functions and expressions inside arguments) are supported, recursion is not.
 
 ###Examples:
 Call a function 'fun' with two parameters '2' and '5'.
@@ -57,8 +57,8 @@ Due to aforementioned modular nature extending MES is an easy task. For example 
 
 ##Issues:
 * Evaluation of deeply nested expressions isn't optimized.
-* Serialization of Expression tree would be difficult due to generic nature of Tokens.
-* Test coverage is very limited.
+* Serialization of Expression tree is not currently easy due to generic nature of Token tree.
+* Test coverage is very limited but improving :).
 
 ----
 ###Lisense:
