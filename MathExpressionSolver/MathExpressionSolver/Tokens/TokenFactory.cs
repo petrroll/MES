@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using MathExpressionSolver.Tokens;
 
-namespace MathExpressionSolver.Tokens
+namespace MathExpressionSolver.Builders
 {
     public interface ITokenFactory<T>
     {

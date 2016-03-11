@@ -10,6 +10,7 @@ open MathExpressionSolver
 open MathExpressionSolver.Tokens
 open MathExpressionSolver.Controller
 open MathExpressionSolver.Parser
+open MathExpressionSolver.Builders
 
 module ControllerIntegrationTests =
 

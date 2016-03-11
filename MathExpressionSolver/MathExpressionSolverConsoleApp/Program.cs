@@ -1,9 +1,10 @@
-﻿using MathExpressionSolver.Controller;
+﻿using System;
+using System.Collections.Generic;
+using MathExpressionSolver.Builders;
+using MathExpressionSolver.Controller;
+
 using MathExpressionSolver.Parser;
 using MathExpressionSolver.Tokens;
-
-using System;
-using System.Collections.Generic;
 
 namespace MathExpressionSolverConsoleApp
 {
