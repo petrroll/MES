@@ -111,13 +111,13 @@ namespace MathExpressionSolver.Parser
             {
                 return ParsedItemType.RBracket;
             }
-            else if (ParserHelper.IsOperator(c))
-            {
-                return ParsedItemType.Operator;
-            }
             else if (ParserHelper.IsSeparator(c))
             {
                 return ParsedItemType.Separator;
+            }
+            else if (ParserHelper.IsOperator(c))
+            {
+                return ParsedItemType.Operator;
             }
             else
             {
