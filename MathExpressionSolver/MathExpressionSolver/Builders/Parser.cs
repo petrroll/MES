@@ -18,8 +18,10 @@ namespace MathExpressionSolver.Parser
         public bool SkipWhiteSpace { get; set; } = true;
 
         /// <summary>
-        /// Parses the expression set in <see cref="StringExpression"/> and appends result to <see cref="ParsedItems"/>.
+        /// Parses the <paramref name="rawExpression"/> and returns an array of corresponding <see cref="ParsedItem"/>s.
         /// </summary>
+        /// <param name="rawExpression">Expression to be parsed.</param>
+        /// <returns>Array of <see cref="ParsedItem"/>s</returns>
         public ParsedItem[] ParseExpression(string rawExpression)
         {
             if (rawExpression == null) { throw new ArgumentNullException(nameof(rawExpression), "StringExpression null"); }
