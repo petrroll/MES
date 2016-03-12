@@ -37,10 +37,10 @@ namespace MathExpressionSolver.Controller
         {
             testInicialization();
 
-            Tokenizer.DataToBeTokenized = Parser.ParseExpression(expression);
-            Tokenizer.Tokenize();
+            var parsedItems = Parser.ParseExpression(expression);
+            var tokens = Tokenizer.Tokenize(parsedItems);
 
-            ExpTreeBuilder.RawTokens = Tokenizer.Tokens;
+            ExpTreeBuilder.RawTokens = tokens;
             ExpTreeBuilder.CreateExpressionTree();
 
             IToken<T> treeTop = ExpTreeBuilder.TreeTop;
