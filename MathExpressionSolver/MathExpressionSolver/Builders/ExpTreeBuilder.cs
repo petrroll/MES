@@ -10,50 +10,13 @@ namespace MathExpressionSolver.Tokens
     /// <typeparam name="T">Token base type.</typeparam>
     public class ExpTreeBuilder<T>
     {
-        private IFactorableToken<T>[] rawTokens;
         /// <summary>
-        /// Array of <see cref="IFactorableToken<T>"/> to be rebuild into an expression tree. 
+        /// Creates an expression tree out of <paramref name="rawTokens"/> and returns its top Token.
         /// </summary>
-        public IFactorableToken<T>[] RawTokens {
-            set {
-                Clear();
-                if (value == null) { throw new ArgumentNullException(nameof(value), $"{nameof(RawTokens)} doesn't accept null"); }
-                rawTokens = value;
-            }
-        }
-        /// <summary>
-        /// The top <see cref="IToken{T}"/> of expression tree determined by <see cref="CreateExpressionTree"/>.
-        /// </summary>
-        public IToken<T> TreeTop { get; private set; }
-
-        public ExpTreeBuilder()
-        {
-            rawTokens = new IFactorableToken<T>[0];
-            Clear();
-        }
-
-        /// <summary>
-        /// Automatically sets <see cref="RawTokens"/> property.
-        /// </summary>
-        /// <param name="tokens">Array of <see cref="IFactorableToken<T>"/> to be rebuild into an expression tree.</param>
-        public ExpTreeBuilder(IFactorableToken<T>[] tokens) : this()
-        {
-            RawTokens = tokens;
-        }
-
-        /// <summary>
-        /// Cleares <see cref="TreeTop"/> and resets <see cref="ExpTreeBuilder{T}"/> state.
-        /// </summary>
-        public void Clear()
-        {
-            TreeTop = null;
-        }
-
-        /// <summary>
-        /// Creates an expression tree out of <see cref="RawTokens"/> and puts its top to <see cref="TreeTop"/>.
-        /// </summary>
+        /// <param name="rawTokens"></param>
         /// <exception cref="ExpTreeBuilderException">Expression tree can't be build.</exception>
-        public void CreateExpressionTree()
+        /// <returns>A top Token of created expression tree.</returns>
+        public IToken<T> CreateExpressionTree(IFactorableToken<T>[] rawTokens)
         {
             var tokenStack = new Stack<IFactorableToken<T>>();
 
@@ -71,9 +34,9 @@ namespace MathExpressionSolver.Tokens
             if (tokenStack.Count > 0)
             {
                 if(tokenStack.Peek().Type == TokenType.BinOperator) { throw new ExpTreeBuilderException("Binary operator: " + tokenStack.Peek().ToString() + " doesn't have right side."); }
-                TreeTop = tokenStack.Last();
+                return tokenStack.Last();
             }
-            else { TreeTop = null; } 
+            else { return null; } 
         }
 
         private void placeCurrentToken(Stack<IFactorableToken<T>> tokenStack, IFactorableToken<T> currToken)
@@ -122,11 +85,10 @@ namespace MathExpressionSolver.Tokens
 
             for (int nThArgument = 0; nThArgument < argumentsTokens.Length; nThArgument++)
             {
-                argumentTokenTreeBuilder.RawTokens = argumentsTokens[nThArgument];
-                argumentTokenTreeBuilder.CreateExpressionTree();
+                var argumentTopToken = argumentTokenTreeBuilder.CreateExpressionTree(argumentsTokens[nThArgument]);
 
-                if(argumentTokenTreeBuilder.TreeTop == null) { throw new ExpTreeBuilderException(nThArgument + "th argument of " + currToken.ToString() + " is empty." ); }
-                currToken.Children[nThArgument] = argumentTokenTreeBuilder.TreeTop;
+                if(argumentTopToken == null) { throw new ExpTreeBuilderException(nThArgument + "th argument of " + currToken.ToString() + " is empty." ); }
+                currToken.Children[nThArgument] = argumentTopToken;
             }
         }
     }

@@ -39,11 +39,8 @@ namespace MathExpressionSolver.Controller
 
             var parsedItems = Parser.ParseExpression(expression);
             var tokens = Tokenizer.Tokenize(parsedItems);
+            var treeTop = ExpTreeBuilder.CreateExpressionTree(tokens);
 
-            ExpTreeBuilder.RawTokens = tokens;
-            ExpTreeBuilder.CreateExpressionTree();
-
-            IToken<T> treeTop = ExpTreeBuilder.TreeTop;
             return treeTop;
         }
 
