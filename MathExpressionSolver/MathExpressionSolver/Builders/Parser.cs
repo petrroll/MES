@@ -32,27 +32,27 @@ namespace MathExpressionSolver.Parser
             foreach (char c in rawExpression)
             {
                 ParsedItemType currentType = getExpItemType(c);
-                if (isCoumpnoundable(lastType) && currentType != lastType) { parseNewExpression(expBuffer, parsedItems, lastType); }
+                if (isCoumpnoundable(lastType) && currentType != lastType) { parseNewExpression(expBuffer, lastType, parsedItems); }
 
                 lastType = currentType;
                 expBuffer.Append(c);
 
-                if (!isCoumpnoundable(currentType)) { parseNewExpression(expBuffer, parsedItems, currentType); }
+                if (!isCoumpnoundable(currentType)) { parseNewExpression(expBuffer, currentType, parsedItems); }
             }
-            flushBuffer(expBuffer, parsedItems, lastType);
+            flushBuffer(expBuffer, lastType, parsedItems);
 
             return parsedItems.ToArray();
         }
 
-        private void flushBuffer(StringBuilder expBuffer, List<ParsedItem> parsedItems, ParsedItemType lastType)
+        private void flushBuffer(StringBuilder expBuffer, ParsedItemType lastType, List<ParsedItem> parsedItems)
         {
             if (expBuffer.Length > 0)
             {
-                parseNewExpression(expBuffer, parsedItems, lastType);
+                parseNewExpression(expBuffer, lastType, parsedItems);
             }
         }
 
-        private void parseNewExpression(StringBuilder expBuffer, List<ParsedItem> parsedItems, ParsedItemType currentType)
+        private void parseNewExpression(StringBuilder expBuffer, ParsedItemType currentType, List<ParsedItem> parsedItems)
         {
             string expression = expBuffer.ToString();
             expBuffer.Clear();

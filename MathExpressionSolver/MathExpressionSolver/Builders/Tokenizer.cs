@@ -32,25 +32,25 @@ namespace MathExpressionSolver.Builders
             var tokens = new List<IFactorableToken<T>>();
             int currTokenIndex = 0;
 
-            while (isCurrTokenIndexInRange(currTokenIndex, parsedItems))
+            while (isCurrTokenIndexInRange(parsedItems, currTokenIndex))
             {
-                tokens.Add(getToken(ref currTokenIndex, parsedItems));
+                tokens.Add(getToken(parsedItems, ref currTokenIndex));
                 currTokenIndex++;
             }
 
             return tokens.ToArray();
         }
 
-        private IFactorableToken<T> getToken(ref int currTokenIndex, ParsedItem[] parsedItems)
+        private IFactorableToken<T> getToken(ParsedItem[] parsedItems, ref int currTokenIndex)
         {
             switch (parsedItems[currTokenIndex].Type)
             {
                 case ParsedItemType.Name:
-                    return handleName(ref currTokenIndex, parsedItems);
+                    return handleName(parsedItems, ref currTokenIndex);
                 case ParsedItemType.Value:
                     return TokenFactory.CreateValue(parsedItems[currTokenIndex].Value);
                 case ParsedItemType.LBracket:
-                    return TokenFactory.CreateBrackets(extractTokensFromBrakets(ref currTokenIndex, parsedItems));
+                    return TokenFactory.CreateBrackets(extractTokensFromBrakets(parsedItems, ref currTokenIndex));
                 case ParsedItemType.Operator:
                     return TokenFactory.CreateOperator(parsedItems[currTokenIndex].Value);
                 case ParsedItemType.Invalid:
@@ -60,11 +60,11 @@ namespace MathExpressionSolver.Builders
             }
         }
 
-        private IFactorableToken<T> handleName(ref int currTokenIndex, ParsedItem[] parsedItems)
+        private IFactorableToken<T> handleName(ParsedItem[] parsedItems, ref int currTokenIndex)
         {
-            if (isSomethingAfterCurrTokenIndex(currTokenIndex, parsedItems) && parsedItems[currTokenIndex + 1].Type == ParsedItemType.LBracket)
+            if (isSomethingAfterCurrTokenIndex(parsedItems, currTokenIndex) && parsedItems[currTokenIndex + 1].Type == ParsedItemType.LBracket)
             {
-                return TokenFactory.CreateFunction(parsedItems[currTokenIndex].Value, extractTokensFromFunctionArgs(ref currTokenIndex, parsedItems));
+                return TokenFactory.CreateFunction(parsedItems[currTokenIndex].Value, extractTokensFromFunctionArgs(parsedItems, ref currTokenIndex));
             }
             else
             {
@@ -72,15 +72,15 @@ namespace MathExpressionSolver.Builders
             }
         }
 
-        private IFactorableToken<T>[][] extractTokensFromFunctionArgs(ref int currTokenIndex, ParsedItem[] parsedItems)
+        private IFactorableToken<T>[][] extractTokensFromFunctionArgs(ParsedItem[] parsedItems, ref int currTokenIndex)
         {
             currTokenIndex++;
-            return extractTokensFromBrakets(ref currTokenIndex, parsedItems);
+            return extractTokensFromBrakets(parsedItems, ref currTokenIndex);
         }
 
-        private IFactorableToken<T>[][] extractTokensFromBrakets(ref int currTokenIndex, ParsedItem[] parsedItems)
+        private IFactorableToken<T>[][] extractTokensFromBrakets(ParsedItem[] parsedItems, ref int currTokenIndex)
         {
-            if(isSomethingAfterCurrTokenIndex(currTokenIndex, parsedItems))
+            if(isSomethingAfterCurrTokenIndex(parsedItems, currTokenIndex))
             {
                 var arguments = new List<IFactorableToken<T>[]>();
                 var argumentsTokenizer = new Tokenizer<T> { TokenFactory = this.TokenFactory };
@@ -94,7 +94,7 @@ namespace MathExpressionSolver.Builders
 
                 while (bracketsLevel != 0)
                 {
-                    if(isCurrTokenIndexOutOfRange(currTokenIndex, parsedItems))
+                    if(isCurrTokenIndexOutOfRange(parsedItems, currTokenIndex))
                     {
                         throw new TokenizerException("Closing brackets for \"" + string.Join(string.Empty, parsedItems.SubArray(firstItemIndex - 1)) + "\" not found.");
                     }
@@ -105,7 +105,7 @@ namespace MathExpressionSolver.Builders
                     if (bracketsLevel == 1 && parsedItems[currTokenIndex].Type == ParsedItemType.Separator ||
                         (bracketsLevel == 0 && parsedItems[currTokenIndex].Type == ParsedItemType.RBracket && length > 0))
                     {
-                        arguments.Add(returnTokenizedSubArray(argumentsTokenizer, firstItemIndex, length, parsedItems)); 
+                        arguments.Add(returnTokenizedSubArray(parsedItems, firstItemIndex, length, argumentsTokenizer)); 
 
                         firstItemIndex = currTokenIndex + 1;
                         length = 0;
@@ -123,28 +123,28 @@ namespace MathExpressionSolver.Builders
 
         }
 
-        private IFactorableToken<T>[] returnTokenizedSubArray(Tokenizer<T> argumentsTokenizer, int firstItemIndex, int length, ParsedItem[] parsedItems)
+        private IFactorableToken<T>[] returnTokenizedSubArray(ParsedItem[] parsedItems, int firstItemIndex, int length, Tokenizer<T> argumentsTokenizer)
         {
             var subArrayParsedItems = parsedItems.SubArray(firstItemIndex, length);
             return argumentsTokenizer.Tokenize(subArrayParsedItems);
         }
 
-        private bool isCurrTokenIndexInRange(int currTokenIndex, ParsedItem[] parsedItems)
+        private bool isCurrTokenIndexInRange(ParsedItem[] parsedItems, int currTokenIndex)
         {
             return (currTokenIndex < parsedItems.Length);
         }
 
-        private bool isCurrTokenIndexOutOfRange(int currTokenIndex, ParsedItem[] parsedItems)
+        private bool isCurrTokenIndexOutOfRange(ParsedItem[] parsedItems, int currTokenIndex)
         {
-            return !isCurrTokenIndexInRange(currTokenIndex, parsedItems);
+            return !isCurrTokenIndexInRange(parsedItems, currTokenIndex);
         }
 
-        private bool isSomethingAfterCurrTokenIndex(int currTokenIndex, ParsedItem[] parsedItems)
+        private bool isSomethingAfterCurrTokenIndex(ParsedItem[] parsedItems, int currTokenIndex)
         {
-            return (isCurrTokenIndexInRange(currTokenIndex, parsedItems) && !isCurrTokenIndexLast(currTokenIndex, parsedItems));
+            return (isCurrTokenIndexInRange(parsedItems, currTokenIndex) && !isCurrTokenIndexLast(parsedItems, currTokenIndex));
         }
 
-        private bool isCurrTokenIndexLast(int currTokenIndex, ParsedItem[] parsedItems)
+        private bool isCurrTokenIndexLast(ParsedItem[] parsedItems, int currTokenIndex)
         {
             return (parsedItems.Length - currTokenIndex == 1);
         }
