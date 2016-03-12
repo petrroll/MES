@@ -16,10 +16,11 @@ namespace MathExpressionSolver.Builders
         /// </summary>
         public ITokenFactory<T> TokenFactory { get; set; }
 
+
         /// <summary>
-        /// Tokenizes the <paramref name="parsedItems"/> and returns an array of <see cref="IFactorableToken<T>"/>.
+        /// Tokenizes the <paramref name="parsedItems"/> and returns an array of <see cref="IFactorableToken{T}"/>.
         /// </summary>
-        /// <param name="parsedItems">Array of <see cref="parsedItems<T> to be tokenized.</param>
+        /// <param name="parsedItems">Array of <see cref="ParsedItem"/>s to be tokenized.</param>
         /// <exception cref="TokenizerException">Expression can't be properly tokenized.</exception>
         /// <exception cref="InvalidOperationException"><see cref="Tokenize"/> is called without set <see cref="TokenFactory"/>.</exception>
         /// <returns>Tokenized <paramref name="parsedItems"/></returns>
