@@ -26,6 +26,7 @@ namespace MathExpressionSolver.Builders
         /// <returns>Tokenized <paramref name="parsedItems"/></returns>
         public IFactorableToken<T>[] Tokenize(ParsedItem[] parsedItems)
         {
+            if (parsedItems == null) { throw new ArgumentNullException(nameof(parsedItems), "ParsedItems null"); }
             if (TokenFactory == null) { throw new InvalidOperationException("Token factory not set."); }
 
             var tokens = new List<IFactorableToken<T>>();
