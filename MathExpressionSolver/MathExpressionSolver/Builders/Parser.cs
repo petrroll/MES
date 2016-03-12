@@ -41,12 +41,7 @@ namespace MathExpressionSolver.Parser
             }
             flushBuffer(expBuffer, parsedItems, lastType);
 
-            var result = parsedItems.ToArray();
-
-            parsedItems.Clear();
-            expBuffer.Clear();
-
-            return result;
+            return parsedItems.ToArray();
         }
 
         private void flushBuffer(StringBuilder expBuffer, List<ParsedItem> parsedItems, ParsedItemType lastType)
