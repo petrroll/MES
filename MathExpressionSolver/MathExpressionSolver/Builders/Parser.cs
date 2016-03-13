@@ -130,7 +130,7 @@ namespace MathExpressionSolver.Parser
 
         public override string ToString()
         {
-            return Value;
+            return $"[{this.Value}:{this.Type}]";
         }
     }
 

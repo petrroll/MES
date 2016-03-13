@@ -15,16 +15,11 @@ open MathExpressionSolver.Builders
 open System.Linq
 open System
 
+open TestsUtils
 
 module ParserTests =
     open Microsoft.FSharp.Core
     open Microsoft.FSharp.Collections
-
-    let parseItemToString (item : ParsedItem) =
-        "[" + item.Value + ":" + item.Type.ToString() + "]"
-
-    let toStringAndConcate (parsedArray : ParsedItem[]) =
-        Array.map parseItemToString parsedArray |> String.concat String.Empty
 
     let initParser () =
         new ExpressionParser();
