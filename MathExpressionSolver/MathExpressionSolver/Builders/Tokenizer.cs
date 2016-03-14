@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MathExpressionSolver.Parser;
 using MathExpressionSolver.Tokens;
+using System.Text;
 
 namespace MathExpressionSolver.Builders
 {
@@ -29,93 +30,196 @@ namespace MathExpressionSolver.Builders
             if (parsedItems == null) { throw new ArgumentNullException(nameof(parsedItems), "ParsedItems null"); }
             if (TokenFactory == null) { throw new InvalidOperationException("Token factory not set."); }
 
-            var tokens = new List<IFactorableToken<T>>();
-            int currTokenIndex = 0;
+            var tokenLevels = new Stack<TokenLevelInfo<T>>();
+            tokenLevels.Push(new TokenLevelInfo<T>(new ParsedItem(string.Empty, ParsedItemType.NotSet)));
 
+            int currTokenIndex = 0;
+            var currentLayerTokens = tokenLevels.Peek();
             while (isInRange(parsedItems, currTokenIndex))
             {
-                tokens.Add(getToken(parsedItems, ref currTokenIndex));
+                processCurrParsedItem(parsedItems, ref currTokenIndex, tokenLevels);
                 currTokenIndex++;
             }
 
-            return tokens.ToArray();
+            if(tokenLevels.Count > 1) { throw new TokenizerException($"{tokenLevels.Peek()} does not have an ending parenthese."); }
+            else if(tokenLevels.Count < 1) { throw new InvalidOperationException("Expression level toekinezer session was ended."); }
+
+            var topLevelTokens = tokenLevels.Peek().GetArguments();
+
+            if (topLevelTokens.Length > 1) { throw new TokenizerException($"Top level contains multiple expressions: {tokenLevels.Peek()}."); }
+            else if (topLevelTokens.Length < 1) { throw new InvalidOperationException("This expression literally cannot fire."); }
+
+            return  topLevelTokens[0];
         }
 
-        private IFactorableToken<T> getToken(ParsedItem[] parsedItems, ref int currTokenIndex)
+        private void processCurrParsedItem(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo<T>> tokenLevels)
         {
-            switch (parsedItems[currTokenIndex].Type)
+            var currItem = parsedItems[currTokenIndex];
+            switch (currItem.Type)
             {
                 case ParsedItemType.Name:
-                    return handleName(parsedItems, ref currTokenIndex);
+                    handleName(parsedItems, ref currTokenIndex, tokenLevels);
+                    break;
                 case ParsedItemType.Value:
-                    return TokenFactory.CreateValue(parsedItems[currTokenIndex].Value);
+                    handleValue(parsedItems, ref currTokenIndex, tokenLevels);
+                    break;
                 case ParsedItemType.LBracket:
-                    return TokenFactory.CreateBrackets(extractTokensFromBrakets(parsedItems, ref currTokenIndex));
+                    handleLeftBracket(parsedItems, ref currTokenIndex, tokenLevels);
+                    break;
+                case ParsedItemType.RBracket:
+                    handleRightBracket(parsedItems, ref currTokenIndex, tokenLevels);
+                    break;
                 case ParsedItemType.Operator:
-                    return TokenFactory.CreateOperator(parsedItems[currTokenIndex].Value);
+                    handleOperator(parsedItems, ref currTokenIndex, tokenLevels);
+                    break;
+                case ParsedItemType.Separator:
+                    handleSeparator(parsedItems, ref currTokenIndex, tokenLevels);
+                    break;
+                case ParsedItemType.WhiteSpace:
                 case ParsedItemType.Invalid:
-                    throw new TokenizerException(parsedItems[currTokenIndex].Value + " is not a valid expression.");
+                case ParsedItemType.NotSet:
                 default:
                     throw new TokenizerException(parsedItems[currTokenIndex].Value + " is not a valid expression.");
             }
         }
 
-        private IFactorableToken<T> handleName(ParsedItem[] parsedItems, ref int currTokenIndex)
+        private void handleSeparator(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo<T>> tokenLevels)
         {
-            var name = parsedItems[currTokenIndex].Value;
-            if (isNotEnd(parsedItems, currTokenIndex) && parsedItems[currTokenIndex + 1].Type == ParsedItemType.LBracket)
+            tokenLevels.Peek().SeparateNewArgument();
+        }
+
+        private void handleOperator(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo<T>> tokenLevels)
+        {
+            var currParsedItem = parsedItems[currTokenIndex];
+            var newToken = TokenFactory.CreateOperator(currParsedItem.Value);
+            tokenLevels.Peek().AddNewToken(newToken);
+        }
+
+        private void handleName(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo<T>> tokenLevels)
+        {
+            var currParsedItem = parsedItems[currTokenIndex];
+            var isFunction = isNotEnd(parsedItems, currTokenIndex) && parsedItems[currTokenIndex + 1].Type == ParsedItemType.LBracket;
+
+            if (isFunction)
             {
+                tokenLevels.Push(new TokenLevelInfo<T>(currParsedItem));
                 currTokenIndex++;
-                var argsTokens = extractTokensFromBrakets(parsedItems, ref currTokenIndex);
-                return TokenFactory.CreateFunction(name, argsTokens);
             }
             else
             {
-                return TokenFactory.CreateVariable(name);
+                var newToken = TokenFactory.CreateVariable(currParsedItem.Value);
+                tokenLevels.Peek().AddNewToken(newToken);
             }
         }
 
-        private IFactorableToken<T>[][] extractTokensFromBrakets(ParsedItem[] parsedItems, ref int currTokenIndex)
+        private void handleValue(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo<T>> tokenLevels)
         {
-            if (isEnd(parsedItems, currTokenIndex))
-            { throw new TokenizerException("Unended bracket at the end of the expression."); }
+            var currParsedItem = parsedItems[currTokenIndex];
+            var newToken = TokenFactory.CreateValue(currParsedItem.Value);
+            tokenLevels.Peek().AddNewToken(newToken);
+        }
 
-            var arguments = new List<IFactorableToken<T>[]>();
-            var argumentsTokenizer = new Tokenizer<T> { TokenFactory = this.TokenFactory };
+        private void handleRightBracket(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo<T>> tokenLevels)
+        {
+            if (tokenLevels.Count < 2) { throw new TokenizerException($"No matching left bracket for {tokenLevels.Peek()}"); }
 
-            currTokenIndex++;
+            var currLevelInfo = tokenLevels.Pop();
+            var currParsedItem = currLevelInfo.ParsedItem;
 
-            int firstItemIndex = currTokenIndex;
-            int length = 0;
+            IFactorableToken<T> newToken = null;
 
-            int bracketsLevel = 1;
-
-            while (bracketsLevel != 0)
+            switch (currParsedItem.Type)
             {
-                if (isOutOfRange(parsedItems, currTokenIndex))
-                {
-                    throw new TokenizerException("Closing brackets for \"" + string.Join(string.Empty, parsedItems.SubArray(firstItemIndex - 1)) + "\" not found.");
-                }
-
-                if (parsedItems[currTokenIndex].Type == ParsedItemType.RBracket) { bracketsLevel--; }
-                else if (parsedItems[currTokenIndex].Type == ParsedItemType.LBracket) { bracketsLevel++; }
-
-                if (bracketsLevel == 1 && parsedItems[currTokenIndex].Type == ParsedItemType.Separator ||
-                    (bracketsLevel == 0 && parsedItems[currTokenIndex].Type == ParsedItemType.RBracket && length > 0))
-                {
-                    arguments.Add(returnTokenizedSubArray(parsedItems, firstItemIndex, length, argumentsTokenizer));
-
-                    firstItemIndex = currTokenIndex + 1;
-                    length = 0;
-                }
-                else { length++; }
-
-                currTokenIndex++;
-
+                case ParsedItemType.Name:
+                    newToken = TokenFactory.CreateFunction(currParsedItem.Value, currLevelInfo.GetArguments());
+                    break;
+                case ParsedItemType.LBracket:
+                    newToken = TokenFactory.CreateBrackets(currLevelInfo.GetArguments());
+                    break;
+                case ParsedItemType.Value:
+                case ParsedItemType.RBracket:
+                case ParsedItemType.Operator:
+                case ParsedItemType.Separator:
+                case ParsedItemType.WhiteSpace:
+                case ParsedItemType.Invalid:
+                case ParsedItemType.NotSet:
+                default:
+                    throw new InvalidOperationException("Invalid type initiated bracket.");
             }
 
-            currTokenIndex--; //corrects index to last brackets token.
-            return arguments.ToArray();
+            tokenLevels.Peek().AddNewToken(newToken);
+        }
+
+        private void handleLeftBracket(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo<T>> tokenLevels)
+        {
+            var currParsedItem = parsedItems[currTokenIndex];
+            tokenLevels.Push(new TokenLevelInfo<T>(currParsedItem));
+        }
+
+        private enum TokenLevelChange { LevelDown, LevelUp, CurrLevel, ArgSeparation }
+        struct CurrTokenInfo
+        {
+            public TokenLevelChange LevelChange { get; private set; }
+            public IFactorableToken<T> Token { get; private set; }
+
+            public CurrTokenInfo(TokenLevelChange levelChange, IFactorableToken<T> factorableToken)
+            {
+                this.LevelChange = levelChange;
+                this.Token = factorableToken;
+            }
+        }
+
+        class TokenLevelInfo<T>
+        {
+            private LinkedList<List<IFactorableToken<T>>> argumentsLists;
+            public ParsedItem ParsedItem { get; private set; }
+
+            public TokenLevelInfo(ParsedItem item)
+            {
+                ParsedItem = item;
+
+                argumentsLists = new LinkedList<List<IFactorableToken<T>>>();
+                argumentsLists.AddLast(new List<IFactorableToken<T>>());
+            }
+
+            public void SeparateNewArgument()
+            {
+                argumentsLists.AddLast(new List<IFactorableToken<T>>());
+            }
+
+            public void AddNewToken(IFactorableToken<T> token)
+            {
+                argumentsLists.Last.Value.Add(token);
+            }
+
+            public IFactorableToken<T>[][] GetArguments()
+            {
+                IFactorableToken<T>[][] arguments = new IFactorableToken<T>[argumentsLists.Count][];
+
+                int i = 0;
+                foreach (var argument in argumentsLists)
+                {
+                    arguments[i] = argument.ToArray();
+                    i++;
+                }
+
+                return arguments;
+            }
+
+            public override string ToString()
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (var argTokens in argumentsLists)
+                {
+                    foreach (var argToken in argTokens)
+                    {
+                        sb.Append(argToken);
+                    }
+                    sb.Append(";");
+                }
+
+                return sb.ToString();
+            }
         }
 
         private IFactorableToken<T>[] returnTokenizedSubArray(ParsedItem[] parsedItems, int firstItemIndex, int length, Tokenizer<T> argumentsTokenizer)
