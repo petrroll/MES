@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MathExpressionSolver.Parser;
 using MathExpressionSolver.Tokens;
 using System.Text;
+using System.Diagnostics;
 
 namespace MathExpressionSolver.Builders
 {
@@ -42,12 +43,12 @@ namespace MathExpressionSolver.Builders
             }
 
             if(tokenLevels.Count > 1) { throw new TokenizerException($"{tokenLevels.Peek()} does not have an ending parenthese."); }
-            else if(tokenLevels.Count < 1) { throw new InvalidOperationException("Expression level toekinezer session was ended."); }
+            Debug.Assert((tokenLevels.Count == 1), "Expression level toekinezer session was ended.");
 
             var topLevelTokens = tokenLevels.Peek().GetArguments();
 
             if (topLevelTokens.Length > 1) { throw new TokenizerException($"Top level contains multiple expressions: {tokenLevels.Peek()}."); }
-            else if (topLevelTokens.Length < 1) { throw new InvalidOperationException("This expression literally cannot fire."); }
+            Debug.Assert((topLevelTokens.Length == 1), "This expression literally cannot fire.");
 
             return  topLevelTokens[0];
         }
