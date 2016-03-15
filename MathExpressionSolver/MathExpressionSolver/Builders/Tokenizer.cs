@@ -43,12 +43,12 @@ namespace MathExpressionSolver.Builders
             }
 
             if(tokenLevels.Count > 1) { throw new TokenizerException($"{tokenLevels.Peek()} does not have an ending parenthese."); }
-            Debug.Assert((tokenLevels.Count == 1), "Expression level toekinezer session was ended.");
+            AssertHelper.AssertRuntime((tokenLevels.Count == 1), "Expression level toekinezer session was ended.");
 
             var topLevelTokens = tokenLevels.Peek().GetArguments();
 
             if (topLevelTokens.Length > 1) { throw new TokenizerException($"Top level contains multiple expressions: {tokenLevels.Peek()}."); }
-            Debug.Assert((topLevelTokens.Length == 1), "This expression literally cannot fire.");
+            AssertHelper.AssertRuntime((topLevelTokens.Length == 1), "Expression level toekinezer session was ended.");
 
             return  topLevelTokens[0];
         }

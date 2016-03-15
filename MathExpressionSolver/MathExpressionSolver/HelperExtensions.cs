@@ -57,6 +57,22 @@ namespace MathExpressionSolver
         }
     }
 
+    /// <summary>
+    /// Helper for asserting conditions at runtime.
+    /// </summary>
+    public static class AssertHelper
+    {
+        /// <summary>
+        /// Asserts a condition and throws an <see cref="AssertFailedException"/> when it's false.
+        /// </summary>
+        /// <param name="condition">Condition expected to be true.</param>
+        /// <param name="failedMessage">Message for <see cref="AssertFailedException"/> when <paramref name="condition"/> is false.</param>
+        public static void AssertRuntime(bool condition, string failedMessage)
+        {
+            if (!condition) { throw new AssertFailedException(failedMessage); }
+        }
+    }
+
 
     [Serializable]
     public class ExpressionException : Exception
@@ -65,6 +81,20 @@ namespace MathExpressionSolver
         public ExpressionException(string message) : base(message) { }
         public ExpressionException(string message, Exception inner) : base(message, inner) { }
         protected ExpressionException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context)
+        { }
+    }
+
+    /// <summary>
+    /// An exception that should never be fired.
+    /// </summary>
+    public class AssertFailedException : Exception
+    {
+        public AssertFailedException() { }
+        public AssertFailedException(string message) : base(message) { }
+        public AssertFailedException(string message, System.Exception inner) : base(message, inner) { }
+        protected AssertFailedException(
           System.Runtime.Serialization.SerializationInfo info,
           System.Runtime.Serialization.StreamingContext context) : base(info, context)
         { }
