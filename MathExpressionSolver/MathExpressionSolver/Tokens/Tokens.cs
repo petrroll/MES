@@ -7,13 +7,13 @@
         virtual public int Priority { get; protected set; }
         virtual public TokenType Type { get; protected set; }
 
-        virtual public IToken<T>[] Children { get; protected set; }
+        public IToken<T>[] Children { get; protected set; }
         abstract public T ReturnValue();
     }
 
     public abstract class UnToken<T> : Token<T>, IUnToken<T>
     {
-        public virtual IToken<T> Child { get { return Children[0]; } set { Children[0] = value; } }
+        public IToken<T> Child { get { return Children[0]; } set { Children[0] = value; } }
 
         protected UnToken()
         {
@@ -30,8 +30,8 @@
 
     public class ItemToken<T> : UnToken<T>
     {
-        new virtual public T Child { get { return Children[0]; } set { Children[0] = value; } }
-        new virtual public T[] Children { get; protected set; }
+        new public T Child { get { return Children[0]; } set { Children[0] = value; } }
+        new public T[] Children { get; protected set; }
 
         public ItemToken()
         {
@@ -52,8 +52,8 @@
 
     public class ArgToken<T> : Token<T>, IArgumentToken<T>
     {
-        public virtual ICustFuncToken<T> CustFunction { get; set; }
-        public virtual int ArgID { get; set; }
+        public ICustFuncToken<T> CustFunction { get; set; }
+        public int ArgID { get; set; }
 
         public ArgToken()
         {
@@ -70,8 +70,8 @@
 
     public abstract class BinOpToken<T> : Token<T>, IBinToken<T>
     {
-        public virtual IToken<T> LeftChild { get { return Children[0]; } set { Children[0] = value; } }
-        public virtual IToken<T> RightChild { get { return Children[1]; } set { Children[1] = value; } }
+        public IToken<T> LeftChild { get { return Children[0]; } set { Children[0] = value; } }
+        public IToken<T> RightChild { get { return Children[1]; } set { Children[1] = value; } }
 
         protected BinOpToken()
         {
@@ -213,7 +213,7 @@
 
     public abstract class FuncToken<T> : Token<T>, IFactorableBracketsToken<T>
     {
-        public virtual IFactorableToken<T>[][] BracketedTokens { get; set; }
+        public IFactorableToken<T>[][] BracketedTokens { get; set; }
 
         protected FuncToken(int arguments)
         {
