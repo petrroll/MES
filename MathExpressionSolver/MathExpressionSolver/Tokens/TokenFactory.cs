@@ -25,32 +25,32 @@ namespace MathExpressionSolver.Builders
         void Clear();
     }
 
-    /// <summary>
-    /// Handles <see cref="IFactorableToken{T}"/> creation out of <see cref="string"/> description.
-    /// </summary>
-    /// <typeparam name="T">Token base type.</typeparam>
-    public abstract class TokenFactory<T> : ITokenFactory<T>
+    public abstract class AdvancedTokenFactory<T> : ICustomFunctionsAwareTokenFactory<T>
     {
+        private string[] argsArray;
+        public string[] ArgsArray { set { if (value == null) { throw new ArgumentNullException(nameof(value), $"{nameof(ArgsArray)} doesn't accept null"); } argsArray = value; } }
+
+        public ICustFuncToken<T> CustomFunction { private get; set; }
         public Dictionary<string, T> CustomVariables { get; set; }
+
+        public Dictionary<string, IFactorableBracketsToken<T>> CustomFunctions { get; set; }
+
+        protected AdvancedTokenFactory()
+        {
+            Clear();
+        }
+
+        public void Clear()
+        {
+            ArgsArray = new string[0];
+            CustomFunction = null;
+        }
 
         public virtual IFactorableBracketsToken<T> CreateBrackets(IFactorableToken<T>[][] arguments)
         {
             IFactorableBracketsToken<T> bracketToken = new BracketToken<T>();
             bracketToken.BracketedTokens[0] = arguments[0];
             return bracketToken;
-        }
-
-        public virtual IFactorableBracketsToken<T> CreateFunction(string s, IFactorableToken<T>[][] arguments)
-        {
-            throw new TokenizerException("Using a factory that doesn's support custom functions.");
-        }
-
-        public abstract IFactorableToken<T> CreateValue(string s);
-
-        public virtual IFactorableToken<T> CreateVariable(string s)
-        {
-            if(CustomVariables != null && CustomVariables.ContainsKey(s)) { return new ItemToken<T> { Child = CustomVariables[s] }; }
-            else { throw new TokenizerException("No variable named " + s + " exists."); }
         }
 
         public virtual IFactorableToken<T> CreateOperator(string s)
@@ -69,28 +69,8 @@ namespace MathExpressionSolver.Builders
                     throw new TokenizerException("No operator named " + s + " exists.");
             }
         }
-    }
 
-    public abstract class AdvancedTokenFactory<T> : TokenFactory<T>, ICustomFunctionsAwareTokenFactory<T>
-    {
-        private string[] argsArray;
-        public string[] ArgsArray { set { if (value == null) { throw new ArgumentNullException(nameof(value), $"{nameof(ArgsArray)} doesn't accept null"); } argsArray = value; } }
-        public ICustFuncToken<T> CustomFunction { private get; set; }
-
-        public Dictionary<string, IFactorableBracketsToken<T>> CustomFunctions { get; set; }
-
-        protected AdvancedTokenFactory()
-        {
-            Clear();
-        }
-
-        public void Clear()
-        {
-            ArgsArray = new string[0];
-            CustomFunction = null;
-        }
-
-        public override IFactorableToken<T> CreateVariable(string s)
+        public virtual IFactorableToken<T> CreateVariable(string s)
         {
             int argID = Array.IndexOf(argsArray, s);
             if (argID != -1)
@@ -99,11 +79,15 @@ namespace MathExpressionSolver.Builders
                 else if (!(CustomFunction.Children.Length > argID)) { throw new TokenizerException("Number of arguments for custom function don't match up."); }
                 else { return new ArgToken<T> { ArgID = argID, CustFunction = CustomFunction }; }
             }
-            else { return base.CreateVariable(s); }
+            else
+            {
+                if (CustomVariables != null && CustomVariables.ContainsKey(s)) { return new ItemToken<T> { Child = CustomVariables[s] }; }
+                else { throw new TokenizerException("No variable named " + s + " exists."); }
+            }
             
         }
 
-        public override IFactorableBracketsToken<T> CreateFunction(string s, IFactorableToken<T>[][] arguments)
+        public virtual IFactorableBracketsToken<T> CreateFunction(string s, IFactorableToken<T>[][] arguments)
         {
             //TODO: Should create a new instance
             if(CustomFunctions != null && CustomFunctions.ContainsKey(s))
@@ -112,9 +96,11 @@ namespace MathExpressionSolver.Builders
                 custFunc.BracketedTokens = arguments;
                 return custFunc;
             }
-            else { return base.CreateFunction(s, arguments); }
+            else { throw new TokenizerException("No function named " + s + " exists."); }
             
         }
+
+        public abstract IFactorableToken<T> CreateValue(string s);
     }
 
     public class DoubleTokenFactory : AdvancedTokenFactory<double>

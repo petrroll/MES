@@ -29,7 +29,7 @@ namespace MathExpressionSolverConsoleApp
             var customVariables = new Dictionary<string, double>();
             var customFunctions = new Dictionary<string, IFactorableBracketsToken<double>>();
 
-            TokenFactory<double> factory = new DoubleTokenFactory { CustomVariables = customVariables, CustomFunctions = customFunctions };
+            ITokenFactory<double> factory = new DoubleTokenFactory { CustomVariables = customVariables, CustomFunctions = customFunctions };
             var tokenizer = new Tokenizer<double> { TokenFactory = factory };
 
             var treeBuilder = new ExpTreeBuilder<double>();
