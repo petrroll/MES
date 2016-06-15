@@ -16,7 +16,7 @@ namespace MathExpressionSolver.Builders
 
     }
 
-    public interface IAdvancedTokenFactory<T> : ITokenFactory<T>
+    public interface ICustomFunctionsAwareTokenFactory<T> : ITokenFactory<T>
     {
         string[] ArgsArray { set; }
         ICustFuncToken<T> CustomFunction { set; }
@@ -71,7 +71,7 @@ namespace MathExpressionSolver.Builders
         }
     }
 
-    public abstract class AdvancedTokenFactory<T> : TokenFactory<T>, IAdvancedTokenFactory<T>
+    public abstract class AdvancedTokenFactory<T> : TokenFactory<T>, ICustomFunctionsAwareTokenFactory<T>
     {
         private string[] argsArray;
         public string[] ArgsArray { set { if (value == null) { throw new ArgumentNullException(nameof(value), $"{nameof(ArgsArray)} doesn't accept null"); } argsArray = value; } }
@@ -105,6 +105,7 @@ namespace MathExpressionSolver.Builders
 
         public override IFactorableBracketsToken<T> CreateFunction(string s, IFactorableToken<T>[][] arguments)
         {
+            //TODO: Should create a new instance
             if(CustomFunctions != null && CustomFunctions.ContainsKey(s))
             {
                 IFactorableBracketsToken<T> custFunc =  CustomFunctions[s];

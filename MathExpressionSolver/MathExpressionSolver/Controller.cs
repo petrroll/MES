@@ -91,8 +91,8 @@ namespace MathExpressionSolver.Controller
         public void SaveFunction(string funcName, string expression, string[] argumentsNames)
         {
             if (Tokenizer.TokenFactory == null) { throw new InvalidOperationException("Controller object not properly iniciazed."); }
-            if (!(Tokenizer.TokenFactory is IAdvancedTokenFactory<T>)) { throw new InvalidOperationException("Token factory doesn't support custom functions."); }
-            var advTokenFactory = (IAdvancedTokenFactory<T>)Tokenizer.TokenFactory;
+            if (!(Tokenizer.TokenFactory is ICustomFunctionsAwareTokenFactory<T>)) { throw new InvalidOperationException("Token factory doesn't support custom functions."); }
+            var advTokenFactory = (ICustomFunctionsAwareTokenFactory<T>)Tokenizer.TokenFactory;
 
             IFactorableCustFuncToken<T> newFunction = new CustFuncToken<T>(argumentsNames.Length);
 
