@@ -46,7 +46,7 @@ namespace MathExpressionSolver.Tokens
             while (!tokenStack.IsEmpty() && tokenStack.Peek().Priority >= currToken.Priority) { subHierarchyToken = tokenStack.Pop(); }
             IFactorableToken<T> upHierarchyToken = (!tokenStack.IsEmpty()) ? tokenStack.Peek() : null;
 
-            if(lastToken?.Type == TokenType.BinOperator && currToken.Type == TokenType.BinOperator)
+            if (lastToken?.Type == TokenType.BinOperator && currToken.Type == TokenType.BinOperator)
             {
                 throw new ExpTreeBuilderException("Two binary operators next to each other: " + lastToken.ToString() + " " + currToken.ToString());
             }
@@ -55,17 +55,22 @@ namespace MathExpressionSolver.Tokens
             {
                 ((IBinToken<T>)currToken).LeftChild = subHierarchyToken;
             }
-            else if(currToken.Type == TokenType.BinOperator)
+            else if (currToken.Type == TokenType.BinOperator)
             {
                 throw new ExpTreeBuilderException("Binary operator: " + currToken.ToString() + " does't have left side");
             }
 
-            if(upHierarchyToken?.Type == TokenType.BinOperator)
+            //Try to assign it under previous binary operator
+            if (upHierarchyToken?.Type == TokenType.BinOperator)
             {
                 ((IBinToken<T>)upHierarchyToken).RightChild = currToken;
             }
-            else if (!(tokenStack.IsEmpty() && 
-                (currToken.Type == TokenType.BinOperator ^ subHierarchyToken == null)))
+            //If stack isn't empty -> current token is disconected
+            //If the current token type is binary & there's nothing to add as left side (or there's something to add as left side but current token is not binary) -> something is left left disconected.
+            else if (
+                (!tokenStack.IsEmpty()) || 
+                ((currToken.Type == TokenType.BinOperator) == (subHierarchyToken == null))
+                )
             {
                 throw new ExpTreeBuilderException("Token " + currToken.ToString() + " isn't connected to any operator");
             }
