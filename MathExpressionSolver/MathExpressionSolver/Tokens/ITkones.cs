@@ -2,24 +2,25 @@
 
 namespace MathExpressionSolver.Tokens
 {
-    public interface IToken<T>
+    #region ITokens
+    public interface IToken<out T>
     {
         T ReturnValue();
     }
 
-    public interface IUnToken<T> : IToken<T>
+    public interface IUnToken<out T> : IToken<T>
     {
         IToken<T> Child { get; }
     }
 
-    public interface IBinToken<T> : IToken<T>
+    public interface IBinToken<out T> : IToken<T>
     {
         IToken<T> LeftChild { get; }
         IToken<T> RightChild { get; }
     }
 
 
-    public interface IChildrenToken<T> : IToken<T>
+    public interface IChildrenToken<out T> : IToken<T>
     {
         IToken<T>[] Children { get; }
     }
@@ -34,7 +35,9 @@ namespace MathExpressionSolver.Tokens
         ICustFuncToken<T> CustFunction { get; set; }
         int ArgID { get; set; }
     }
+    #endregion
 
+    #region IFactorableTokens
     public interface IFactorableToken<T> : IToken<T>
     {
         int Priority { get; }
@@ -61,5 +64,6 @@ namespace MathExpressionSolver.Tokens
     {
 
     }
+    #endregion
 
 }
