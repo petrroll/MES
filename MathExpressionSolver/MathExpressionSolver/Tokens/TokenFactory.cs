@@ -81,7 +81,7 @@ namespace MathExpressionSolver.Builders
             }
             else
             {
-                if (CustomVariables != null && CustomVariables.ContainsKey(s)) { return new ItemToken<T> { Child = CustomVariables[s] }; }
+                if (CustomVariables != null && CustomVariables.ContainsKey(s)) { return new ItemToken<T> { Value = CustomVariables[s] }; }
                 else { throw new TokenizerException("No variable named " + s + " exists."); }
             }
             
@@ -156,7 +156,7 @@ namespace MathExpressionSolver.Builders
             double result = 0;
             if(double.TryParse(s, NumberStyles.AllowDecimalPoint, NumberFormatInfo.InvariantInfo, out result))
             {
-                return new ItemToken<double> { Child = result };
+                return new ItemToken<double> { Value = result };
             }
             else
             {

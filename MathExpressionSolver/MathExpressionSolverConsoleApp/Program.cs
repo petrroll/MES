@@ -21,6 +21,7 @@ namespace MathExpressionSolverConsoleApp
             {
                 input = Console.ReadLine();
                 if(input == "--bye") { break; }
+                controller.ExecuteExpression(input);
                 Console.WriteLine(controller.ExecuteExpressionSafe(input));
             }
         }

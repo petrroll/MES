@@ -10,20 +10,17 @@ namespace MathExpressionSolver.Tokens
         virtual public int Priority { get; protected set; }
         virtual public TokenType Type { get; protected set; }
 
-        public IToken<T>[] MutChildren { get; protected set; }
-        public IReadOnlyList<IToken<T>> Children { get { return Array.AsReadOnly<IToken<T>>(MutChildren); } } 
         abstract public T ReturnValue();
     }
 
     public abstract class UnToken<T> : Token<T>, IFactorableUnToken<T>
     {
-        public IToken<T> Child { get { return Children[0]; } }
-        public IToken<T> MutChild { get { return Children[0]; } set { MutChildren[0] = value; } }
+        public IToken<T> Child { get { return MutChild; } }
+        public IToken<T> MutChild { get; set; }
 
         protected UnToken()
         {
             Priority = int.MaxValue;
-            MutChildren = new IToken<T>[1];
         }
 
         public override T ReturnValue()
@@ -32,26 +29,24 @@ namespace MathExpressionSolver.Tokens
         }
     }
 
-
-    public class ItemToken<T> : UnToken<T>
+    public class ItemToken<T> : Token<T>
     {
-        new public T Child { get { return Children[0]; } set { Children[0] = value; } }
-        new public T[] Children { get; protected set; }
+        public T Value { get; set; }
 
         public ItemToken()
         {
             Type = TokenType.Element;
-            Children = new T[1];
+            Priority = int.MaxValue;
         }
 
         public override T ReturnValue()
         {
-            return Child;
+            return Value;
         }
 
         public override string ToString()
         {
-            return Child.ToString();
+            return Value.ToString();
         }
     }
 
@@ -62,7 +57,6 @@ namespace MathExpressionSolver.Tokens
 
         public ArgToken()
         {
-            MutChildren = new IToken<T>[0];
             Type = TokenType.Element;
             Priority = int.MaxValue;
         }
@@ -75,16 +69,15 @@ namespace MathExpressionSolver.Tokens
 
     public abstract class BinOpToken<T> : Token<T>, IFactorableBinToken<T>
     {
-        public IToken<T> LeftChild { get { return Children[0]; } }
-        public IToken<T> RightChild { get { return Children[1]; } }
+        public IToken<T> LeftChild { get { return MutLeftChild; } }
+        public IToken<T> RightChild { get { return MutRightChild; } }
 
-        public IToken<T> MutLeftChild { get { return Children[0]; } set { MutChildren[0] = value; } }
-        public IToken<T> MutRightChild { get { return Children[1]; } set { MutChildren[1] = value; } }
+        public IToken<T> MutLeftChild { get; set; }
+        public IToken<T> MutRightChild { get; set; }
 
         protected BinOpToken()
         {
             Type = TokenType.BinOperator;
-            MutChildren = new IToken<T>[2];
         }
 
         public override T ReturnValue()
@@ -223,13 +216,18 @@ namespace MathExpressionSolver.Tokens
     {
         public IFactorableToken<T>[][] BracketedTokens { get; set; }
 
+        public IToken<T>[] MutChildren { get; protected set; }
+        public IReadOnlyList<IToken<T>> Children { get; protected set; }
+
         protected FuncToken(int arguments)
         {
+            MutChildren = new IToken<T>[arguments];
+            Children = Array.AsReadOnly(MutChildren);
+
+            BracketedTokens = new IFactorableToken<T>[arguments][];
+
             Type = TokenType.Function;
             Priority = int.MaxValue;
-
-            MutChildren = new IToken<T>[arguments];
-            BracketedTokens = new IFactorableToken<T>[arguments][];
         }
 
         public override T ReturnValue()
@@ -246,7 +244,6 @@ namespace MathExpressionSolver.Tokens
     public class CustFuncToken<T> : FuncToken<T>, IFactorableCustFuncToken<T>
     {
         public IToken<T> FuncTopToken { get { return MutFuncTopToken; }  }
-
         public IToken<T> MutFuncTopToken { get; set; }
 
         public CustFuncToken(int numOfArgs)

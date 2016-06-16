@@ -61,6 +61,7 @@ namespace MathExpressionSolver.Tokens
 
     public interface IFactorableBracketsToken<T> : IFactorableIChildrenToken<T>
     {
+        //TODO: Consider removing setter
         IFactorableToken<T>[][] BracketedTokens { get; set; }
     }
 
