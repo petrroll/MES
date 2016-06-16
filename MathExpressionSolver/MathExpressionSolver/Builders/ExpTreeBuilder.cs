@@ -5,7 +5,7 @@ using System.Linq;
 namespace MathExpressionSolver.Tokens
 {
     /// <summary>
-    /// Converts linear array of <see cref="IFactorableToken"/> into an expression tree.
+    /// Converts linear array of <see cref="IFactorableToken{T}"/> into an expression tree.
     /// </summary>
     /// <typeparam name="T">Token base type.</typeparam>
     public class ExpTreeBuilder<T>
@@ -33,7 +33,7 @@ namespace MathExpressionSolver.Tokens
 
             if (tokenStack.Count > 0)
             {
-                if(tokenStack.Peek().Type == TokenType.BinOperator) { throw new ExpTreeBuilderException("Binary operator: " + tokenStack.Peek().ToString() + " doesn't have right side."); }
+                if(tokenStack.Peek().Type == TokenType.BinOperator) { throw new ExpTreeBuilderException($"Binary operator: {tokenStack.Peek()} doesn't have right side."); }
                 return tokenStack.Last();
             }
             else { return null; } 
@@ -48,7 +48,7 @@ namespace MathExpressionSolver.Tokens
 
             if (lastToken?.Type == TokenType.BinOperator && currToken.Type == TokenType.BinOperator)
             {
-                throw new ExpTreeBuilderException("Two binary operators next to each other: " + lastToken.ToString() + " " + currToken.ToString());
+                throw new ExpTreeBuilderException($"Two binary operators next to each other: {lastToken}, {currToken}");
             }
 
             if (currToken.Type == TokenType.BinOperator && subHierarchyToken != null)
@@ -57,7 +57,7 @@ namespace MathExpressionSolver.Tokens
             }
             else if (currToken.Type == TokenType.BinOperator)
             {
-                throw new ExpTreeBuilderException("Binary operator: " + currToken.ToString() + " does't have left side");
+                throw new ExpTreeBuilderException($"Binary operator: {currToken} does't have left side");
             }
 
             //Try to assign it under previous binary operator
@@ -72,7 +72,7 @@ namespace MathExpressionSolver.Tokens
                 ((currToken.Type == TokenType.BinOperator) == (subHierarchyToken == null))
                 )
             {
-                throw new ExpTreeBuilderException("Token " + currToken.ToString() + " isn't connected to any operator");
+                throw new ExpTreeBuilderException($"Token {currToken} isn't connected to any operator");
             }
 
             tokenStack.Push(currToken);
@@ -85,14 +85,14 @@ namespace MathExpressionSolver.Tokens
 
             if (argumentsTokens.Length != currToken.Children.Length)
             {
-                throw new ExpTreeBuilderException("Number of supplied (" + argumentsTokens.Length + ") and required (" + currToken.Children.Length + ") arguments for " + currToken.ToString() + " doesn't match.");
+                throw new ExpTreeBuilderException($"Number of supplied ({argumentsTokens.Length}) and required ({currToken.Children.Length}) arguments for {currToken} doesn't match.");
             }
 
             for (int nThArgument = 0; nThArgument < argumentsTokens.Length; nThArgument++)
             {
                 var argumentTopToken = argumentTokenTreeBuilder.CreateExpressionTree(argumentsTokens[nThArgument]);
 
-                if(argumentTopToken == null) { throw new ExpTreeBuilderException(nThArgument + "th argument of " + currToken.ToString() + " is empty." ); }
+                if(argumentTopToken == null) { throw new ExpTreeBuilderException($"{nThArgument}. argument of {currToken} is empty." ); }
                 currToken.Children[nThArgument] = argumentTopToken;
             }
         }

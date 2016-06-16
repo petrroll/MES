@@ -10,7 +10,9 @@ namespace MathExpressionSolverConsoleApp
 {
     class Program
     {
+#pragma warning disable RECS0154 // Parameter is never used
         static void Main(string[] args)
+#pragma warning restore RECS0154 // Parameter is never used
         {
             string input;
             Controller<double> controller = initController();
@@ -18,6 +20,7 @@ namespace MathExpressionSolverConsoleApp
             while (true)
             {
                 input = Console.ReadLine();
+                if(input == "--bye") { break; }
                 Console.WriteLine(controller.ExecuteExpressionSafe(input));
             }
         }

@@ -61,7 +61,7 @@ namespace MathExpressionSolver.Controller
         }
 
         /// <summary>
-        /// Computes a result of a given expression and saves it to <see cref="CustomVariables"/>.
+        /// Computes a result of a given expression and saves it to custom variables in TokenFactory.
         /// </summary>
         /// <param name="variableName">Custom variable name.</param>
         /// <param name="expression">An expression whose result is to be set as a value of the variable.</param>
@@ -80,7 +80,7 @@ namespace MathExpressionSolver.Controller
         }
 
         /// <summary>
-        /// Creates an expression tree for a function and assign this newly created function to <see cref="CustomFunctions"/>.
+        /// Creates an expression tree for a function and assign this newly created function to custom functions in TokenFactory.
         /// </summary>
         /// <param name="funcName">Custom function descriptor (name).</param>
         /// <param name="expression">An expression describing what the function will do.</param>

@@ -8,7 +8,7 @@ using System.Diagnostics;
 namespace MathExpressionSolver.Builders
 {
     /// <summary>
-    /// Creates linear array of <see cref="IFactorableToken<T>"/> out of <see cref="ParsedItem"/> array.
+    /// Creates linear array of <see cref="IFactorableToken{T}"/> out of <see cref="ParsedItem"/> array.
     /// </summary>
     /// <typeparam name="T">Token base type.</typeparam>
     public class Tokenizer<T>
@@ -31,8 +31,8 @@ namespace MathExpressionSolver.Builders
             if (parsedItems == null) { throw new ArgumentNullException(nameof(parsedItems), "ParsedItems null"); }
             if (TokenFactory == null) { throw new InvalidOperationException("Token factory not set."); }
 
-            var tokenLevels = new Stack<TokenLevelInfo<T>>();
-            tokenLevels.Push(new TokenLevelInfo<T>(new ParsedItem(string.Empty, ParsedItemType.NotSet)));
+            var tokenLevels = new Stack<TokenLevelInfo>();
+            tokenLevels.Push(new TokenLevelInfo(new ParsedItem(string.Empty, ParsedItemType.NotSet)));
 
             int currTokenIndex = 0;
             var currentLayerTokens = tokenLevels.Peek();
@@ -53,7 +53,7 @@ namespace MathExpressionSolver.Builders
             return  topLevelTokens[0];
         }
 
-        private void processCurrParsedItem(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo<T>> tokenLevels)
+        private void processCurrParsedItem(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo> tokenLevels)
         {
             var currItem = parsedItems[currTokenIndex];
             switch (currItem.Type)
@@ -76,34 +76,33 @@ namespace MathExpressionSolver.Builders
                 case ParsedItemType.Separator:
                     handleSeparator(parsedItems, ref currTokenIndex, tokenLevels);
                     break;
-                case ParsedItemType.WhiteSpace:
-                case ParsedItemType.Invalid:
-                case ParsedItemType.NotSet:
                 default:
                     throw new TokenizerException(parsedItems[currTokenIndex].Value + " is not a valid expression.");
             }
         }
 
-        private void handleSeparator(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo<T>> tokenLevels)
+#pragma warning disable RECS0154 // Parameter is never used
+        private void handleSeparator(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo> tokenLevels)
+#pragma warning restore RECS0154 // Parameter is never used
         {
             tokenLevels.Peek().SeparateNewArgument();
         }
 
-        private void handleOperator(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo<T>> tokenLevels)
+        private void handleOperator(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo> tokenLevels)
         {
             var currParsedItem = parsedItems[currTokenIndex];
             var newToken = TokenFactory.CreateOperator(currParsedItem.Value);
             tokenLevels.Peek().AddNewToken(newToken);
         }
 
-        private void handleName(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo<T>> tokenLevels)
+        private void handleName(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo> tokenLevels)
         {
             var currParsedItem = parsedItems[currTokenIndex];
             var isFunction = isNotEnd(parsedItems, currTokenIndex) && parsedItems[currTokenIndex + 1].Type == ParsedItemType.LBracket;
 
             if (isFunction)
             {
-                tokenLevels.Push(new TokenLevelInfo<T>(currParsedItem));
+                tokenLevels.Push(new TokenLevelInfo(currParsedItem));
                 currTokenIndex++;
             }
             else
@@ -113,14 +112,16 @@ namespace MathExpressionSolver.Builders
             }
         }
 
-        private void handleValue(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo<T>> tokenLevels)
+        private void handleValue(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo> tokenLevels)
         {
             var currParsedItem = parsedItems[currTokenIndex];
             var newToken = TokenFactory.CreateValue(currParsedItem.Value);
             tokenLevels.Peek().AddNewToken(newToken);
         }
 
-        private void handleRightBracket(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo<T>> tokenLevels)
+#pragma warning disable RECS0154 // Parameter is never used
+        private void handleRightBracket(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo> tokenLevels)
+#pragma warning restore RECS0154 // Parameter is never used
         {
             if (tokenLevels.Count < 2) { throw new TokenizerException($"No matching left bracket for {tokenLevels.Peek()}"); }
 
@@ -137,13 +138,6 @@ namespace MathExpressionSolver.Builders
                 case ParsedItemType.LBracket:
                     newToken = TokenFactory.CreateBrackets(currLevelInfo.GetArguments());
                     break;
-                case ParsedItemType.Value:
-                case ParsedItemType.RBracket:
-                case ParsedItemType.Operator:
-                case ParsedItemType.Separator:
-                case ParsedItemType.WhiteSpace:
-                case ParsedItemType.Invalid:
-                case ParsedItemType.NotSet:
                 default:
                     throw new InvalidOperationException("Invalid type initiated bracket.");
             }
@@ -151,10 +145,10 @@ namespace MathExpressionSolver.Builders
             tokenLevels.Peek().AddNewToken(newToken);
         }
 
-        private void handleLeftBracket(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo<T>> tokenLevels)
+        private void handleLeftBracket(ParsedItem[] parsedItems, ref int currTokenIndex, Stack<TokenLevelInfo> tokenLevels)
         {
             var currParsedItem = parsedItems[currTokenIndex];
-            tokenLevels.Push(new TokenLevelInfo<T>(currParsedItem));
+            tokenLevels.Push(new TokenLevelInfo(currParsedItem));
         }
 
         private enum TokenLevelChange { LevelDown, LevelUp, CurrLevel, ArgSeparation }
@@ -170,9 +164,9 @@ namespace MathExpressionSolver.Builders
             }
         }
 
-        class TokenLevelInfo<T>
+        class TokenLevelInfo
         {
-            private LinkedList<List<IFactorableToken<T>>> argumentsLists;
+            private readonly LinkedList<List<IFactorableToken<T>>> argumentsLists;
             public ParsedItem ParsedItem { get; private set; }
 
             public TokenLevelInfo(ParsedItem item)
@@ -209,7 +203,7 @@ namespace MathExpressionSolver.Builders
 
             public override string ToString()
             {
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 foreach (var argTokens in argumentsLists)
                 {
                     foreach (var argToken in argTokens)
