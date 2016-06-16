@@ -53,7 +53,7 @@ namespace MathExpressionSolver.Tokens
 
             if (currToken.Type == TokenType.BinOperator && subHierarchyToken != null)
             {
-                ((IBinToken<T>)currToken).LeftChild = subHierarchyToken;
+                ((IFactorableBinToken<T>)currToken).MutLeftChild = subHierarchyToken;
             }
             else if (currToken.Type == TokenType.BinOperator)
             {
@@ -63,7 +63,7 @@ namespace MathExpressionSolver.Tokens
             //Try to assign it under previous binary operator
             if (upHierarchyToken?.Type == TokenType.BinOperator)
             {
-                ((IBinToken<T>)upHierarchyToken).RightChild = currToken;
+                ((IFactorableBinToken<T>)upHierarchyToken).MutRightChild = currToken;
             }
             //If stack isn't empty -> current token is disconected
             //If the current token type is binary & there's nothing to add as left side (or there's something to add as left side but current token is not binary) -> something is left left disconected.

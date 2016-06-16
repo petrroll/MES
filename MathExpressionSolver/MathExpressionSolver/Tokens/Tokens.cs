@@ -1,4 +1,6 @@
-﻿namespace MathExpressionSolver.Tokens
+﻿using System;
+
+namespace MathExpressionSolver.Tokens
 {
     public enum TokenType { BinOperator, Function, Element, Brackets };
 
@@ -11,9 +13,10 @@
         abstract public T ReturnValue();
     }
 
-    public abstract class UnToken<T> : Token<T>, IUnToken<T>
+    public abstract class UnToken<T> : Token<T>, IFactorableUnToken<T>
     {
-        public IToken<T> Child { get { return Children[0]; } set { Children[0] = value; } }
+        public IToken<T> Child { get { return Children[0]; } }
+        public IToken<T> MutChild { get { return Children[0]; } set { Children[0] = value; } }
 
         protected UnToken()
         {
@@ -68,10 +71,13 @@
         }
     }
 
-    public abstract class BinOpToken<T> : Token<T>, IBinToken<T>
+    public abstract class BinOpToken<T> : Token<T>, IFactorableBinToken<T>
     {
-        public IToken<T> LeftChild { get { return Children[0]; } set { Children[0] = value; } }
-        public IToken<T> RightChild { get { return Children[1]; } set { Children[1] = value; } }
+        public IToken<T> LeftChild { get { return Children[0]; } }
+        public IToken<T> RightChild { get { return Children[1]; } }
+
+        public IToken<T> MutLeftChild { get { return Children[0]; } set { Children[0] = value; } }
+        public IToken<T> MutRightChild { get { return Children[1]; } set { Children[1] = value; } }
 
         protected BinOpToken()
         {

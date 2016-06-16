@@ -9,14 +9,15 @@ namespace MathExpressionSolver.Tokens
 
     public interface IUnToken<T> : IToken<T>
     {
-        IToken<T> Child { get; set; }
+        IToken<T> Child { get; }
     }
 
     public interface IBinToken<T> : IToken<T>
     {
-        IToken<T> LeftChild { get; set; }
-        IToken<T> RightChild { get; set; }
+        IToken<T> LeftChild { get; }
+        IToken<T> RightChild { get; }
     }
+
 
     public interface IChildrenToken<T> : IToken<T>
     {
@@ -38,6 +39,17 @@ namespace MathExpressionSolver.Tokens
     {
         int Priority { get; }
         TokenType Type { get; }
+    }
+
+    public interface IFactorableUnToken<T> : IUnToken<T>, IFactorableToken<T>
+    {
+        IToken<T> MutChild { get; set; }
+    }
+
+    public interface IFactorableBinToken<T> : IBinToken<T>, IFactorableToken<T>
+    {
+        IToken<T> MutLeftChild { get; set; }
+        IToken<T> MutRightChild { get; set; }
     }
 
     public interface IFactorableBracketsToken<T> : IFactorableToken<T>, IChildrenToken<T>
