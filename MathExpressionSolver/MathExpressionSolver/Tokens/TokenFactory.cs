@@ -76,7 +76,7 @@ namespace MathExpressionSolver.Builders
             if (argID != -1)
             {
                 if (CustomFunction == null) { throw new InvalidOperationException("Custom function not set."); } 
-                else if (!(CustomFunction.Children.Length > argID)) { throw new TokenizerException("Number of arguments for custom function don't match up."); }
+                else if (!(CustomFunction.Children.Count > argID)) { throw new TokenizerException("Number of arguments for custom function don't match up."); }
                 else { return new ArgToken<T> { ArgID = argID, CustFunction = CustomFunction }; }
             }
             else

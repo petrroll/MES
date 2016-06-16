@@ -19,21 +19,20 @@ namespace MathExpressionSolver.Tokens
         IToken<T> RightChild { get; }
     }
 
-
     public interface IChildrenToken<out T> : IToken<T>
     {
-        IToken<T>[] Children { get; }
+        IReadOnlyList<IToken<T>> Children { get; }
     }
 
     public interface ICustFuncToken<T> : IChildrenToken<T>
     {
-        IToken<T> FuncTopToken { get; set; }
+        IToken<T> FuncTopToken { get; }
     }
 
     public interface IArgumentToken<T> : IToken<T>
     {
-        ICustFuncToken<T> CustFunction { get; set; }
-        int ArgID { get; set; }
+        ICustFuncToken<T> CustFunction { get; }
+        int ArgID { get; }
     }
     #endregion
 
@@ -55,14 +54,19 @@ namespace MathExpressionSolver.Tokens
         IToken<T> MutRightChild { get; set; }
     }
 
-    public interface IFactorableBracketsToken<T> : IFactorableToken<T>, IChildrenToken<T>
+    public interface IFactorableIChildrenToken<T> : IChildrenToken<T>, IFactorableToken<T>
+    {
+        IToken<T>[] MutChildren { get; }
+    }
+
+    public interface IFactorableBracketsToken<T> : IFactorableIChildrenToken<T>
     {
         IFactorableToken<T>[][] BracketedTokens { get; set; }
     }
 
     public interface IFactorableCustFuncToken<T> : IFactorableBracketsToken<T>, ICustFuncToken<T>
     {
-
+        IToken<T> MutFuncTopToken { get; set; }
     }
     #endregion
 

@@ -99,7 +99,7 @@ namespace MathExpressionSolver.Controller
             advTokenFactory.ArgsArray = argumentsNames;
             advTokenFactory.CustomFunction = newFunction;
 
-            newFunction.FuncTopToken = ReturnExpressionTopToken(expression);
+            newFunction.MutFuncTopToken = ReturnExpressionTopToken(expression);
             if(newFunction.FuncTopToken == null) { throw new ControllerException("Custom function body is empty."); }
 
             if (advTokenFactory.CustomFunctions == null) { throw new InvalidOperationException("Controller object not properly iniciazed."); }

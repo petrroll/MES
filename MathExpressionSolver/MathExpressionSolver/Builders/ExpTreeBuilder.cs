@@ -83,9 +83,9 @@ namespace MathExpressionSolver.Tokens
             var argumentTokenTreeBuilder = new ExpTreeBuilder<T>();
             IFactorableToken<T>[][] argumentsTokens = currToken.BracketedTokens;
 
-            if (argumentsTokens.Length != currToken.Children.Length)
+            if (argumentsTokens.Length != currToken.Children.Count)
             {
-                throw new ExpTreeBuilderException($"Number of supplied ({argumentsTokens.Length}) and required ({currToken.Children.Length}) arguments for {currToken} doesn't match.");
+                throw new ExpTreeBuilderException($"Number of supplied ({argumentsTokens.Length}) and required ({currToken.Children.Count}) arguments for {currToken} doesn't match.");
             }
 
             for (int nThArgument = 0; nThArgument < argumentsTokens.Length; nThArgument++)
@@ -93,7 +93,7 @@ namespace MathExpressionSolver.Tokens
                 var argumentTopToken = argumentTokenTreeBuilder.CreateExpressionTree(argumentsTokens[nThArgument]);
 
                 if(argumentTopToken == null) { throw new ExpTreeBuilderException($"{nThArgument}. argument of {currToken} is empty." ); }
-                currToken.Children[nThArgument] = argumentTopToken;
+                currToken.MutChildren[nThArgument] = argumentTopToken;
             }
         }
     }
