@@ -193,7 +193,7 @@ namespace MathExpressionSolver.Controller
         public Exception Exception { get; private set; }
         public ExpressionType Type { get; private set; }   
         public T Value { get; private set; }
-        public string AdditionalData { get; private set; }
+        public string AdditionalData { get; private set; } //E.g. the name of new function or a variable
 
         public Result(ExpressionType expressionType, T value, string additionalData = null, Exception ex = null)
         {
