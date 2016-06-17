@@ -21,7 +21,7 @@ module ControllerIntegrationTests =
         parser.SkipWhiteSpace <- true
 
         let customVariables = new Dictionary<string, double>();
-        let customFunctions = new Dictionary<string, IFactorableBracketsToken<double>>();
+        let customFunctions = new Dictionary<string, IFactorableCustFuncToken<double>>();
 
         let factory = new DoubleTokenFactory()
         factory.CustomVariables <- customVariables
