@@ -11,30 +11,41 @@ namespace MESSocketClient
 
         public void Talk(string server = "127.0.0.1")
         {
-            using (client = new TcpClient(server, _port))
+            try
             {
-                string command = Console.ReadLine();
-
-                using (client)
-                using (var clientStream = client.GetStream())
-                using (var reader = new StreamReader(clientStream))
-                using (var writer = new StreamWriter(clientStream))
+                using (client = new TcpClient(server, _port))
                 {
-                    while (true)
+                    string command = Console.ReadLine();
+
+                    using (client)
+                    using (var clientStream = client.GetStream())
+                    using (var reader = new StreamReader(clientStream))
+                    using (var writer = new StreamWriter(clientStream) { AutoFlush = true })
                     {
-                        writer.WriteLine(command);
-                        writer.Flush();
-                        if (command == "--bye") { break; }
+                        while (true)
+                        {
+                            writer.WriteLine(command);
+                            if (command == "--bye") { break; }
 
-                        string response = reader.ReadLine();
-                        Console.WriteLine(response);
+                            string response = reader.ReadLine();
+                            Console.WriteLine(response);
 
-                        command = Console.ReadLine();
+                            command = Console.ReadLine();
+                        }
+
+
                     }
-
-
                 }
             }
+            catch(SocketException ex)
+            {
+                Console.WriteLine($"Network error (code: {ex.ErrorCode}): {ex.Message}");
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine($"Network error: {ex.Message}");
+            }
+
         }
 
     }

@@ -24,12 +24,24 @@ namespace MathExpressionSolverSocketSever
 
         public async Task Talk(TcpClient client)
         {
-            using (client)
-            using (var clientStream = client.GetStream())
-            using (var reader = new StreamReader(clientStream))
-            using (var writer = new StreamWriter(clientStream))
+            try
             {
-                await handleCommands(reader, writer);
+                using (client)
+                using (var clientStream = client.GetStream())
+                using (var reader = new StreamReader(clientStream))
+                using (var writer = new StreamWriter(clientStream) { AutoFlush = true })
+                {
+                    await handleCommands(reader, writer);
+                }
+
+            }
+            catch (SocketException ex)
+            {
+                Console.WriteLine($"Client network error (code: {ex.ErrorCode}): {ex.Message}");
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine($"Client network error: {ex.Message}");
             }
 
         }
@@ -55,8 +67,7 @@ namespace MathExpressionSolverSocketSever
                 string result = controller.ExecuteExpressionSafe(command).ToString();
 
                 await lastWriteTask;
-                await writer.FlushAsync();
-                lastWriteTask = writer.WriteLineAsync(result).ContinueWith(async(_) => await writer.FlushAsync());
+                lastWriteTask = writer.WriteLineAsync(result);
             }
         }
 

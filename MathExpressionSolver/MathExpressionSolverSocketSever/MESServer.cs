@@ -1,8 +1,10 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 namespace MathExpressionSolverSocketSever
 {
     class MESServer
@@ -20,21 +22,39 @@ namespace MathExpressionSolverSocketSever
 
         async public Task Work()
         {
-            serverListener.Start();
-            await listen(serverListener, cancelationTokenS.Token);
-            serverListener.Stop();
+            try
+            {
+                serverListener.Start();
+                await listen(serverListener, cancelationTokenS.Token);
+            }
+            catch (SocketException ex)
+            {
+                Console.WriteLine($"Network error (code: {ex.ErrorCode}): {ex.Message}");
+            }
+            finally
+            {
+                serverListener.Stop();
+            }
         }
 
         private async Task listen(TcpListener listener, CancellationToken ct)
         {
-            while (!ct.IsCancellationRequested)
+            try
             {
-                TcpClient client = await listener.AcceptTcpClientAsync().ConfigureAwait(false);
-                var newClient = new ClientState(ct);
-                newClient.Talk(client);
+                while (!ct.IsCancellationRequested)
+                {
+                    TcpClient client = await listener.AcceptTcpClientAsync().ConfigureAwait(false);
+                    var newClient = new ClientState(ct);
+
+                    newClient.Talk(client);
+
+                }
+            }
+            catch (SocketException ex)
+            {
+                Console.WriteLine($"Network error (code: {ex.ErrorCode}): {ex.Message}");
             }
         }
-    }
-
-   
+    }  
 }
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
