@@ -10,7 +10,7 @@ namespace MathExpressionSolverSocketSever
     class MESServer
     {
         private const int _port = 4586;
-        bool _log;
+        readonly bool _log;
 
         CancellationTokenSource cancelationSource;
         Task cancelationTask;

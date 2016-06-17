@@ -11,7 +11,7 @@ namespace MathExpressionSolverSocketSever
     {
         public static Task GetCancelationTask(CancellationToken token)
         {
-            TaskCompletionSource<bool> cancelationCompletionSource = new TaskCompletionSource<bool>();
+            var cancelationCompletionSource = new TaskCompletionSource<bool>();
             token.Register(() => cancelationCompletionSource.SetResult(true));
 
             return cancelationCompletionSource.Task;
