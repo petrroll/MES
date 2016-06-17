@@ -329,10 +329,15 @@ namespace MathExpressionSolver.Tokens
             for (int i = 0; i < MutArgumentTokens.Length; i++)
             {
                 var currArg = MutArgumentTokens[i];
-                var currArgCopy = currArg.Clone(substitutionDict);
-                substitutionDict[currArg] = currArgCopy;
 
-                mutArgumentsCopy[i] = (IFactorableUnToken<T>)currArgCopy;
+                if (currArg != null)
+                {
+                    var currArgCopy = currArg.Clone(substitutionDict);
+                    substitutionDict[currArg] = currArgCopy;
+
+                    mutArgumentsCopy[i] = (IFactorableUnToken<T>)currArgCopy;
+                }
+
             }
 
 

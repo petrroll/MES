@@ -148,6 +148,9 @@ module ControllerIntegrationTests =
 
         let valueTester = bindController controller testValue
         let funcTester = bindController controller testNewFunction
+        
+        funcTester "funC(a) = 5" "funC"
+        valueTester "funC(3)" 5.0
 
         funcTester "funA(x; y) = x + x * y" "funA"
         valueTester "funA(3; 2)" 9.0
