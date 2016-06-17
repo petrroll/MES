@@ -66,7 +66,7 @@ namespace MathExpressionSolver.Builders
                 case "/":
                     return new DivToken<T>();
                 default:
-                    throw new TokenizerException("No operator named " + s + " exists.");
+                    throw new TokenizerException($"No operator named {s} exists.");
             }
         }
 
@@ -82,7 +82,7 @@ namespace MathExpressionSolver.Builders
             else
             {
                 if (CustomVariables != null && CustomVariables.ContainsKey(s)) { return new ItemToken<T> { Value = CustomVariables[s] }; }
-                else { throw new TokenizerException("No variable named " + s + " exists."); }
+                else { throw new TokenizerException($"No variable named {s} exists."); }
             }
             
         }
@@ -96,7 +96,7 @@ namespace MathExpressionSolver.Builders
                 custFunc.BracketedTokens = arguments;
                 return custFunc;
             }
-            else { throw new TokenizerException("No function named " + s + " exists."); }
+            else { throw new TokenizerException($"No function named {s} exists."); }
             
         }
 
