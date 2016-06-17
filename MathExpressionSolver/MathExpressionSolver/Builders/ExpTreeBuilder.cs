@@ -52,7 +52,7 @@ namespace MathExpressionSolver.Tokens
             }
 
             if (currToken.Type == TokenType.BinOperator && subHierarchyToken != null)
-            {
+            { 
                 ((IFactorableBinToken<T>)currToken).MutLeftChild = subHierarchyToken;
             }
             else if (currToken.Type == TokenType.BinOperator)

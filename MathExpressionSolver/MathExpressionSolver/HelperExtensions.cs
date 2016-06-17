@@ -100,8 +100,8 @@ namespace MathExpressionSolver
         { }
     }
 
-    public interface IClonable<out T>
+    public interface IClonable<T>
     {
-        T Clone();
+        T Clone(IDictionary<T, T> substitutionDict);
     }
 }

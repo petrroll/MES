@@ -151,6 +151,7 @@ module ControllerIntegrationTests =
 
         funcTester "funA(x; y) = x + x * y" "funA"
         valueTester "funA(3; 2)" 9.0
+        valueTester "funA(3; 2)" 9.0
 
         funcTester "funB(height_in_m; diameter_in_cm) = Pi * ((diameter_in_cm / 100) * (diameter_in_cm / 100)) * height_in_m" "funB"
 
@@ -211,7 +212,7 @@ module ControllerIntegrationTests =
         valueTester "funC(2.0)" -98.0
 
 
-    [<Fact(Skip="Throws stackoverflow. Will get fixed during ExpTree builder refactoring")>]
+    [<Fact>]
     let FuncDeep() =
         let controller = initController()
 

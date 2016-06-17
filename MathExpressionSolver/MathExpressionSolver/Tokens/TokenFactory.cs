@@ -19,7 +19,7 @@ namespace MathExpressionSolver.Builders
     public interface ICustomFunctionsAwareTokenFactory<T> : ITokenFactory<T>
     {
         string[] ArgsArray { set; }
-        ICustFuncToken<T> CustomFunction { set; }
+        IFactorableCustFuncToken<T> CustomFunction { set; }
         Dictionary<string, IFactorableCustFuncToken<T>> CustomFunctions { get; set; }
 
         void Clear();
@@ -30,7 +30,7 @@ namespace MathExpressionSolver.Builders
         private string[] argsArray;
         public string[] ArgsArray { set { if (value == null) { throw new ArgumentNullException(nameof(value), $"{nameof(ArgsArray)} doesn't accept null"); } argsArray = value; } }
 
-        public ICustFuncToken<T> CustomFunction { private get; set; }
+        public IFactorableCustFuncToken<T> CustomFunction { private get; set; }
         public Dictionary<string, T> CustomVariables { get; set; }
 
         public Dictionary<string, IFactorableCustFuncToken<T>> CustomFunctions { get; set; }
@@ -77,7 +77,18 @@ namespace MathExpressionSolver.Builders
             {
                 if (CustomFunction == null) { throw new InvalidOperationException("Custom function not set."); } 
                 else if (!(CustomFunction.Children.Count > argID)) { throw new TokenizerException("Number of arguments for custom function don't match up."); }
-                else { return new ArgToken<T> { ArgID = argID, CustFunction = CustomFunction }; }
+                else
+                {
+                    if(CustomFunction.MutArgumentTokens[argID] == null)
+                    {
+                        var newArgToken = new ArgToken<T>();
+                        CustomFunction.MutArgumentTokens[argID] = newArgToken;
+                        return newArgToken;
+                    }
+
+                    return CustomFunction.MutArgumentTokens[argID];
+
+                }
             }
             else
             {
@@ -92,7 +103,7 @@ namespace MathExpressionSolver.Builders
             //TODO: Should create a new instance
             if(CustomFunctions != null && CustomFunctions.ContainsKey(s))
             {
-                var custFunc = (IFactorableBracketsToken<T>)CustomFunctions[s];
+                var custFunc = (IFactorableBracketsToken<T>)CustomFunctions[s].Clone(new Dictionary<IToken<T>, IToken<T>>());
                 custFunc.BracketedTokens = arguments;
                 return custFunc;
             }
