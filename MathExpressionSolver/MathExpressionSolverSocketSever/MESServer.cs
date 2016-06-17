@@ -12,19 +12,33 @@ namespace MathExpressionSolverSocketSever
         private const int _port = 4586;
         bool _log;
 
-        CancellationTokenSource cancelationTokenS;
+        CancellationTokenSource cancelationSource;
+        Task cancelationTask;
+
         TcpListener serverListener;
 
         public MESServer(bool log)
         {
             _log = log;
-            cancelationTokenS = new CancellationTokenSource();
+            cancelationSource = new CancellationTokenSource();
+            cancelationTask = AsyncHelpers.GetCancelationTask(cancelationSource.Token);
+
             serverListener = new TcpListener(IPAddress.Any, _port);
         }
 
         async public Task Work()
         {
+            Task.Factory.StartNew(readCommands);
             await doListening();
+        }
+
+        private void readCommands()
+        {
+            while (!cancelationSource.Token.IsCancellationRequested)
+            {
+                string command = Console.ReadLine();
+                if (command == "--bye") { cancelationSource.Cancel(); }
+            }
         }
 
         private async Task doListening()
@@ -32,7 +46,7 @@ namespace MathExpressionSolverSocketSever
             try
             {
                 serverListener.Start();
-                await listen(serverListener, cancelationTokenS.Token);
+                await listen(serverListener, cancelationSource.Token);
             }
             catch (SocketException ex)
             {
@@ -49,12 +63,17 @@ namespace MathExpressionSolverSocketSever
 
             try
             {
+                Task completedTask;
                 while (!ct.IsCancellationRequested)
                 {
-                    TcpClient client = await listener.AcceptTcpClientAsync().ConfigureAwait(false);
+                    var clientTask = listener.AcceptTcpClientAsync();
+                    completedTask = await Task.WhenAny(clientTask, cancelationTask).ConfigureAwait(false);
+
+                    if(completedTask == cancelationTask) { log("Server cancelation."); break; }
+
+                    TcpClient client = await clientTask;
                     log("New client connected.");
                     var newClient = new ClientState(ct, _log);
-
                     newClient.Talk(client);
 
                 }

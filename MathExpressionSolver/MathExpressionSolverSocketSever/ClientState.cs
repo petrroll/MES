@@ -17,12 +17,16 @@ namespace MathExpressionSolverSocketSever
         bool _log;
 
         CancellationToken ct;
+        Task ctTask;
         Controller<double> controller;
 
         public ClientState(CancellationToken token, bool log)
         {
             _log = log;
+
             ct = token;
+            ctTask = AsyncHelpers.GetCancelationTask(ct);
+
             controller = initController();
         }
 
@@ -57,21 +61,26 @@ namespace MathExpressionSolverSocketSever
             var lastReadTask = reader.ReadLineAsync();
             var timeoutTask = Task.Delay(TimeSpan.FromSeconds(timeoutSec));
 
+            Task completedTask;
+
             while (!ct.IsCancellationRequested)
             {   
-                var completedTask = await Task.WhenAny(timeoutTask, lastReadTask)
-                              .ConfigureAwait(false);
-
+                completedTask = await Task.WhenAny(timeoutTask, lastReadTask, ctTask).ConfigureAwait(false);
                 if (completedTask == timeoutTask) { break; }
+                if (completedTask == ctTask) { log("Cancel"); break; }
+
                 string command = lastReadTask.Result;
                 if (command == "--bye") { log("Client bye"); break; }
+
 
                 lastReadTask = reader.ReadLineAsync();
                 timeoutTask = Task.Delay(TimeSpan.FromSeconds(timeoutSec));
 
                 string result = controller.ExecuteExpressionSafe(command).ToString();
 
-                await lastWriteTask;
+                completedTask = await Task.WhenAny(lastWriteTask, ctTask).ConfigureAwait(false);
+                if(completedTask == ctTask) { log("Cancel"); break; }
+
                 lastWriteTask = writer.WriteLineAsync(result);
             }
         }
