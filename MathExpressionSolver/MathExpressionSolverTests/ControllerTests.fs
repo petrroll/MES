@@ -129,6 +129,18 @@ module ControllerIntegrationTests =
         valueTester "funA(2;5)" 7.0
 
     [<Fact>]
+    let Exceptions() =
+        let controller = initController()
+        let excTester = bindController controller testException
+
+        excTester "2 + + 3" "Two binary operators next to each other: 2 + ,  + "
+        excTester "2 + " "Binary operator: 2 +  doesn't have right side."
+        excTester "+ 2" "Binary operator:  +  does't have left side"
+        excTester "(2 + 2" "2 + 2; does not have an ending parenthese."
+        excTester "sin()" "0. argument of sin() is empty."
+        excTester "sin(2,3) " "Number of supplied (2) and required (1) arguments for sin() doesn't match."
+
+    [<Fact>]
     let FuncsAdv() =
         
         let controller = initController()
