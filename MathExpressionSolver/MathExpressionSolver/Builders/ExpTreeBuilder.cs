@@ -93,8 +93,10 @@ namespace MathExpressionSolver.Tokens
                 var argumentTopToken = argumentTokenTreeBuilder.CreateExpressionTree(argumentsTokens[nThArgument]);
 
                 if(argumentTopToken == null) { throw new ExpTreeBuilderException($"{nThArgument}. argument of {currToken} is empty." ); }
-                currToken.MutChildren[nThArgument] = argumentTopToken;
+                currToken.SetChild(nThArgument, argumentTopToken);
             }
+
+            currToken.BracketedTokens = null;
         }
     }
 
