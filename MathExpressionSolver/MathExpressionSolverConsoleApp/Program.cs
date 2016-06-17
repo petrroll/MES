@@ -30,7 +30,7 @@ namespace MathExpressionSolverConsoleApp
             var parser = new ExpressionParser { SkipWhiteSpace = true };
 
             var customVariables = new Dictionary<string, double>();
-            var customFunctions = new Dictionary<string, IFactorableBracketsToken<double>>();
+            var customFunctions = new Dictionary<string, IFactorableCustFuncToken<double>>();
 
             ITokenFactory<double> factory = new DoubleTokenFactory { CustomVariables = customVariables, CustomFunctions = customFunctions };
             var tokenizer = new Tokenizer<double> { TokenFactory = factory };

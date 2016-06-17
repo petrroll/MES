@@ -99,4 +99,9 @@ namespace MathExpressionSolver
           System.Runtime.Serialization.StreamingContext context) : base(info, context)
         { }
     }
+
+    public interface IClonable<out T>
+    {
+        T Clone();
+    }
 }

@@ -20,7 +20,7 @@ namespace MathExpressionSolver.Builders
     {
         string[] ArgsArray { set; }
         ICustFuncToken<T> CustomFunction { set; }
-        Dictionary<string, IFactorableBracketsToken<T>> CustomFunctions { get; set; }
+        Dictionary<string, IFactorableCustFuncToken<T>> CustomFunctions { get; set; }
 
         void Clear();
     }
@@ -33,7 +33,7 @@ namespace MathExpressionSolver.Builders
         public ICustFuncToken<T> CustomFunction { private get; set; }
         public Dictionary<string, T> CustomVariables { get; set; }
 
-        public Dictionary<string, IFactorableBracketsToken<T>> CustomFunctions { get; set; }
+        public Dictionary<string, IFactorableCustFuncToken<T>> CustomFunctions { get; set; }
 
         protected AdvancedTokenFactory()
         {
@@ -92,7 +92,7 @@ namespace MathExpressionSolver.Builders
             //TODO: Should create a new instance
             if(CustomFunctions != null && CustomFunctions.ContainsKey(s))
             {
-                IFactorableBracketsToken<T> custFunc =  CustomFunctions[s];
+                var custFunc = (IFactorableBracketsToken<T>)CustomFunctions[s];
                 custFunc.BracketedTokens = arguments;
                 return custFunc;
             }
