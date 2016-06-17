@@ -10,7 +10,7 @@ namespace MathExpressionSolverSocketSever
     {
         static void Main(string[] args)
         {
-            MESServer server = new MESServer();
+            MESServer server = new MESServer(true);
             server.Work().Wait();
         }
     }

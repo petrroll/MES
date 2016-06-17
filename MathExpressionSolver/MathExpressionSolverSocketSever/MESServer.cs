@@ -9,18 +9,25 @@ namespace MathExpressionSolverSocketSever
 {
     class MESServer
     {
-        private const int _port = 4586; 
+        private const int _port = 4586;
+        bool _log;
 
         CancellationTokenSource cancelationTokenS;
         TcpListener serverListener;
 
-        public MESServer()
+        public MESServer(bool log)
         {
+            _log = log;
             cancelationTokenS = new CancellationTokenSource();
             serverListener = new TcpListener(IPAddress.Any, _port);
         }
 
         async public Task Work()
+        {
+            await doListening();
+        }
+
+        private async Task doListening()
         {
             try
             {
@@ -29,7 +36,7 @@ namespace MathExpressionSolverSocketSever
             }
             catch (SocketException ex)
             {
-                Console.WriteLine($"Network error (code: {ex.ErrorCode}): {ex.Message}");
+                log($"Network error (code: {ex.ErrorCode}): {ex.Message}");
             }
             finally
             {
@@ -39,12 +46,14 @@ namespace MathExpressionSolverSocketSever
 
         private async Task listen(TcpListener listener, CancellationToken ct)
         {
+
             try
             {
                 while (!ct.IsCancellationRequested)
                 {
                     TcpClient client = await listener.AcceptTcpClientAsync().ConfigureAwait(false);
-                    var newClient = new ClientState(ct);
+                    log("New client connected.");
+                    var newClient = new ClientState(ct, _log);
 
                     newClient.Talk(client);
 
@@ -52,8 +61,13 @@ namespace MathExpressionSolverSocketSever
             }
             catch (SocketException ex)
             {
-                Console.WriteLine($"Network error (code: {ex.ErrorCode}): {ex.Message}");
+                log($"Network error (code: {ex.ErrorCode}): {ex.Message}");
             }
+        }
+
+        private void log(string message)
+        {
+            if (_log) { Console.WriteLine(message); }
         }
     }  
 }

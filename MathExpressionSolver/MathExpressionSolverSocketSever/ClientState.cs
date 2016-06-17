@@ -13,11 +13,15 @@ namespace MathExpressionSolverSocketSever
 {
     class ClientState
     {
+        private const int timeoutSec = 60 * 60;
+        bool _log;
+
         CancellationToken ct;
         Controller<double> controller;
 
-        public ClientState(CancellationToken token)
+        public ClientState(CancellationToken token, bool log)
         {
+            _log = log;
             ct = token;
             controller = initController();
         }
@@ -37,20 +41,21 @@ namespace MathExpressionSolverSocketSever
             }
             catch (SocketException ex)
             {
-                Console.WriteLine($"Client network error (code: {ex.ErrorCode}): {ex.Message}");
+                log($"Client network error (code: {ex.ErrorCode}): {ex.Message}");
             }
             catch (IOException ex)
             {
-                Console.WriteLine($"Client network error: {ex.Message}");
+                log($"Client network error: {ex.Message}");
             }
 
+            log("Client stopped talking.");
         }
 
         private async Task handleCommands(StreamReader reader, StreamWriter writer)
         {   
             Task lastWriteTask = Task.FromResult(0);
             var lastReadTask = reader.ReadLineAsync();
-            var timeoutTask = Task.Delay(TimeSpan.FromSeconds(60*60));
+            var timeoutTask = Task.Delay(TimeSpan.FromSeconds(timeoutSec));
 
             while (!ct.IsCancellationRequested)
             {   
@@ -59,16 +64,21 @@ namespace MathExpressionSolverSocketSever
 
                 if (completedTask == timeoutTask) { break; }
                 string command = lastReadTask.Result;
-                if (command == "--bye") { break; }
+                if (command == "--bye") { log("Client bye"); break; }
 
                 lastReadTask = reader.ReadLineAsync();
-                timeoutTask = Task.Delay(TimeSpan.FromSeconds(15));
+                timeoutTask = Task.Delay(TimeSpan.FromSeconds(timeoutSec));
 
                 string result = controller.ExecuteExpressionSafe(command).ToString();
 
                 await lastWriteTask;
                 lastWriteTask = writer.WriteLineAsync(result);
             }
+        }
+
+        private void log(string message)
+        {
+            if (_log) { Console.WriteLine(message); }
         }
 
         private Controller<double> initController()
