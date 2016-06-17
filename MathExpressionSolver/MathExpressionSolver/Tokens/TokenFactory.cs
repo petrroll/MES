@@ -100,7 +100,6 @@ namespace MathExpressionSolver.Builders
 
         public virtual IFactorableBracketsToken<T> CreateFunction(string s, IFactorableToken<T>[][] arguments)
         {
-            //TODO: Should create a new instance
             if(CustomFunctions != null && CustomFunctions.ContainsKey(s))
             {
                 var custFunc = (IFactorableBracketsToken<T>)CustomFunctions[s].Clone(new Dictionary<IToken<T>, IToken<T>>());
