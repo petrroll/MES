@@ -20,6 +20,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathExpressionSolverSocketS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MESSocketClient", "MESSocketClient\MESSocketClient.csproj", "{EBFD0B6C-4665-48C3-8BF3-19C0752E406C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{A6613A6A-6716-42DD-A06E-E5A96BB00B3C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "czech", "czech", "{1ED0570E-4F49-4FAB-8922-51224DF6CF2D}"
+	ProjectSection(SolutionItems) = preProject
+		..\docs\czech\mes_library-pd.md = ..\docs\czech\mes_library-pd.md
+		..\docs\czech\mes_server-client_pd.txt = ..\docs\czech\mes_server-client_pd.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,5 +57,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1ED0570E-4F49-4FAB-8922-51224DF6CF2D} = {A6613A6A-6716-42DD-A06E-E5A96BB00B3C}
 	EndGlobalSection
 EndGlobal

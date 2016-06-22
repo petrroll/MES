@@ -1,0 +1,1 @@
+## Programátorská dokumentace
