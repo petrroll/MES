@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MathExpressionSolver.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -7,7 +8,7 @@ namespace MathExpressionSolver.Parser
     /// <summary>
     /// Divides expression string into an array of substrings and their types.
     /// </summary>
-    public class ExpressionParser
+    public class ExpressionParser : IParser
     {
         const int _avgParsedItemLength = 4;
 

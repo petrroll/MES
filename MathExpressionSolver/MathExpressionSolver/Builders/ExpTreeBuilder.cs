@@ -1,4 +1,4 @@
-﻿using System;
+﻿using MathExpressionSolver.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,7 +8,7 @@ namespace MathExpressionSolver.Tokens
     /// Converts linear array of <see cref="IFactorableToken{T}"/> into an expression tree.
     /// </summary>
     /// <typeparam name="T">Token base type.</typeparam>
-    public class ExpTreeBuilder<T>
+    public class ExpTreeBuilder<T> : IExpTreeBuilder<T>
     {
         /// <summary>
         /// Creates an expression tree out of <paramref name="rawTokens"/> and returns its top Token.

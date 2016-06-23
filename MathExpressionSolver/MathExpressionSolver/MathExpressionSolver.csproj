@@ -48,11 +48,15 @@
     <Compile Include="Controller.cs" />
     <Compile Include="HelperExtensions.cs" />
     <Compile Include="Builders\Parser.cs" />
+    <Compile Include="Interfaces\IExpTreeBuilder.cs" />
+    <Compile Include="Interfaces\IParser.cs" />
+    <Compile Include="Interfaces\ITokenFactory.cs" />
+    <Compile Include="Interfaces\ITokenizer.cs" />
     <Compile Include="Tokens\TokenFactory.cs" />
     <Compile Include="Builders\Tokenizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Builders\ExpTreeBuilder.cs" />
-    <Compile Include="Tokens\ITkones.cs" />
+    <Compile Include="Interfaces\ITkones.cs" />
     <Compile Include="Tokens\Tokens.cs" />
   </ItemGroup>
   <ItemGroup>

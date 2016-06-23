@@ -1,5 +1,6 @@
 ﻿using MathExpressionSolver.Builders;
 using MathExpressionSolver.Controller;
+using MathExpressionSolver.Interfaces;
 using MathExpressionSolver.Parser;
 using MathExpressionSolver.Tokens;
 using System;

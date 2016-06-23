@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using MathExpressionSolver.Parser;
 using MathExpressionSolver.Tokens;
 using System.Text;
-using System.Diagnostics;
+using MathExpressionSolver.Interfaces;
 
 namespace MathExpressionSolver.Builders
 {
@@ -11,7 +11,7 @@ namespace MathExpressionSolver.Builders
     /// Creates linear array of <see cref="IFactorableToken{T}"/> out of <see cref="ParsedItem"/> array.
     /// </summary>
     /// <typeparam name="T">Token base type.</typeparam>
-    public class Tokenizer<T>
+    public class Tokenizer<T> : ITokenizer<T>
     {
         /// <summary>
         /// <see cref="ITokenFactory{T}"/> object used for actual <see cref="IFactorableToken{T}"/> creation.

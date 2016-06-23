@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using MathExpressionSolver.Builders;
 using MathExpressionSolver.Parser;
 using MathExpressionSolver.Tokens;
+using MathExpressionSolver.Interfaces;
 
 namespace MathExpressionSolver.Controller
 {
@@ -15,15 +16,15 @@ namespace MathExpressionSolver.Controller
         /// <summary>
         /// Is used for expression parsing from <see cref="string"/> to <see cref="ParsedItem[]"/>.
         /// </summary>
-        public ExpressionParser Parser { private get; set; }
+        public IParser Parser { private get; set; }
         /// <summary>
         /// Is used for converting <see cref="ParsedItem[]"/> to <see cref="IFactorableToken{T}[]"/>.
         /// </summary>
-        public Tokenizer<T> Tokenizer { private get; set; }
+        public ITokenizer<T> Tokenizer { private get; set; }
         /// <summary>
         /// Is used for building an expression tree out of <see cref="IFactorableToken{T}[]"/>.
         /// </summary>
-        public ExpTreeBuilder<T> ExpTreeBuilder { private get; set; }
+        public IExpTreeBuilder<T> ExpTreeBuilder { private get; set; }
 
         /// <summary>
         /// Returns a top <see cref="IToken{T}"/> of a expression tree to specified <see cref="string"/> expression.
