@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using MathExpressionSolver.Builders;
-using MathExpressionSolver.Parser;
 using MathExpressionSolver.Tokens;
 using MathExpressionSolver.Interfaces;
 

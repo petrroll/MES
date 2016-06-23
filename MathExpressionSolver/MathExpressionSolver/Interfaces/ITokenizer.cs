@@ -1,5 +1,4 @@
-﻿using MathExpressionSolver.Builders;
-using MathExpressionSolver.Parser;
+﻿using MathExpressionSolver.Parser;
 using MathExpressionSolver.Tokens;
 
 namespace MathExpressionSolver.Interfaces
