@@ -25,7 +25,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "czech", "czech", "{1ED0570E-4F49-4FAB-8922-51224DF6CF2D}"
 	ProjectSection(SolutionItems) = preProject
 		..\docs\czech\mes_library-pd.md = ..\docs\czech\mes_library-pd.md
-		..\docs\czech\mes_server-client_pd.txt = ..\docs\czech\mes_server-client_pd.txt
+		..\docs\czech\mes_server-client_pd.md = ..\docs\czech\mes_server-client_pd.md
 	EndProjectSection
 EndProject
 Global
