@@ -18,7 +18,7 @@ Výsledky controller vrací ve struktuře `Result<T>`, která kromě hodnoty a t
 ### Implementace parseru:
 Rozhraní `IParser` vyžaduje existenci jediné metody - ParseExpression, která přijímá řetězec a vrací pole `ParsedItem`, což je struktura obsahující vždy string a typ aktuální položky - `ParsedItemType` (jméno, hodnota, operátor, whitespace, ...). 
 
-Samotná implementace parseru je  vcelku triviální stavový automat, který si jako stav udržuje typ posledního znaku. Co se týče typů znaků, tak malá a velká písmena velké abecedy plus podtržítko se počítají za název, čísla a desetiná tečka (nezávisle na kultuře) za číslo, čárka a středník za oddělovač a tařka cokoliv jiného, vyjma bílých znaků, za operátory.
+Implementace parseru je vcelku triviální stavový automat, který si jako stav udržuje typ posledního znaku. Co se týče typů znaků, tak malá a velká písmena velké abecedy plus podtržítko se počítají za název, čísla a desetiná tečka (nezávisle na kultuře) za číslo, čárka a středník za oddělovač a tařka cokoliv jiného, vyjma bílých znaků, za operátory.
 
 ### Tokeny:
 
@@ -36,5 +36,13 @@ Dodaná implementace prochází dodané pole `ParsedItem`'ů a na základě typu
 V případě, že Tokenizér narazí na otevírací závorku, tak si poznačí typ očekávaného tokenu s argumentem (tj. token závorky / funkce) a sejde o úroveň níže. Následně zas normálně vytváří tokeny, dokud nenarazí na závorku ukončovací. V ten moment zkompletuje všechny tokeny aktuální úrovně do pole, nechá `ITokenFactory<T>` vytvořit na základě dříve poznačené informace odpovídající Token (závorky / funkce), uloží něj pole argumentů a normálně pokračuje o úroveň výše.
 
 ### Implementace expression tree builderu:
+
+Rozhraní `IExpTreeBuilder<T>` vyžaduje existenci jediné metody - CreateExpressionTree, která přijímá pole `IFactorableToken<T>` a vrací kořen vytvořeného expression stromu v podobě `IToken<T>`. 
+
+Dodaná implementace je postavená na vlastním algoritmu optimalizovaném pro binární infixové operátory libovolné priority a, byť jen rozumně zanořené, funkce libovolného počtu proměnných.
+
+Detailní popis je k nalezení ve funkci `placeCurrentToken` souboru `\Builders\ExpTreeBuilder.cs`.
+
+Za zmínku stojí jen zpracování Tokenů s argumenty (funkce, závorky). V případě takových se na každý argument spustí ExpTreeBuilder rekurzivně a vytvoří vždy nezávislý expression tree, který následně uloží pomocí funkce `SetChild` na odpovídajícím tokenu.
 
 ### Tvorba vlastních funkcí:
