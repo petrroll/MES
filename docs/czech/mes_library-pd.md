@@ -33,7 +33,7 @@ Interface `ITokenizer<T>` vynucuje pouze jednu metodu `Tokenize` přijímající
 
 Dodaná implementace prochází dodané pole `ParsedItem`'ů a na základě typu aktuálního prvku, případně nejbližších sousedních, nechává `ITokenFactory<T>` vytvořit odpovídající `IFactorableToken<T>`.
 
-V případě, že narazí na otevírací závorku, tak si poznačí, že je o úroveň níže a pokračuje dál. Následně, u uzavírající závorky zkompletuje pole `IFactorableToken<T>`ů vytvořených od poslední otevírající (tj. na stejné úrovni) a uloží je do Tokenu o úroveň výše, kterému dané argumenty odpovídají (buďto tokenu funkce nebo tokenu závorek). 
+V případě, že Tokenizér narazí na otevírací závorku, tak si poznačí typ očekávaného tokenu s argumentem (tj. token závorky / funkce) a sejde o úroveň níže. Následně zas normálně vytváří tokeny, dokud nenarazí na závorku ukončovací. V ten moment zkompletuje všechny tokeny aktuální úrovně do pole, nechá `ITokenFactory<T>` vytvořit na základě dříve poznačené informace odpovídající Token (závorky / funkce), uloží něj pole argumentů a normálně pokračuje o úroveň výše.
 
 ### Implementace expression tree builderu:
 
