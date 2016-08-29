@@ -1,4 +1,4 @@
-﻿namespace MathExpressionSolverSocketSever
+﻿namespace MESExamples.SocketServer
 {
     class Program
     {

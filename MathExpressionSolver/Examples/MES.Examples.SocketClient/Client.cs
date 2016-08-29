@@ -2,7 +2,7 @@
 using System.IO;
 using System.Net.Sockets;
 
-namespace MESSocketClient
+namespace MESExamples.SocketClient
 {
     class Client
     {

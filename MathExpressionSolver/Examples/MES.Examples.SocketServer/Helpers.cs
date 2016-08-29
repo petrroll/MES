@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace MathExpressionSolverSocketSever
+namespace MESExamples.SocketServer
 {
     public static class AsyncHelpers
     {

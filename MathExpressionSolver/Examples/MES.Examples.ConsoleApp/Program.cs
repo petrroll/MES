@@ -7,7 +7,7 @@ using MathExpressionSolver.Parser;
 using MathExpressionSolver.Tokens;
 using MathExpressionSolver.Interfaces;
 
-namespace MathExpressionSolverConsoleApp
+namespace MESExamples.CosnsoleApp
 {
     class Program
     {

@@ -7,8 +7,8 @@
     <ProjectGuid>{C1574172-198E-48DC-B096-C9AC90BB13E1}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MathExpressionSolverConsoleApp</RootNamespace>
-    <AssemblyName>MathExpressionSolverConsoleApp</AssemblyName>
+    <RootNamespace>MESExamples.CosnsoleApp</RootNamespace>
+    <AssemblyName>MESExamples.CosnsoleApp</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -49,7 +49,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MathExpressionSolver\MathExpressionSolver.csproj">
+    <ProjectReference Include="..\..\MathExpressionSolver\MathExpressionSolver.csproj">
       <Project>{bb3dc4d5-6b85-40f7-9176-8edb9dc4d823}</Project>
       <Name>MathExpressionSolver</Name>
     </ProjectReference>

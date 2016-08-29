@@ -1,4 +1,4 @@
-﻿namespace MESSocketClient
+﻿namespace MESExamples.SocketClient
 {
     class Program
     {

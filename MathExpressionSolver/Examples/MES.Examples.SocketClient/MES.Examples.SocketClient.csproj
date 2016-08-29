@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8D78FEC6-79E8-43A6-8739-71FEBC51A450}</ProjectGuid>
+    <ProjectGuid>{EBFD0B6C-4665-48C3-8BF3-19C0752E406C}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MathExpressionSolverSocketSever</RootNamespace>
-    <AssemblyName>MathExpressionSolverSocketSever</AssemblyName>
+    <RootNamespace>MES.Examples.SocketClient</RootNamespace>
+    <AssemblyName>MES.Examples.SocketClient</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -42,20 +42,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientState.cs" />
-    <Compile Include="Helpers.cs" />
-    <Compile Include="MESServer.cs" />
+    <Compile Include="Client.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MathExpressionSolver\MathExpressionSolver.csproj">
-      <Project>{bb3dc4d5-6b85-40f7-9176-8edb9dc4d823}</Project>
-      <Name>MathExpressionSolver</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

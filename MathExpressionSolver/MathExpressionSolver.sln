@@ -5,9 +5,9 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathExpressionSolver", "MathExpressionSolver\MathExpressionSolver.csproj", "{BB3DC4D5-6B85-40F7-9176-8EDB9DC4D823}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "MathExpressionSolverTests", "MathExpressionSolverTests\MathExpressionSolverTests.fsproj", "{56AC3F9B-8826-47D0-B1DA-927D882B3EED}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "MES.Tests", "MathExpressionSolver.Tests\MES.Tests.fsproj", "{56AC3F9B-8826-47D0-B1DA-927D882B3EED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathExpressionSolverConsoleApp", "MathExpressionSolverConsoleApp\MathExpressionSolverConsoleApp.csproj", "{C1574172-198E-48DC-B096-C9AC90BB13E1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MES.Examples.ConsoleApp", "Examples\MES.Examples.ConsoleApp\MES.Examples.ConsoleApp.csproj", "{C1574172-198E-48DC-B096-C9AC90BB13E1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0DF5FBE3-83D2-4434-8331-F1328B249E7A}"
 	ProjectSection(SolutionItems) = preProject
@@ -16,9 +16,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathExpressionSolverSocketSever", "MathExpressionSolverSocketSever\MathExpressionSolverSocketSever.csproj", "{8D78FEC6-79E8-43A6-8739-71FEBC51A450}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MES.Examples.SocketServer", "Examples\MES.Examples.SocketServer\MES.Examples.SocketServer.csproj", "{8D78FEC6-79E8-43A6-8739-71FEBC51A450}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MESSocketClient", "MESSocketClient\MESSocketClient.csproj", "{EBFD0B6C-4665-48C3-8BF3-19C0752E406C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MES.Examples.SocketClient", "Examples\MES.Examples.SocketClient\MES.Examples.SocketClient.csproj", "{EBFD0B6C-4665-48C3-8BF3-19C0752E406C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{A6613A6A-6716-42DD-A06E-E5A96BB00B3C}"
 EndProject

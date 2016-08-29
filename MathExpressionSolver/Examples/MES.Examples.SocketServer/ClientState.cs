@@ -10,7 +10,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MathExpressionSolverSocketSever
+namespace MESExamples.SocketServer
 {
     class ClientState
     {
