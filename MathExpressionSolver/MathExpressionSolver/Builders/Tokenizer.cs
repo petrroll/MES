@@ -7,15 +7,10 @@ using MathExpressionSolver.Interfaces;
 
 namespace MathExpressionSolver.Builders
 {
-    /// <summary>
-    /// Creates linear array of <see cref="IFactorableToken{T}"/> out of <see cref="ParsedItem"/> array.
-    /// </summary>
-    /// <typeparam name="T">Token base type.</typeparam>
+
     public class Tokenizer<T> : ITokenizer<T>
     {
-        /// <summary>
-        /// <see cref="ITokenFactory{T}"/> object used for actual <see cref="IFactorableToken{T}"/> creation.
-        /// </summary>
+
         public ITokenFactory<T> TokenFactory { get; set; }
 
 
