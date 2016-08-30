@@ -2,6 +2,7 @@
   "locked": false,
   "version": 2,
   "targets": {
+    ".NETFramework,Version=v4.5": {},
     ".NETStandard,Version=v1.1": {
       "Microsoft.CSharp/4.0.1": {
         "type": "package",
@@ -2611,12 +2612,13 @@
     }
   },
   "projectFileDependencyGroups": {
-    "": [
+    "": [],
+    ".NETFramework,Version=v4.5": [],
+    ".NETStandard,Version=v1.1": [
       "Microsoft.CSharp >= 4.0.1",
       "NETStandard.Library >= 1.6.0",
       "System.Dynamic.Runtime >= 4.0.11"
-    ],
-    ".NETStandard,Version=v1.1": []
+    ]
   },
   "tools": {},
   "projectFileToolGroups": {}

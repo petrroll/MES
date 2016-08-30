@@ -32,8 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MathExpressionSolver.Library">
-      <HintPath>..\..\MathExpressionSolver.Library\bin\Debug\netstandard1.1\MathExpressionSolver.Library.dll</HintPath>
+    <Reference Include="Petrroll.MES">
+      <HintPath>..\..\MathExpressionSolver.Library\bin\Debug\netstandard1.1\Petrroll.MES.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

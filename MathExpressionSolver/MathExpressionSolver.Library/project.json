@@ -1,13 +1,31 @@
 ﻿{
-  "version": "1.0.0-*",
+  "version": "1.0.1-*",
+  "name": "Petrroll.MES",
+  "title": "Math Expression Evaluator",
+  "authors": [ "Petrroll" ],
+  "description": "MES is a mathematical expressions evaluator (let's just say a fancy calculator) written in .NET. While being fairly simple it's heavily focused on being generic, modular, and extensible.",
+  "copyright": "Petr Houska 2016",
+  "packOptions": {
+    "licenseUrl": "https://opensource.org/licenses/MIT",
+    "projectUrl": "https://github.com/petrroll/MES",
+    "tags": [ "math expression evaluator", "evaluator", "math evaluator", "math engine", "string math evaluator" ],
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/petrroll/MES"
+    }
+  },
 
   "dependencies": {
-    "Microsoft.CSharp": "4.0.1",
-    "NETStandard.Library": "1.6.0",
-    "System.Dynamic.Runtime": "4.0.11"
   },
 
   "frameworks": {
-    ".NETStandard1.1": {},
+    ".NETStandard1.1": {
+      "dependencies": {
+        "Microsoft.CSharp": "4.0.1",
+        "NETStandard.Library": "1.6.0",
+        "System.Dynamic.Runtime": "4.0.11"
+      }
+    },
+    "net45": { "dependencies": {} }
   }
 }
