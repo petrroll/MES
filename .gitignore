@@ -191,4 +191,4 @@ ModelManifest.xml
 /MathExpressionSolver/packages
 *.DotSettings
 /MathExpressionSolver/.vs
-*.md
+/docs/czech

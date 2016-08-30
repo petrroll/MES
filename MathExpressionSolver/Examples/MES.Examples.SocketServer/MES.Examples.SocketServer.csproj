@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MES.Library">
+      <HintPath>..\..\MathExpressionSolver.Library\bin\Debug\netstandard1.1\MES.Library.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -52,10 +55,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MathExpressionSolver\MathExpressionSolver.csproj">
-      <Project>{bb3dc4d5-6b85-40f7-9176-8edb9dc4d823}</Project>
-      <Name>MathExpressionSolver</Name>
-    </ProjectReference>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
