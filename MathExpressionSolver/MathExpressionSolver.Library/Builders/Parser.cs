@@ -5,9 +5,7 @@ using System.Text;
 
 namespace MathExpressionSolver.Parser
 {
-    /// <summary>
-    /// Divides expression string into an array of substrings and their types.
-    /// </summary>
+
     public class ExpressionParser : IParser
     {
         const int _avgParsedItemLength = 4;
@@ -17,11 +15,6 @@ namespace MathExpressionSolver.Parser
         /// </summary>
         public bool SkipWhiteSpace { get; set; } = true;
 
-        /// <summary>
-        /// Parses the <paramref name="rawExpression"/> and returns an array of corresponding <see cref="ParsedItem"/>s.
-        /// </summary>
-        /// <param name="rawExpression">Expression to be parsed.</param>
-        /// <returns>Array of <see cref="ParsedItem"/>s</returns>
         public ParsedItem[] ParseExpression(string rawExpression)
         {
             if (rawExpression == null) { throw new ArgumentNullException(nameof(rawExpression), "StringExpression null"); }

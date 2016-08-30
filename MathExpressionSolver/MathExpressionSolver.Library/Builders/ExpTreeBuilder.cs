@@ -4,10 +4,6 @@ using System.Linq;
 
 namespace MathExpressionSolver.Tokens
 {
-    /// <summary>
-    /// Converts linear array of <see cref="IFactorableToken{T}"/> into an expression tree.
-    /// </summary>
-    /// <typeparam name="T">Token base type.</typeparam>
     public class ExpTreeBuilder<T> : IExpTreeBuilder<T>
     {
         /// <summary>
