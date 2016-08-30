@@ -31,4 +31,4 @@ install:
 script:
   - dotnet build ./MathExpressionSolver/MathExpressionSolver.Library -c Debug
   - xbuild /p:Configuration=ReleaseTravis MathExpressionSolver/MathExpressionSolver.sln
-  - mono ./testrunner/xunit.runner.console.2.1.0/tools/xunit.console.exe ./MathExpressionSolver/MathExpressionSolver.Tests/bin/Release/MathExpressionSolverTests.dll
+  - mono ./testrunner/xunit.runner.console.2.1.0/tools/xunit.console.exe ./MathExpressionSolver/MathExpressionSolver.Tests/bin/ReleaseTravis/MathExpressionSolverTests.dll
