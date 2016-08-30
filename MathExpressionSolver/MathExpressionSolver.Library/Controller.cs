@@ -137,7 +137,7 @@ namespace MathExpressionSolver.Controller
             }
             else if (Regex.IsMatch(expression, possFuncRegex))
             {
-                string argumentsRegex = @"((?<argName>" + nameRegex + @")(;)?|(;\s)?)+";
+                string argumentsRegex = @"((?<argName>" + nameRegex + @")([;,])?|([;,\s])?)+";
                 Match custFunc = Regex.Match(expression, @"^(?<funcName>" + nameRegex + @")\(" + argumentsRegex + @"\)" + exprRegex + "$");
                 if(!custFunc.Success) { throw new ControllerException("Given expression is not a valid custom function assigment."); }
 
