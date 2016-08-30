@@ -74,8 +74,8 @@
       <HintPath>..\packages\FsUnit.xUnit.1.4.1.0\lib\net45\FsUnit.Xunit.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MES.Library">
-      <HintPath>..\MathExpressionSolver.Library\bin\Debug\netstandard1.1\MES.Library.dll</HintPath>
+    <Reference Include="MathExpressionSolver.Library">
+      <HintPath>..\MathExpressionSolver.Library\bin\Debug\netstandard1.1\MathExpressionSolver.Library.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NHamcrest">
