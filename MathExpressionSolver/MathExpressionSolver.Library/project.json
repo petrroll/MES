@@ -3,9 +3,10 @@
   "name": "Petrroll.MES",
   "title": "Math Expression Evaluator",
   "authors": [ "Petrroll" ],
-  "description": "MES is a mathematical expressions evaluator (let's just say a fancy calculator) written in .NET. While being fairly simple it's heavily focused on being generic, modular, and extensible.",
+  "description": "MES is a mathematical expressions evaluator. While being fairly simple it's heavily focused on being generic, modular, and extensible. Supports custom functions!",
   "copyright": "Petr Houska 2016",
   "packOptions": {
+    "summary": "A highly modular Mathematical expressions evaluator.",
     "licenseUrl": "https://opensource.org/licenses/MIT",
     "projectUrl": "https://github.com/petrroll/MES",
     "tags": [ "math expression evaluator", "evaluator", "math evaluator", "math engine", "string math evaluator" ],
