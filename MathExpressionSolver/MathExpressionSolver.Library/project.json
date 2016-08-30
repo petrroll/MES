@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "1.0.1-*",
   "name": "Petrroll.MES",
   "title": "Math Expression Evaluator",
@@ -28,5 +28,8 @@
       }
     },
     "net45": { "dependencies": {} }
+  },
+  "configurations": {
+    "ReleaseTravis": {}
   }
 }

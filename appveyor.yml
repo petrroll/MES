@@ -1,6 +1,9 @@
 version: 0.0.{build}
+configuration:
+  - Release
 before_build:
 - ps: nuget restore MathExpressionSolver/MathExpressionSolver.sln
+- ps: dotnet build ./MathExpressionSolver/MathExpressionSolver.Library -c Debug  
 build:
   project: MathExpressionSolver/MathExpressionSolver.sln
   verbosity: minimal

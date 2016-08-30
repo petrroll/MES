@@ -1,11 +1,17 @@
 notifications:
   email: false
 language: csharp
-dist: trusty  
-env:  
-  - CLI_VERSION=latest
+dist: trusty
+sudo: required
 
-addons:  
+os:
+  - linux
+  # - osx CoreCLR does not support OS X 10.9 (yet)
+  
+env:  
+ - CLI_VERSION=latest
+ 
+addons:
   apt:
     packages:
     - gettext
@@ -14,8 +20,6 @@ addons:
     - libssl-dev
     - libunwind8
     - zlib1g
-mono:  
-  - 4.2.3    
 
 install:
   - export DOTNET_INSTALL_DIR="$PWD/.dotnetcli"
@@ -25,6 +29,6 @@ install:
   - nuget restore MathExpressionSolver/MathExpressionSolver.sln
   - nuget install xunit.runner.console -Version 2.1.0 -OutputDirectory testrunner 
 script:
-  - build_MES_lib.sh
-  - xbuild /p:Configuration=Release MathExpressionSolver/MathExpressionSolver.sln
+  - dotnet build ./MathExpressionSolver/MathExpressionSolver.Library -c Debug
+  - xbuild /p:Configuration=ReleaseTravis MathExpressionSolver/MathExpressionSolver.sln
   - mono ./testrunner/xunit.runner.console.2.1.0/tools/xunit.console.exe ./MathExpressionSolver/MathExpressionSolver.Tests/bin/Release/MathExpressionSolverTests.dll
