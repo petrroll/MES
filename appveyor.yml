@@ -1,4 +1,24 @@
-version: 0.0.{build}
+version: '{build}' 
+pull_requests:  
+  do_not_increment_build_number: true
+artifacts:
+  - path: ./MathExpressionSolver/MathExpressionSolver.Library/bin/Release/*.nupkg
+    name: NuGet
+
+branches:  
+  only:
+  - master
+nuget:  
+  disable_publish_on_pr: true  
+deploy:  
+- provider: NuGet
+  name: production
+  artifact: /.*\.nupkg/
+  api_key:
+    secure: t9CSIU7UZmj1KvAeppdspMOMxjDS59F/0e/VDl504YB1Gh/dakjKPFSZ/LUgcZHK
+  on:
+    branch: master
+#    appveyor_repo_tag: true
 configuration:
   - Release
 before_build:
@@ -7,3 +27,6 @@ before_build:
 build:
   project: MathExpressionSolver/MathExpressionSolver.sln
   verbosity: minimal
+after_test:
+- ps: dotnet pack ./MathExpressionSolver/MathExpressionSolver.Library -c Release
+
